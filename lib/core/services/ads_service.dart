@@ -12,6 +12,16 @@ class AdsService {
 
   static Future<void> init() async {
     await MobileAds.instance.initialize();
+
+    // Families Policy Compliance:
+    // 1. Tag for Child Directed Treatment (COPPA)
+    // 2. Max Ad Content Rating set to G
+    RequestConfiguration configuration = RequestConfiguration(
+      tagForChildDirectedTreatment: TagForChildDirectedTreatment.yes,
+      maxAdContentRating: MaxAdContentRating.g,
+    );
+    await MobileAds.instance.updateRequestConfiguration(configuration);
+
     // Preload ads immediately upon init
     preloadInterstitial();
     preloadRewarded();

@@ -444,7 +444,10 @@ class GameBloc extends Bloc<GameEvent, GameState> {
           return;
         }
 
-        HapticFeedback.lightImpact(); // Select Vibration
+        // HapticFeedback.lightImpact(); // HANDLED IN WIDGET NOW for immediate response?
+        // Better to handle logic confirmed here.
+        HapticFeedback.selectionClick();
+        _audio.playSelect(); // NEW
         emit(state.copyWith(selectedTubeIndex: tappedIndex));
       }
       return;
@@ -452,7 +455,8 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
     // 2. Tapped the same tube -> deselect
     if (sourceIndex == tappedIndex) {
-      HapticFeedback.lightImpact(); // Deselect
+      HapticFeedback.selectionClick();
+      _audio.playDeselect(); // NEW
       emit(state.copyWith(clearSelection: true));
       return;
     }
@@ -555,11 +559,22 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     } else {
       // Invalid move.
       // User might want to change selection to this new tube if it has items
-      HapticFeedback.selectionClick();
       if (!targetTube.isEmpty) {
+        // Change selection
+        HapticFeedback.selectionClick();
+        _audio.playSelect();
         emit(state.copyWith(selectedTubeIndex: tappedIndex));
       } else {
-        emit(state.copyWith(clearSelection: true));
+        // Just invalid drop on empty? (Shouldn't happen as empty accepts all, unless constrained)
+        // Or specific constraints.
+        // If it's truly invalid:
+        HapticFeedback.heavyImpact(); // NEW: Strong feedback for error
+        _audio.playError(); // NEW
+        emit(
+          state.copyWith(clearSelection: true),
+        ); // Or keep selection? Let's Deselect to be safe or keep?
+        // Usually keeping selection is better UX, but visual feedback is needed.
+        // For now, deselecting is clear "No".
       }
     }
   }

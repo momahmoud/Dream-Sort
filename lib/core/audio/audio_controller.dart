@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dream_sort/features/game/repo/game_repository.dart';
 import 'package:flutter/foundation.dart';
+import 'package:vibration/vibration.dart';
 
 class AudioController {
   final GameRepository _repo;
@@ -44,9 +45,16 @@ class AudioController {
   }
 
   Future<void> playPop() async {
+    // Vibrate even if muted (unless user disabled vibration in future settings)
+    if (await Vibration.hasVibrator()) {
+      Vibration.vibrate(duration: 15); // Light tick
+    }
+
     if (isMuted) return;
     try {
       final player = _getNextPoolPlayer();
+      await player
+          .stop(); // Stop previous sound if any (crucial for rapid overlapping)
       await player.play(
         AssetSource('audio/pop.wav'),
         mode: PlayerMode.lowLatency,
@@ -56,11 +64,17 @@ class AudioController {
     }
   }
 
-  // Called when ball moves physically
+  // called when ball moves physically
   Future<void> playMove() async {
+    if (await Vibration.hasVibrator()) {
+      Vibration.vibrate(duration: 30); // Slight thud
+    }
+
     if (isMuted) return;
     try {
       final player = _getNextPoolPlayer();
+      await player.stop(); // Stop previous
+      await player.setPlaybackRate(1.0); // Normal speed
       await player.play(
         AssetSource('audio/move.wav'),
         mode: PlayerMode.lowLatency,
@@ -68,7 +82,78 @@ class AudioController {
     } catch (_) {}
   }
 
+  // New: High pitch pop for selection
+  Future<void> playSelect() async {
+    if (await Vibration.hasVibrator()) {
+      Vibration.vibrate(duration: 10); // Crisp click
+    }
+
+    if (isMuted) return;
+    try {
+      final player = _getNextPoolPlayer();
+      await player.stop();
+      await player.setPlaybackRate(1.5); // Higher pitch for selection
+      await player.play(
+        AssetSource('audio/pop.wav'),
+        mode: PlayerMode.lowLatency,
+      );
+    } catch (_) {}
+  }
+
+  // New: Low pitch pop for deselect/cancel
+  Future<void> playDeselect() async {
+    if (await Vibration.hasVibrator()) {
+      Vibration.vibrate(duration: 10); // Light tick
+    }
+
+    if (isMuted) return;
+    try {
+      final player = _getNextPoolPlayer();
+      await player.stop();
+      await player.setPlaybackRate(0.8); // Lower pitch
+      await player.play(
+        AssetSource('audio/pop.wav'),
+        mode: PlayerMode.lowLatency,
+      );
+    } catch (_) {}
+  }
+
+  // New: Error buzz (reusing pop with very low pitch/fast repetition if possible, or just a distinct low thud)
+  Future<void> playError() async {
+    if (await Vibration.hasVibrator()) {
+      // Double shake for error
+      if (await Vibration.hasCustomVibrationsSupport()) {
+        Vibration.vibrate(
+          pattern: [0, 50, 50, 50],
+          intensities: [0, 128, 0, 128],
+        );
+      } else {
+        Vibration.vibrate(duration: 200);
+      }
+    }
+
+    if (isMuted) return;
+    try {
+      final player = _getNextPoolPlayer();
+      await player.stop();
+      await player.setPlaybackRate(0.5); // Very low pitch "thud"
+      await player.play(
+        AssetSource('audio/pop.wav'),
+        mode: PlayerMode.lowLatency,
+      );
+    } catch (_) {}
+  }
+
   Future<void> playWin() async {
+    if (await Vibration.hasVibrator()) {
+      // Fun Win Pattern
+      if (await Vibration.hasCustomVibrationsSupport()) {
+        Vibration.vibrate(pattern: [0, 50, 50, 100, 50, 200]);
+      } else {
+        Vibration.vibrate(duration: 500);
+      }
+    }
+
     if (isMuted) return;
     try {
       final p = AudioPlayer();

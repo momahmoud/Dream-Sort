@@ -4,14 +4,12 @@ import '../../../l10n/app_localizations.dart';
 
 class MultiplayerGameOverDialog extends StatelessWidget {
   final String winner;
-  final String time;
   final VoidCallback onRematch;
   final VoidCallback onBackToMenu;
 
   const MultiplayerGameOverDialog({
     super.key,
     required this.winner,
-    required this.time,
     required this.onRematch,
     required this.onBackToMenu,
   });
@@ -36,7 +34,7 @@ class MultiplayerGameOverDialog extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(l10n.time(time), style: const TextStyle(color: Colors.white70)),
+          // Text(l10n.time(time), style: const TextStyle(color: Colors.white70)),
         ],
       ),
       actions: [

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:dream_sort/core/audio/audio_controller.dart';
 import 'package:dream_sort/features/game/bloc/game_bloc.dart';
 import 'package:dream_sort/features/game/models/decor_models.dart';
@@ -36,8 +34,6 @@ class OnlineMultiplayerGamePage extends StatefulWidget {
 
 class _OnlineMultiplayerGamePageState extends State<OnlineMultiplayerGamePage> {
   late GameBloc _gameBloc;
-  Timer? _gameTimer;
-  Duration _elapsed = Duration.zero;
   String? _winner;
   int _completedTubes = 0;
 
@@ -63,8 +59,6 @@ class _OnlineMultiplayerGamePageState extends State<OnlineMultiplayerGamePage> {
           seed: widget.initialRoom.seed,
         ),
       );
-
-    _startTimer();
   }
 
   @override
@@ -76,32 +70,12 @@ class _OnlineMultiplayerGamePageState extends State<OnlineMultiplayerGamePage> {
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-    _gameTimer?.cancel();
     _gameBloc.close();
     super.dispose();
   }
 
-  void _startTimer() {
-    _elapsed = Duration.zero;
-    _gameTimer?.cancel();
-    _gameTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (mounted) {
-        setState(() {
-          _elapsed += const Duration(seconds: 1);
-        });
-      }
-    });
-  }
-
-  String _formatTime(Duration d) {
-    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
-  }
-
   void _handleWin(String playerWrapper) {
     if (_winner != null) return;
-    _gameTimer?.cancel();
     setState(() {
       _winner = playerWrapper;
     });
@@ -111,7 +85,6 @@ class _OnlineMultiplayerGamePageState extends State<OnlineMultiplayerGamePage> {
       barrierDismissible: false,
       builder: (dialogContext) => MultiplayerGameOverDialog(
         winner: playerWrapper,
-        time: _formatTime(_elapsed),
         onBackToMenu: () {
           widget.repository.leaveRoom();
           Navigator.pop(dialogContext); // Close dialog
@@ -138,8 +111,6 @@ class _OnlineMultiplayerGamePageState extends State<OnlineMultiplayerGamePage> {
         seed: widget.initialRoom.seed,
       ),
     );
-
-    _startTimer();
   }
 
   @override

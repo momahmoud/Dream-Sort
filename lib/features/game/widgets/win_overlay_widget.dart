@@ -5,20 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../l10n/app_localizations.dart';
 
 class WinOverlayWidget extends StatelessWidget {
-  final Duration elapsed;
   final VoidCallback onRestartTimer;
 
-  const WinOverlayWidget({
-    super.key,
-    required this.elapsed,
-    required this.onRestartTimer,
-  });
-
-  String _formatTime(Duration d) {
-    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
-  }
+  const WinOverlayWidget({super.key, required this.onRestartTimer});
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +43,10 @@ class WinOverlayWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            /* Text(
               l10n.levelComplete(_formatTime(elapsed)),
               style: const TextStyle(color: Colors.white70),
-            ),
+            ), */
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {

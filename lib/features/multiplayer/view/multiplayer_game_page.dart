@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:dream_sort/core/audio/audio_controller.dart';
@@ -29,8 +28,6 @@ class MultiplayerGamePage extends StatefulWidget {
 class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
   late int _sharedSeed;
   String? _winner;
-  Timer? _gameTimer;
-  Duration _elapsed = Duration.zero;
 
   late GameBloc _blocP1;
   late GameBloc _blocP2;
@@ -60,8 +57,6 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
 
     _blocP2 = GameBloc(repo: repo, audio: audio)
       ..add(LoadLevel(levelId: widget.levelId, seed: _sharedSeed));
-
-    _startTimer();
   }
 
   @override
@@ -74,33 +69,15 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-    _gameTimer?.cancel();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
     _blocP1.close();
     _blocP2.close();
     super.dispose();
   }
 
-  void _startTimer() {
-    _elapsed = Duration.zero;
-    _gameTimer?.cancel();
-    _gameTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (mounted) {
-        setState(() {
-          _elapsed += const Duration(seconds: 1);
-        });
-      }
-    });
-  }
-
-  String _formatTime(Duration d) {
-    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
-  }
-
   void _handleWin(String player) {
     if (_winner != null) return; // Already won
-    _gameTimer?.cancel();
     setState(() {
       _winner = player;
     });
@@ -110,7 +87,6 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
       barrierDismissible: false,
       builder: (context) => MultiplayerGameOverDialog(
         winner: player,
-        time: _formatTime(_elapsed),
         onBackToMenu: () {
           Navigator.pop(context); // Close dialog
           Navigator.pop(context); // Close game page
@@ -134,8 +110,6 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
     // Reset Blocs
     _blocP1.add(LoadLevel(levelId: widget.levelId, seed: _sharedSeed));
     _blocP2.add(LoadLevel(levelId: widget.levelId, seed: _sharedSeed));
-
-    _startTimer();
   }
 
   @override
@@ -165,7 +139,9 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
           return Stack(
             children: [
               // Shared Background
-              RoomView(equipped: equippedMap, showCenterVisual: false),
+              RepaintBoundary(
+                child: RoomView(equipped: equippedMap, showCenterVisual: false),
+              ),
 
               // Dark overlay to make tubes pop
               Container(color: Colors.black.withValues(alpha: 0.3)),
@@ -203,20 +179,22 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
                                 );
                               }
                             },
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  left: BorderSide(
-                                    color: Colors.white24,
-                                    width: 2,
+                            child: RepaintBoundary(
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    left: BorderSide(
+                                      color: Colors.white24,
+                                      width: 2,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: GameBoard(
-                                  onWin: () {}, // Handled by listener
-                                  tubeSkinColor: tubeSkinColor,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: GameBoard(
+                                    onWin: () {}, // Handled by listener
+                                    tubeSkinColor: tubeSkinColor,
+                                  ),
                                 ),
                               ),
                             ),
@@ -248,20 +226,22 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
                               );
                             }
                           },
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                left: BorderSide(
-                                  color: Colors.white24,
-                                  width: 2,
+                          child: RepaintBoundary(
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                border: Border(
+                                  left: BorderSide(
+                                    color: Colors.white24,
+                                    width: 2,
+                                  ),
                                 ),
                               ),
-                            ),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: GameBoard(
-                                onWin: () {}, // Handled by listener
-                                tubeSkinColor: tubeSkinColor,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: GameBoard(
+                                  onWin: () {}, // Handled by listener
+                                  tubeSkinColor: tubeSkinColor,
+                                ),
                               ),
                             ),
                           ),

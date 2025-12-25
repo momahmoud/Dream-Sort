@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:dream_sort/core/services/ads_service.dart';
 
@@ -38,10 +36,6 @@ class _GamePageState extends State<GamePage> {
   // Defines a flying ball animation
   final List<Widget> _flyingBalls = [];
 
-  // ... timers ...
-  Timer? _gameTimer;
-  Duration _elapsed = Duration.zero;
-
   // Ads
   BannerAd? _bannerAd;
   bool _isBannerAdReady = false;
@@ -49,7 +43,6 @@ class _GamePageState extends State<GamePage> {
   @override
   void initState() {
     super.initState();
-    _startTimer();
     _loadBannerAd();
   }
 
@@ -73,27 +66,8 @@ class _GamePageState extends State<GamePage> {
 
   @override
   void dispose() {
-    _gameTimer?.cancel();
     _bannerAd?.dispose();
     super.dispose();
-  }
-
-  void _startTimer() {
-    _elapsed = Duration.zero;
-    _gameTimer?.cancel();
-    _gameTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (mounted) {
-        setState(() {
-          _elapsed += const Duration(seconds: 1);
-        });
-      }
-    });
-  }
-
-  String _formatTime(Duration d) {
-    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
   }
 
   void _handleGameStateChange(BuildContext context, GameState state) {
@@ -102,10 +76,8 @@ class _GamePageState extends State<GamePage> {
       _tubeKeys = List.generate(state.tubes.length, (_) => GlobalKey());
     }
 
-    // 2. Check for Win to stop timer
+    // 2. Check for Win status
     if (state.status == GameStatus.won) {
-      _gameTimer?.cancel();
-      _gameTimer?.cancel();
       // Show Interstitial on Win (Best Practice: Preloaded)
       AdsService.showInterstitial();
     }
@@ -257,26 +229,6 @@ class _GamePageState extends State<GamePage> {
                                 blurRadius: 4,
                               ),
                             ],
-                          ),
-                        ),
-                        // Timer Display
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.black26, // Subtle pill
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            _formatTime(_elapsed),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.white70,
-                              fontFamily: 'monospace',
-                              fontWeight: FontWeight.bold,
-                            ),
                           ),
                         ),
                       ],
@@ -566,7 +518,12 @@ class _GamePageState extends State<GamePage> {
               body: Stack(
                 children: [
                   // 1. Room Background
-                  RoomView(equipped: equippedMap, showCenterVisual: false),
+                  RepaintBoundary(
+                    child: RoomView(
+                      equipped: equippedMap,
+                      showCenterVisual: false,
+                    ),
+                  ),
 
                   // 2. Main Game Content
                   SafeArea(
@@ -577,11 +534,13 @@ class _GamePageState extends State<GamePage> {
                         Expanded(
                           child: BlocBuilder<GameBloc, GameState>(
                             builder: (context, state) {
-                              return GameBoard(
-                                tubeSkinColor: tubeSkinColor,
-                                tubeKeys: _tubeKeys,
-                                hiddenTargets: _hiddenTargets,
-                                bottomPadding: 100, // Safe space for buttons
+                              return RepaintBoundary(
+                                child: GameBoard(
+                                  tubeSkinColor: tubeSkinColor,
+                                  tubeKeys: _tubeKeys,
+                                  hiddenTargets: _hiddenTargets,
+                                  bottomPadding: 100, // Safe space for buttons
+                                ),
                               );
                             },
                           ),
@@ -1181,7 +1140,6 @@ class _GamePageState extends State<GamePage> {
                               icon: Icons.refresh_rounded,
                               onTap: () {
                                 context.read<GameBloc>().add(ResetLevel());
-                                _startTimer();
                               },
                             ),
                           ],
@@ -1193,9 +1151,7 @@ class _GamePageState extends State<GamePage> {
                   // 5. Win Overlay & Confetti
                   BlocConsumer<GameBloc, GameState>(
                     listener: (context, state) {
-                      if (state.status == GameStatus.won) {
-                        _gameTimer?.cancel(); // Stop timer on win
-                      }
+                      // Win Overlay Listener
                     },
                     builder: (context, state) {
                       if (state.status == GameStatus.won) {
@@ -1209,8 +1165,8 @@ class _GamePageState extends State<GamePage> {
                                 alpha: 0.5,
                               ), // Dim background
                               child: WinOverlayWidget(
-                                elapsed: _elapsed,
-                                onRestartTimer: _startTimer,
+                                onRestartTimer:
+                                    () {}, // No timer restart needed
                               ),
                             ),
                           ],
