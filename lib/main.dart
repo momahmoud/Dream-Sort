@@ -1,0 +1,46 @@
+import 'package:dream_sort/app/app.dart';
+import 'package:dream_sort/core/audio/audio_controller.dart';
+import 'package:dream_sort/core/locale/locale_cubit.dart';
+import 'package:dream_sort/core/services/ads_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:dream_sort/features/game/repo/game_repository.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint('Firebase already initialized or error: $e');
+  }
+
+  await Hive.initFlutter();
+  await dotenv.load(fileName: ".env");
+  await AdsService.init();
+
+  final gameRepo = GameRepository();
+  await gameRepo.init();
+
+  final audioCtrl = AudioController(gameRepo);
+  await audioCtrl.init();
+
+  runApp(
+    MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: gameRepo),
+        RepositoryProvider.value(value: audioCtrl),
+      ],
+      child: BlocProvider(
+        create: (_) => LocaleCubit(),
+        child: const DreamSortApp(),
+      ),
+    ),
+  );
+}

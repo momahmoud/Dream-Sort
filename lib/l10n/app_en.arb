@@ -1,0 +1,110 @@
+{
+  "appTitle": "Dream Sort",
+  "play": "PLAY",
+  "levels": "LEVELS",
+  "room": "ROOM",
+  "multiplayer": "MULTIPLAYER",
+  "muteSound": "Mute Sound",
+  "unmuteSound": "Unmute Sound",
+  "decorShop": "Decor Shop",
+  "howToPlay": "How to Play",
+  "quitGame": "Quit Game",
+  "selectLevel": "Select Level",
+  "level": "Level",
+  "renovateRoom": "Renovate Room",
+  "notEnoughStars": "Not enough stars! Need {cost} stars.",
+  "@notEnoughStars": {
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
+  },
+  "owned": "OWNED",
+  "equipped": "EQUIPPED",
+  "gameOver": "GAME OVER",
+  "wins": "{player} WINS!",
+  "@wins": {
+    "placeholders": {
+      "player": {
+        "type": "String"
+      }
+    }
+  },
+  "time": "Time: {time}",
+  "@time": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "backToMenu": "Back to Menu",
+  "rematch": "Rematch",
+  "vsBattle": "1 vs 1 Battle",
+  "sentPenalty": "{player} sent a penalty!",
+  "@sentPenalty": {
+    "placeholders": {
+      "player": {
+        "type": "String"
+      }
+    }
+  },
+  "frozeOpponent": "{attacker} Froze {victim}!",
+  "@frozeOpponent": {
+    "placeholders": {
+      "attacker": {
+        "type": "String"
+      },
+      "victim": {
+        "type": "String"
+      }
+    }
+  },
+  "freezeOpponent": "Freeze Opponent",
+  "levelComplete": "Level Complete in {time}",
+  "@levelComplete": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "nextLevel": "Next Level",
+  "dreamSorted": "DREAM SORTED!",
+  "levelTitle": "Level {level}",
+  "@levelTitle": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "menu": "Menu",
+  "tapToPick": "Tap a tube to pick up the top ball.",
+  "tapToDrop": "Tap another tube to drop it.",
+  "sameColorStack": "You can only stack balls of the SAME color.",
+  "sortToWin": "Sort all same-colored balls into one tube to win!",
+  "gotIt": "Got it!",
+  "subtitle": "A Relaxing Puzzle Game",
+  "multiplayerMode": "Multiplayer Mode",
+  "challengeFriends": "Challenge your friends!",
+  "createRoom": "Create Room",
+  "joinRoom": "Join Room",
+  "localVs": "Local VS (Split Screen)",
+  "comingSoon": "Multiplayer backend coming soon!",
+  "settings": "Settings",
+  "language": "Language",
+  "changeLanguage": "Change Language",
+  "sound": "Sound",
+  "music": "Music",
+  "sfx": "Sound Effects",
+  "resetProgress": "Reset Progress",
+  "about": "About",
+  "credits": "Credits",
+  "resetConfirmTitle": "Reset All Progress?",
+  "resetConfirmMessage": "This will delete all your stars, items, and level progress. This cannot be undone.",
+  "cancel": "Cancel",
+  "reset": "Reset",
+  "progressReset": "Progress has been reset."
+}
