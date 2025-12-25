@@ -106,5 +106,13 @@
   "resetConfirmMessage": "This will delete all your stars, items, and level progress. This cannot be undone.",
   "cancel": "Cancel",
   "reset": "Reset",
-  "progressReset": "Progress has been reset."
+  "progressReset": "Progress has been reset.",
+  "chooseDifficulty": "Choose difficulty for local vs",
+  "enterNameAndLevel": "Enter your name and select level",
+  "playerName": "Player Name",
+  "enterRoomDetails": "Enter room details to join",
+  "yourName": "Your Name",
+  "roomCodeHint": "Room Code (e.g. ABCD)",
+  "create": "Create",
+  "join": "Join"
 }

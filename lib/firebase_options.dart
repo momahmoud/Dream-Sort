@@ -51,20 +51,21 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCkss4I3tRZQ9wmBSbfbQ8EuSoPKDzBlk8',
-    appId: '1:511130188370:android:bded4988e72f9baef37d8b',
+    appId: '1:511130188370:android:1264deb875fb4483f37d8b',
     messagingSenderId: '511130188370',
     projectId: 'dream-sort-48418',
-    storageBucket: 'dream-sort-48418.firebasestorage.app',
     databaseURL: 'https://dream-sort-48418-default-rtdb.firebaseio.com',
+    storageBucket: 'dream-sort-48418.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBLFJZA0NdojQPgYopl6mLkJCB-sk9Xfiw',
-    appId: '1:511130188370:ios:0f4cd110ede360f9f37d8b',
+    appId: '1:511130188370:ios:b79b0b5d115fb9ebf37d8b',
     messagingSenderId: '511130188370',
     projectId: 'dream-sort-48418',
-    storageBucket: 'dream-sort-48418.firebasestorage.app',
-    iosBundleId: 'com.example.dreamSort',
     databaseURL: 'https://dream-sort-48418-default-rtdb.firebaseio.com',
+    storageBucket: 'dream-sort-48418.firebasestorage.app',
+    iosBundleId: 'com.elaskry.dreamSort',
   );
+
 }

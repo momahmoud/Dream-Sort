@@ -53,3 +53,6 @@ google-services.json
 # iOS secrets
 GoogleService-Info.plist
 ios/Runner/ExportOptions.plist
+
+# Environment variables
+.env

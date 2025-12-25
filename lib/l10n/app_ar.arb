@@ -54,5 +54,13 @@
   "resetConfirmMessage": "سيؤدي هذا إلى حذف جميع نجومك وعناصرك وتقدم المستوى. لا يمكن التراجع عن هذا.",
   "cancel": "إلغاء",
   "reset": "إعادة تعيين",
-  "progressReset": "تمت إعادة تعيين التقدم."
+  "progressReset": "تمت إعادة تعيين التقدم.",
+  "chooseDifficulty": "اختر الصعوبة للعب المحلي",
+  "enterNameAndLevel": "أدخل اسمك واختر المستوى",
+  "playerName": "اسم اللاعب",
+  "enterRoomDetails": "أدخل تفاصيل الغرفة للانضمام",
+  "yourName": "اسمك",
+  "roomCodeHint": "رمز الغرفة (مثال: ABCD)",
+  "create": "إنشاء",
+  "join": "انضمام"
 }

@@ -433,6 +433,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Progress has been reset.'**
   String get progressReset;
+
+  /// No description provided for @chooseDifficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose difficulty for local vs'**
+  String get chooseDifficulty;
+
+  /// No description provided for @enterNameAndLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your name and select level'**
+  String get enterNameAndLevel;
+
+  /// No description provided for @playerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Player Name'**
+  String get playerName;
+
+  /// No description provided for @enterRoomDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter room details to join'**
+  String get enterRoomDetails;
+
+  /// No description provided for @yourName.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Name'**
+  String get yourName;
+
+  /// No description provided for @roomCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Room Code (e.g. ABCD)'**
+  String get roomCodeHint;
+
+  /// No description provided for @create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
+
+  /// No description provided for @join.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get join;
 }
 
 class _AppLocalizationsDelegate

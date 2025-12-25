@@ -190,4 +190,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get progressReset => 'Progress has been reset.';
+
+  @override
+  String get chooseDifficulty => 'Choose difficulty for local vs';
+
+  @override
+  String get enterNameAndLevel => 'Enter your name and select level';
+
+  @override
+  String get playerName => 'Player Name';
+
+  @override
+  String get enterRoomDetails => 'Enter room details to join';
+
+  @override
+  String get yourName => 'Your Name';
+
+  @override
+  String get roomCodeHint => 'Room Code (e.g. ABCD)';
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get join => 'Join';
 }

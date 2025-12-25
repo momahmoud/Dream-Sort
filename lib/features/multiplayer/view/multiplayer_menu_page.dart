@@ -196,9 +196,9 @@ class _MultiplayerMenuPageState extends State<MultiplayerMenuPage> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Choose difficulty for local vs',
-                  style: TextStyle(color: Colors.white60, fontSize: 14),
+                Text(
+                  l10n.chooseDifficulty,
+                  style: const TextStyle(color: Colors.white60, fontSize: 14),
                 ),
                 const SizedBox(height: 24),
                 // Level Grid
@@ -225,9 +225,9 @@ class _MultiplayerMenuPageState extends State<MultiplayerMenuPage> {
                 // Cancel button
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(color: Colors.white70),
+                  child: Text(
+                    l10n.cancel,
+                    style: const TextStyle(color: Colors.white70),
                   ),
                 ),
               ],
@@ -239,6 +239,7 @@ class _MultiplayerMenuPageState extends State<MultiplayerMenuPage> {
   }
 
   void _showCreateDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController();
     int selectedLevel = 1;
 
@@ -278,23 +279,26 @@ class _MultiplayerMenuPageState extends State<MultiplayerMenuPage> {
                       size: 48,
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      'Create Room',
-                      style: TextStyle(
+                    Text(
+                      l10n.createRoom,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Enter your name and select level',
-                      style: TextStyle(color: Colors.white60, fontSize: 14),
+                    Text(
+                      l10n.enterNameAndLevel,
+                      style: const TextStyle(
+                        color: Colors.white60,
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     _StyledTextField(
                       controller: controller,
-                      hintText: 'Player Name',
+                      hintText: l10n.playerName,
                       icon: Icons.person,
                     ),
                     const SizedBox(height: 16),
@@ -309,9 +313,9 @@ class _MultiplayerMenuPageState extends State<MultiplayerMenuPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Select Level',
-                            style: TextStyle(
+                          Text(
+                            l10n.selectLevel,
+                            style: const TextStyle(
                               color: Colors.white70,
                               fontSize: 12,
                             ),
@@ -369,13 +373,13 @@ class _MultiplayerMenuPageState extends State<MultiplayerMenuPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _DialogActionButton(
-                          label: 'Cancel',
+                          label: l10n.cancel,
                           color: Colors.transparent,
                           textColor: Colors.white70,
                           onTap: () => Navigator.pop(context),
                         ),
                         _DialogActionButton(
-                          label: 'Create',
+                          label: l10n.create,
                           color: AppTheme.accent,
                           textColor: Colors.white,
                           onTap: () {
@@ -403,6 +407,7 @@ class _MultiplayerMenuPageState extends State<MultiplayerMenuPage> {
   }
 
   void _showJoinDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final nameCtrl = TextEditingController();
     final codeCtrl = TextEditingController();
 
@@ -436,29 +441,29 @@ class _MultiplayerMenuPageState extends State<MultiplayerMenuPage> {
               children: [
                 const Icon(Icons.login, color: Color(0xFF4CAF50), size: 48),
                 const SizedBox(height: 16),
-                const Text(
-                  'Join Room',
-                  style: TextStyle(
+                Text(
+                  l10n.joinRoom,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Enter room details to join',
-                  style: TextStyle(color: Colors.white60, fontSize: 14),
+                Text(
+                  l10n.enterRoomDetails,
+                  style: const TextStyle(color: Colors.white60, fontSize: 14),
                 ),
                 const SizedBox(height: 24),
                 _StyledTextField(
                   controller: nameCtrl,
-                  hintText: 'Your Name',
+                  hintText: l10n.yourName,
                   icon: Icons.person,
                 ),
                 const SizedBox(height: 16),
                 _StyledTextField(
                   controller: codeCtrl,
-                  hintText: 'Room Code (e.g. ABCD)',
+                  hintText: l10n.roomCodeHint,
                   icon: Icons.vpn_key,
                   isCapitalized: true,
                 ),
@@ -467,13 +472,13 @@ class _MultiplayerMenuPageState extends State<MultiplayerMenuPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _DialogActionButton(
-                      label: 'Cancel',
+                      label: l10n.cancel,
                       color: Colors.transparent,
                       textColor: Colors.white70,
                       onTap: () => Navigator.pop(context),
                     ),
                     _DialogActionButton(
-                      label: 'Join',
+                      label: l10n.join,
                       color: const Color(0xFF4CAF50),
                       textColor: Colors.white,
                       onTap: () {

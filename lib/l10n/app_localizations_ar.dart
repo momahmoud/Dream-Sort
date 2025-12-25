@@ -190,4 +190,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get progressReset => 'تمت إعادة تعيين التقدم.';
+
+  @override
+  String get chooseDifficulty => 'اختر الصعوبة للعب المحلي';
+
+  @override
+  String get enterNameAndLevel => 'أدخل اسمك واختر المستوى';
+
+  @override
+  String get playerName => 'اسم اللاعب';
+
+  @override
+  String get enterRoomDetails => 'أدخل تفاصيل الغرفة للانضمام';
+
+  @override
+  String get yourName => 'اسمك';
+
+  @override
+  String get roomCodeHint => 'رمز الغرفة (مثال: ABCD)';
+
+  @override
+  String get create => 'إنشاء';
+
+  @override
+  String get join => 'انضمام';
 }
