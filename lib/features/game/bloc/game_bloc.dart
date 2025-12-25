@@ -363,27 +363,38 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   void _onAddPenalty(AddPenalty event, Emitter<GameState> emit) {
-    // Add a new tube with garbage (random balls)
-    // To make it annoying but fair: 1 new tube with 2 random balls.
+    // FIX: Previously added random balls which broke the color counts (e.g. 6 green balls).
+    // NEW PENALTY: Remove an empty tube to constrict the workspace.
 
-    // Limit total tubes to avoid UI breakage
-    if (state.tubes.length >= 8) return;
+    // 1. Find an empty tube
+    final emptyTubeIndex = state.tubes.indexWhere((t) => t.isEmpty);
 
-    final random = Random();
-    final newItems = List.generate(2, (_) {
-      // Random color from available colors in the level?
-      // Simplified: Just take random color 0..3
-      return SortingItem(colorIndex: random.nextInt(4));
-    });
+    if (emptyTubeIndex != -1) {
+      // Remove it
+      final newTubes = List<Tube>.from(state.tubes)..removeAt(emptyTubeIndex);
 
-    final newTube = Tube(items: newItems, capacity: 4);
+      emit(state.copyWith(tubes: newTubes, clearSelection: true));
+      _audio.playPop(); // Sound effect
+    } else {
+      // 2. Fallback: If no empty tubes, Hide some balls (Memory Challenge)
+      // Hide the top ball of every non-completed tube?
+      final newTubes = state.tubes.map((tube) {
+        if (!tube.isCompleted && !tube.isEmpty) {
+          final newItems = List<SortingItem>.from(tube.items);
+          // Hide the top item
+          final topIndex = newItems.length - 1;
+          newItems[topIndex] = SortingItem(
+            colorIndex: newItems[topIndex].colorIndex,
+            isHidden: true,
+          );
+          return Tube(items: newItems, capacity: tube.capacity);
+        }
+        return tube;
+      }).toList();
 
-    final newTubes = List<Tube>.from(state.tubes)..add(newTube);
-
-    emit(state.copyWith(tubes: newTubes));
-
-    // Play a "penalty" sound
-    _audio.playPop();
+      emit(state.copyWith(tubes: newTubes, clearSelection: true));
+      _audio.playPop();
+    }
   }
 
   void _onUndoMove(UndoMove event, Emitter<GameState> emit) {
