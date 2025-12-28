@@ -51,16 +51,24 @@ class MoveDetails extends Equatable {
   final int targetIndex;
   final int colorIndex;
   final int moveId; // To detect distinct moves
+  final int count;
 
   const MoveDetails({
     required this.sourceIndex,
     required this.targetIndex,
     required this.colorIndex,
     required this.moveId,
+    this.count = 1,
   });
 
   @override
-  List<Object?> get props => [sourceIndex, targetIndex, colorIndex, moveId];
+  List<Object?> get props => [
+    sourceIndex,
+    targetIndex,
+    colorIndex,
+    moveId,
+    count,
+  ];
 }
 
 class GameState extends Equatable {
@@ -436,16 +444,12 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     // 1. No tube selected yet
     if (sourceIndex == null) {
       if (!state.tubes[tappedIndex].isEmpty) {
-        // Prevent selecting if top item is hidden (Should ideally not happen if we reveal on remove,
-        // but generator might have hidden the very top item? Our generator constraint prevents this,
-        // but for safety...)
+        // Prevent selecting if top item is hidden
         if (state.tubes[tappedIndex].topItem!.isHidden) {
           // Maybe play error sound?
           return;
         }
 
-        // HapticFeedback.lightImpact(); // HANDLED IN WIDGET NOW for immediate response?
-        // Better to handle logic confirmed here.
         HapticFeedback.selectionClick();
         _audio.playSelect(); // NEW
         emit(state.copyWith(selectedTubeIndex: tappedIndex));
@@ -469,23 +473,50 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       _audio.playMove(); // Play Move Sound
       HapticFeedback.mediumImpact(); // Move Vibration
 
+      // MULTI-MOVE LOGIC
       final itemToMove = sourceTube.topItem!;
 
-      final newSourceTube = sourceTube.removeItem();
-      final newTargetTube = targetTube.addItem(itemToMove)!;
+      // Count consecutive items of same color in Source
+      int consecutiveCount = 0;
+      for (int i = sourceTube.items.length - 1; i >= 0; i--) {
+        if (sourceTube.items[i].colorIndex == itemToMove.colorIndex &&
+            !sourceTube.items[i].isHidden) {
+          consecutiveCount++;
+        } else {
+          break;
+        }
+      }
+
+      // Check target capacity
+      final targetSpace = targetTube.capacity - targetTube.items.length;
+
+      // Determine actual move count
+      final moveCount = min(consecutiveCount, targetSpace);
+
+      // Perform Moves on local state vars to build final result
+      var tempSource = sourceTube;
+      var tempTarget = targetTube;
+
+      for (int i = 0; i < moveCount; i++) {
+        // Remove top from source
+        // We know the item color, just pop it.
+        final movingItem = tempSource.topItem!;
+        tempSource = tempSource.removeItem();
+        tempTarget = tempTarget.addItem(movingItem)!;
+      }
 
       // SAVE HISTORY
       final currentHistory = List<List<Tube>>.from(state.history);
       currentHistory.add(state.tubes); // Add 'old' tubes state
 
       final newTubes = List<Tube>.from(state.tubes);
-      newTubes[sourceIndex] = newSourceTube;
-      newTubes[tappedIndex] = newTargetTube;
+      newTubes[sourceIndex] = tempSource;
+      newTubes[tappedIndex] = tempTarget;
 
       // REVEAL LOGIC:
       // If the new source tube has items, and the new top item is HIDDEN, reveal it.
-      if (!newSourceTube.isEmpty) {
-        final topItem = newSourceTube.topItem!;
+      if (!tempSource.isEmpty) {
+        final topItem = tempSource.topItem!;
         if (topItem.isHidden) {
           final revealedItem = SortingItem(
             colorIndex: topItem.colorIndex,
@@ -493,12 +524,12 @@ class GameBloc extends Bloc<GameEvent, GameState> {
           );
 
           // Replace top item
-          final currentItems = List<SortingItem>.from(newSourceTube.items);
+          final currentItems = List<SortingItem>.from(tempSource.items);
           currentItems[currentItems.length - 1] = revealedItem;
 
           newTubes[sourceIndex] = Tube(
             items: currentItems,
-            capacity: newSourceTube.capacity,
+            capacity: tempSource.capacity,
           );
         }
       }
@@ -509,6 +540,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         targetIndex: tappedIndex,
         colorIndex: itemToMove.colorIndex,
         moveId: Random().nextInt(1000000),
+        count: moveCount, // PASS COUNT
       );
 
       final isWon = newTubes.every((t) => t.isCompleted);

@@ -9,7 +9,7 @@ class GameBoard extends StatelessWidget {
   final Color? tubeSkinColor;
 
   final List<GlobalKey>? tubeKeys;
-  final Set<int>? hiddenTargets;
+  final Map<int, int>? hiddenTargets;
   final double bottomPadding;
 
   const GameBoard({
@@ -53,9 +53,12 @@ class GameBoard extends StatelessWidget {
                                 : null,
                             tube: tubes[index],
                             isSelected: state.selectedTubeIndex == index,
-                            hideTopItem:
-                                hiddenTargets?.contains(index) ?? false,
+                            hiddenItemCount: hiddenTargets?[index] ?? 0,
                             skinColor: tubeSkinColor,
+                            isCompleted:
+                                tubes[index].items.isNotEmpty &&
+                                tubes[index].isCompleted &&
+                                (hiddenTargets?[index] ?? 0) == 0,
                             onTap: isInteractive
                                 ? () => context.read<GameBloc>().add(
                                     TubeTapped(index),
@@ -68,7 +71,7 @@ class GameBoard extends StatelessWidget {
                       // Layout Logic:
                       // Ensure rows are balanced and symmetric.
                       // Max 4 columns works best for vertical mobile and split screens.
-                      const int maxColumns = 4;
+                      const int maxColumns = 6;
                       List<Widget> rows = [];
 
                       // Chunk the widgets

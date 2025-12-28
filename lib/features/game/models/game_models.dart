@@ -59,7 +59,9 @@ class Tube extends Equatable {
     if (!isFull) return false;
 
     final firstColor = items.first.colorIndex;
-    return items.every((item) => item.colorIndex == firstColor);
+    return items.every(
+      (item) => item.colorIndex == firstColor && !item.isHidden,
+    );
   }
 
   Map<String, dynamic> toJson() {

@@ -1,6 +1,7 @@
 import 'package:dream_sort/features/game/bloc/game_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../l10n/app_localizations.dart';
 
@@ -31,7 +32,7 @@ class WinOverlayWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star, color: Colors.amber, size: 60),
+            SvgPicture.asset('assets/images/coin.svg', width: 80, height: 80),
             const SizedBox(height: 16),
             Text(
               l10n.dreamSorted,

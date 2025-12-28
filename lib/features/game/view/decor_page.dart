@@ -7,6 +7,7 @@ import 'package:dream_sort/features/game/widgets/room_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../l10n/app_localizations.dart';
 
 class DecorPage extends StatefulWidget {
@@ -101,7 +102,11 @@ class _DecorPageState extends State<DecorPage> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.star_rounded, size: 20, color: Colors.amber),
+                SvgPicture.asset(
+                  'assets/images/coin.svg',
+                  width: 20,
+                  height: 20,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   '$_stars',

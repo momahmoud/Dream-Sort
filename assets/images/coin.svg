@@ -1,0 +1,27 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d)">
+    <!-- 1. Outer Circle (Darker Shade for depth) -->
+    <circle cx="32" cy="30" r="26" fill="#FBC02D"/>
+    
+    <!-- 2. Inner Face (Lighter Main Color) -->
+    <circle cx="32" cy="30" r="23" fill="#FFEB3B"/>
+
+    <!-- 3. Inner Ring/Detail (Stroke) -->
+    <circle cx="32" cy="30" r="19" stroke="#F9A825" stroke-width="2"/>
+
+    <!-- 4. Central Symbol (Star) -->
+    <path d="M32 17L36.5 26L46.5 27.5L39 34.5L41 44.5L32 39.5L23 44.5L25 34.5L17.5 27.5L27.5 26L32 17Z" fill="#FBC02D"/>
+</g>
+<defs>
+    <filter id="filter0_d" x="2" y="4" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+        <feOffset dy="2"/>
+        <feGaussianBlur stdDeviation="2"/>
+        <feComposite in2="hardAlpha" operator="out"/>
+        <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
+        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+    </filter>
+</defs>
+</svg>

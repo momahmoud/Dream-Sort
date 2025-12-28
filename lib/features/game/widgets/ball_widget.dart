@@ -6,7 +6,7 @@ class BallWidget extends StatelessWidget {
   final SortingItem item;
   final double size;
 
-  const BallWidget({super.key, required this.item, this.size = 48.0});
+  const BallWidget({super.key, required this.item, this.size = 34.0});
 
   @override
   Widget build(BuildContext context) {
@@ -59,29 +59,22 @@ class BallWidget extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            color.withValues(alpha: 0.8),
-            color,
-            color.withValues(alpha: 0.9),
-          ],
+          colors: [color.withOpacity(0.8), color, color.withOpacity(0.9)],
         ),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.4),
+            color: color.withOpacity(0.4),
             blurRadius: 6,
             spreadRadius: 0,
             offset: const Offset(0, 0),
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 2,
             offset: const Offset(1, 2),
           ),
         ],
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.3),
-          width: 1.5,
-        ),
+        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
       ),
       child: Stack(
         children: [
@@ -93,7 +86,7 @@ class BallWidget extends StatelessWidget {
               width: width * 0.25,
               height: height * 0.15,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.6),
+                color: Colors.white.withOpacity(0.6),
                 borderRadius: BorderRadius.all(
                   Radius.elliptical(width * 0.25, height * 0.15),
                 ),
