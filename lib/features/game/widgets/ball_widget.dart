@@ -6,7 +6,7 @@ class BallWidget extends StatelessWidget {
   final SortingItem item;
   final double size;
 
-  const BallWidget({super.key, required this.item, this.size = 34.0});
+  const BallWidget({super.key, required this.item, this.size = 26.0});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class BallWidget extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           color: Colors.grey.shade700,
-          borderRadius: BorderRadius.circular(width * 0.3),
+          borderRadius: BorderRadius.circular(width * 0.2),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.3),
@@ -34,10 +34,39 @@ class BallWidget extends StatelessWidget {
             '?',
             style: TextStyle(
               color: Colors.white70,
-              fontSize: 20,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
+        ),
+      );
+    }
+
+    // If Stone, render rock texture
+    if (item.isStone) {
+      final width = size;
+      final height = size * (44 / 48);
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF424242), Color(0xFF757575)], // Dark Grey
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(width * 0.2), // More square/rough
+          border: Border.all(color: Colors.black54, width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black45,
+              blurRadius: 4,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Icon(Icons.terrain, color: Colors.grey.shade800, size: 20),
         ),
       );
     }
@@ -55,7 +84,7 @@ class BallWidget extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(width * 0.3), // approx 14 for 48
+        borderRadius: BorderRadius.circular(width * 0.2), // approx 14 for 48
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

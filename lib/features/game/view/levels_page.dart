@@ -69,7 +69,8 @@ class LevelsPage extends StatelessWidget {
               itemCount: 100,
               itemBuilder: (context, index) {
                 final level = index + 1;
-                final isLocked = level > maxLevel;
+                // final isLocked = level > maxLevel;
+                final isLocked = false;
                 final isCurrent = level == maxLevel;
 
                 return LevelGridItem(

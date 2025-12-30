@@ -10,8 +10,15 @@ class AdsService {
   static bool _isInterstitialLoading = false;
   static bool _isRewardedLoading = false;
 
+  static bool _isInitialized = false;
+  static const bool _adsEnabled = false; // Ads disabled for now
+
+  static bool get isEnabled => _adsEnabled;
+
   static Future<void> init() async {
-    await MobileAds.instance.initialize();
+    if (!_adsEnabled) return;
+    if (_isInitialized) return;
+    _isInitialized = true;
 
     // Families Policy Compliance:
     // 1. Tag for Child Directed Treatment (COPPA)
@@ -21,6 +28,36 @@ class AdsService {
       maxAdContentRating: MaxAdContentRating.g,
     );
     await MobileAds.instance.updateRequestConfiguration(configuration);
+
+    // UMP Consent Flow
+    final params = ConsentRequestParameters();
+    ConsentInformation.instance.requestConsentInfoUpdate(
+      params,
+      () async {
+        if (await ConsentInformation.instance.isConsentFormAvailable()) {
+          _loadConsentForm();
+        } else {
+          _initializeMobileAdsSdk();
+        }
+      },
+      (FormError error) {
+        debugPrint('Consent info update failed: ${error.message}');
+        _initializeMobileAdsSdk();
+      },
+    );
+  }
+
+  static void _loadConsentForm() {
+    ConsentForm.loadAndShowConsentFormIfRequired((FormError? error) {
+      if (error != null) {
+        debugPrint('Consent form error: ${error.message}');
+      }
+      _initializeMobileAdsSdk();
+    });
+  }
+
+  static Future<void> _initializeMobileAdsSdk() async {
+    await MobileAds.instance.initialize();
 
     // Preload ads immediately upon init
     preloadInterstitial();
@@ -69,7 +106,7 @@ class AdsService {
     required Function(Ad) onAdLoaded,
     Function(LoadAdError)? onAdFailed,
   }) {
-    return BannerAd(
+    final ad = BannerAd(
       adUnitId: bannerAdUnitId,
       size: AdSize
           .banner, // Standard banner. For best practice, consider AnchoredAdaptiveBanner in UI.
@@ -81,11 +118,18 @@ class AdsService {
           if (onAdFailed != null) onAdFailed(error);
         },
       ),
-    )..load();
+    );
+
+    if (_adsEnabled) {
+      ad.load();
+    }
+
+    return ad;
   }
 
   // --- Interstitial Best Practices ---
   static void preloadInterstitial() {
+    if (!_adsEnabled) return;
     if (_interstitialAd != null || _isInterstitialLoading) return;
     _isInterstitialLoading = true;
 
@@ -121,6 +165,7 @@ class AdsService {
   }
 
   static void showInterstitial() {
+    if (!_adsEnabled) return;
     if (_interstitialAd != null) {
       _interstitialAd!.show();
     } else {
@@ -131,6 +176,7 @@ class AdsService {
 
   // --- Rewarded Best Practices ---
   static void preloadRewarded() {
+    if (!_adsEnabled) return;
     if (_rewardedAd != null || _isRewardedLoading) return;
     _isRewardedLoading = true;
 
@@ -163,6 +209,7 @@ class AdsService {
   }
 
   static void showRewarded({required Function(int amount) onUserEarnedReward}) {
+    if (!_adsEnabled) return;
     if (_rewardedAd != null) {
       _rewardedAd!.show(
         onUserEarnedReward: (ad, reward) {

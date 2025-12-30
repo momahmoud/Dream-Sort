@@ -33,41 +33,42 @@ class GameMenuSheet extends StatelessWidget {
           const SizedBox(height: 16),
           const SizedBox(height: 16),
           // REWARDED AD BUTTON
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber.shade700,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.all(16),
+          if (AdsService.isEnabled)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.amber.shade700,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.all(16),
+                  ),
+                  icon: const Icon(Icons.star, color: Colors.yellowAccent),
+                  label: const Text('Watch Ad +50 Stars'),
+                  onPressed: () {
+                    // Capture bloc before popping
+                    final gameBloc = context.read<GameBloc>();
+                    final messenger = ScaffoldMessenger.of(context);
+
+                    Navigator.pop(context);
+
+                    // Show preloaded rewarded ad
+                    AdsService.showRewarded(
+                      onUserEarnedReward: (amount) {
+                        debugPrint('User earned reward: $amount');
+                        // Add 50 Stars using captured bloc
+                        gameBloc.add(const AddCurrency(50));
+
+                        messenger.showSnackBar(
+                          const SnackBar(content: Text('You earned 50 Stars!')),
+                        );
+                      },
+                    );
+                  },
                 ),
-                icon: const Icon(Icons.star, color: Colors.yellowAccent),
-                label: const Text('Watch Ad +50 Stars'),
-                onPressed: () {
-                  // Capture bloc before popping
-                  final gameBloc = context.read<GameBloc>();
-                  final messenger = ScaffoldMessenger.of(context);
-
-                  Navigator.pop(context);
-
-                  // Show preloaded rewarded ad
-                  AdsService.showRewarded(
-                    onUserEarnedReward: (amount) {
-                      debugPrint('User earned reward: $amount');
-                      // Add 50 Stars using captured bloc
-                      gameBloc.add(const AddCurrency(50));
-
-                      messenger.showSnackBar(
-                        const SnackBar(content: Text('You earned 50 Stars!')),
-                      );
-                    },
-                  );
-                },
               ),
             ),
-          ),
           // LANGUAGE TOGGLE
           BlocBuilder<LocaleCubit, Locale>(
             builder: (context, locale) {

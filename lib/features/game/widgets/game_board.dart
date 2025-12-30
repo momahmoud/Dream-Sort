@@ -1,4 +1,5 @@
 import 'package:dream_sort/features/game/bloc/game_bloc.dart';
+import 'package:dream_sort/features/game/models/game_models.dart';
 import 'package:dream_sort/features/game/widgets/tube_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,9 +61,32 @@ class GameBoard extends StatelessWidget {
                                 tubes[index].isCompleted &&
                                 (hiddenTargets?[index] ?? 0) == 0,
                             onTap: isInteractive
-                                ? () => context.read<GameBloc>().add(
-                                    TubeTapped(index),
-                                  )
+                                ? () {
+                                    final bloc = context.read<GameBloc>();
+                                    // Local Validity Check for Shake Feedback
+                                    final selectedIndex =
+                                        state.selectedTubeIndex;
+                                    if (selectedIndex != null &&
+                                        selectedIndex != index) {
+                                      final source = state.tubes[selectedIndex];
+                                      final target = state.tubes[index];
+                                      final isValid = _isMoveValid(
+                                        source,
+                                        target,
+                                      );
+
+                                      if (!isValid) {
+                                        // Trigger Shake
+                                        if (tubeKeys != null &&
+                                            index < tubeKeys!.length) {
+                                          final key = tubeKeys![index];
+                                          (key.currentState as TubeWidgetState?)
+                                              ?.shake();
+                                        }
+                                      }
+                                    }
+                                    bloc.add(TubeTapped(index));
+                                  }
                                 : () {},
                           ),
                         );
@@ -71,7 +95,7 @@ class GameBoard extends StatelessWidget {
                       // Layout Logic:
                       // Ensure rows are balanced and symmetric.
                       // Max 4 columns works best for vertical mobile and split screens.
-                      const int maxColumns = 6;
+                      const int maxColumns = 8;
                       List<Widget> rows = [];
 
                       // Chunk the widgets
@@ -154,5 +178,12 @@ class GameBoard extends StatelessWidget {
         );
       },
     );
+  }
+
+  bool _isMoveValid(Tube source, Tube target) {
+    if (source.isEmpty) return false;
+    if (target.isFull) return false;
+    if (target.isEmpty) return true;
+    return source.topItem!.colorIndex == target.topItem!.colorIndex;
   }
 }

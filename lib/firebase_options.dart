@@ -67,5 +67,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'dream-sort-48418.firebasestorage.app',
     iosBundleId: 'com.elaskry.dreamSort',
   );
-
 }

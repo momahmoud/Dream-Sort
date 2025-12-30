@@ -9,25 +9,34 @@ class AppTheme {
   static const Color textSecondary = Color(0xFFB0B0B0);
 
   // Sorting Colors (The items to sort)
+  // HIGH CONTRAST PALETTE - Optimized to avoid "similar blues"
   static const List<Color> sortColors = [
-    Color(0xFFFF0055), // Red/Pink
-    Color(0xFF00DDFF), // Cyan
-    Color(0xFFFFD500), // Yellow
-    Color(0xFF00FF55), // Green
-    Color(0xFFAA00FF), // Purple
-    Color(0xFFFF8800), // Orange
-    Color(0xFF2979FF), // Blue
-    Color(0xFFB0BEC5), // Silver
-    Color(0xFF795548), // Brown
-    Color(0xFF009688), // Teal
-    Color(0xFFC6FF00), // Lime
-    Color(0xFF3D5AFE), // Indigo
-    Color(0xFFC51162), // Deep Pink
-    Color(0xFF69F0AE), // Mint
-    Color(0xFFE040FB), // Lavender
-    Color(0xFF3E2723), // Dark Brown
-    Color(0xFF827717), // Olive
-    Color(0xFFFF6E40), // Coral
+    Color(0xFFFF1744), // 1. Red (Bright)
+    Color(0xFF00E676), // 2. Green (Fluorescent)
+    Color(0xFF2962FF), // 3. Blue (Royal)
+    Color(0xFFFFEA00), // 4. Yellow (Canary)
+    Color(0xFFD500F9), // 5. Purple (Bright)
+    Color(0xFFFF6D00), // 6. Orange (Vivid)
+    Color(0xFF00B8D4), // 7. Cyan
+    Color(0xFFF50057), // 8. Pink
+    Color(0xFF76FF03), // 9. Lime
+    Color(0xFF8D6E63), // 10. Brown (Lighter to distinguish from darks)
+    Color(0xFF263238), // 11. Blue Grey (Dark)
+    Color(0xFF6200EA), // 12. Deep Purple
+    Color(0xFF004D40), // 13. Teal (Dark)
+    Color(0xFFDD2C00), // 14. Deep Orange
+    Color(0xFF304FFE), // 15. Indigo (Bright)
+    Color(0xFF880E4F), // 16. Maroon
+    Color(0xFF0091EA), // 17. Light Blue
+    Color(0xFFC6FF00), // 18. Lime Accent
+    Color(0xFF3E2723), // 19. Dark Brown
+    Color(0xFFC51162), // 20. Rose (Dark Pink)
+    Color(0xFF7986CB), // 21. Indigo (Light)
+    Color(0xFFA1887F), // 22. Brown (Pale)
+    Color(0xFFFFAB00), // 23. Amber
+    Color(0xFF00C853), // 24. Green (Standard)
+    Color(0xFF607D8B), // 25. Blue Grey
+    Color(0xFFBA68C8), // 26. Purple (Light)
   ];
 
   static ThemeData getTheme(Locale locale) {

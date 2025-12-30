@@ -25,7 +25,7 @@ class GameRepository {
   }
 
   int getStars() {
-    return _box?.get(starsKey, defaultValue: 100) ?? 100;
+    return _box?.get(starsKey, defaultValue: 120) ?? 120;
   }
 
   Future<void> addStars(int amount) async {

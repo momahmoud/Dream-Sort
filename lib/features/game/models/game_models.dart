@@ -3,20 +3,26 @@ import 'package:equatable/equatable.dart';
 class SortingItem extends Equatable {
   final int colorIndex;
   final bool isHidden;
+  final bool isStone; // New: Blocker element
 
-  const SortingItem({required this.colorIndex, this.isHidden = false});
+  const SortingItem({
+    required this.colorIndex,
+    this.isHidden = false,
+    this.isStone = false,
+  });
 
   @override
-  List<Object?> get props => [colorIndex, isHidden];
+  List<Object?> get props => [colorIndex, isHidden, isStone];
 
   Map<String, dynamic> toJson() {
-    return {'colorIndex': colorIndex, 'isHidden': isHidden};
+    return {'colorIndex': colorIndex, 'isHidden': isHidden, 'isStone': isStone};
   }
 
   factory SortingItem.fromJson(Map<String, dynamic> json) {
     return SortingItem(
       colorIndex: json['colorIndex'] as int,
       isHidden: json['isHidden'] as bool? ?? false,
+      isStone: json['isStone'] as bool? ?? false,
     );
   }
 }
