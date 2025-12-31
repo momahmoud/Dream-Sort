@@ -114,7 +114,7 @@ class GameBoard extends StatelessWidget {
                         // Add spacing if not last
                         if (end < count) {
                           rows.add(
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 5),
                           ); // Increased spacing slightly
                         }
                       }

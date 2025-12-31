@@ -954,6 +954,11 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
       if (itemsInTubes[source].isNotEmpty &&
           itemsInTubes[target].length < tubeCapacities[target]) {
+        // CRITICAL FIX: Never move Stones during shuffle.
+        // If we move a stone, we create a state where the user (who cannot move stones)
+        // is expected to move it back, which is impossible.
+        if (itemsInTubes[source].last.isStone) continue;
+
         // Check specific capacity
         final item = itemsInTubes[source].removeLast();
         itemsInTubes[target].add(item);

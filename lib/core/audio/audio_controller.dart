@@ -2,10 +2,12 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:dream_sort/features/game/repo/game_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:vibration/vibration.dart';
+import 'dart:math';
 
 class AudioController {
   final GameRepository _repo;
   final AudioPlayer _musicPlayer = AudioPlayer();
+  final Random _rng = Random();
 
   // Pool of audio players for low-latency SFX
   final List<AudioPlayer> _sfxPool = [];
@@ -55,6 +57,12 @@ class AudioController {
       final player = _getNextPoolPlayer();
       await player
           .stop(); // Stop previous sound if any (crucial for rapid overlapping)
+
+      // Random pitch variation: 0.95 - 1.05
+      final pitch = 0.95 + (_rng.nextDouble() * 0.1);
+      await player.setPlaybackRate(pitch);
+      await player.setVolume(1.0);
+
       await player.play(
         AssetSource('audio/pop.wav'),
         mode: PlayerMode.lowLatency,
@@ -74,7 +82,12 @@ class AudioController {
     try {
       final player = _getNextPoolPlayer();
       await player.stop(); // Stop previous
-      await player.setPlaybackRate(1.0); // Normal speed
+
+      // Move sound with slight variance: 0.9 - 1.1
+      final pitch = 0.9 + (_rng.nextDouble() * 0.2);
+      await player.setPlaybackRate(pitch);
+      await player.setVolume(0.8); // Slightly softer
+
       await player.play(
         AssetSource('audio/move.wav'),
         mode: PlayerMode.lowLatency,
@@ -93,6 +106,7 @@ class AudioController {
       final player = _getNextPoolPlayer();
       await player.stop();
       await player.setPlaybackRate(1.5); // Higher pitch for selection
+      await player.setVolume(1.0);
       await player.play(
         AssetSource('audio/pop.wav'),
         mode: PlayerMode.lowLatency,
@@ -111,6 +125,7 @@ class AudioController {
       final player = _getNextPoolPlayer();
       await player.stop();
       await player.setPlaybackRate(0.8); // Lower pitch
+      await player.setVolume(0.7); // Softer
       await player.play(
         AssetSource('audio/pop.wav'),
         mode: PlayerMode.lowLatency,
@@ -137,6 +152,7 @@ class AudioController {
       final player = _getNextPoolPlayer();
       await player.stop();
       await player.setPlaybackRate(0.5); // Very low pitch "thud"
+      await player.setVolume(1.0);
       await player.play(
         AssetSource('audio/pop.wav'),
         mode: PlayerMode.lowLatency,

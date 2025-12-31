@@ -1,9 +1,11 @@
+import 'package:dream_sort/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class LevelGridItem extends StatefulWidget {
   final int level;
   final bool isLocked;
   final bool isCurrent;
+  final bool isCompleted; // NEW
   final VoidCallback onTap;
 
   const LevelGridItem({
@@ -11,6 +13,7 @@ class LevelGridItem extends StatefulWidget {
     required this.level,
     required this.isLocked,
     required this.isCurrent,
+    this.isCompleted = false,
     required this.onTap,
   });
 
@@ -42,6 +45,42 @@ class _LevelGridItemState extends State<LevelGridItem>
     super.dispose();
   }
 
+  List<Color> get _gradientColors {
+    if (widget.isLocked) {
+      return [
+        Colors.white.withValues(alpha: 0.05),
+        Colors.white.withValues(alpha: 0.02),
+      ];
+    }
+    if (widget.isCurrent) {
+      // Match "Play" button: [Color(0xFFFF4757), Color(0xFFFF6B81)]
+      return [const Color(0xFFFF4757), const Color(0xFFFF6B81)];
+    }
+    // Completed
+    // Match "Levels" button: [Color(0xFF1E90FF), Color(0xFF5352ED)]
+    return [const Color(0xFF1E90FF), const Color(0xFF5352ED)];
+  }
+
+  Color get _shadowColor {
+    if (widget.isLocked) return Colors.transparent;
+    if (widget.isCurrent) return const Color(0xFFFF4757).withValues(alpha: 0.4);
+    return const Color(0xFF1E90FF).withValues(alpha: 0.3);
+  }
+
+  String _formatNumber(int number) {
+    final locale = AppLocalizations.of(context)?.localeName ?? 'en';
+    if (locale == 'ar') {
+      const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+      String result = number.toString();
+      for (int i = 0; i < 10; i++) {
+        result = result.replaceAll(english[i], arabic[i]);
+      }
+      return result;
+    }
+    return number.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -53,78 +92,95 @@ class _LevelGridItemState extends State<LevelGridItem>
         scale: _scaleAnimation,
         child: Container(
           decoration: BoxDecoration(
-            gradient: widget.isLocked
-                ? LinearGradient(
-                    colors: [
-                      Colors.white.withValues(alpha: 0.05),
-                      Colors.white.withValues(alpha: 0.05),
-                    ],
-                  )
-                : LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: widget.isCurrent
-                        ? [const Color(0xFFFF512F), const Color(0xFFDD2476)]
-                        : [const Color(0xFF1CB5E0), const Color(0xFF000046)],
-                  ),
-            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: _gradientColors,
+            ),
+            borderRadius: BorderRadius.circular(10),
             boxShadow: widget.isLocked
                 ? []
                 : [
                     BoxShadow(
-                      color: widget.isCurrent
-                          ? Colors.pinkAccent.withValues(alpha: 0.4)
-                          : Colors.cyanAccent.withValues(alpha: 0.3),
+                      color: _shadowColor,
                       blurRadius: 12,
                       offset: const Offset(0, 6),
                     ),
                   ],
             border: Border.all(
               color: widget.isCurrent
-                  ? Colors.white.withValues(alpha: 0.8)
-                  : Colors.white.withValues(alpha: 0.1),
+                  ? Colors.white.withValues(alpha: 0.9)
+                  : Colors.white.withValues(alpha: 0.15),
               width: widget.isCurrent ? 2 : 1,
             ),
           ),
           child: Stack(
             children: [
+              // 1. Gloss / Inner Glow (Top Left Highlight)
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white.withValues(alpha: 0.4),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.6],
+                  ),
+                ),
+              ),
+
+              // 2. Deco Circle (Top Right)
               if (!widget.isLocked)
                 Positioned(
-                  top: -10,
-                  right: -10,
+                  top: -15,
+                  right: -15,
                   child: Container(
-                    width: 40,
-                    height: 40,
+                    width: 50,
+                    height: 50,
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
+                      color: Colors.white.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
                   ),
                 ),
+
+              // 3. Content
               Center(
                 child: widget.isLocked
                     ? Icon(
                         Icons.lock_rounded,
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: Colors.white.withValues(alpha: 0.3),
                         size: 24,
                       )
-                    : Text(
-                        '${widget.level}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'monospace',
-                          shadows: [
-                            Shadow(
-                              color: Colors.black45,
-                              offset: Offset(1, 1),
-                              blurRadius: 2,
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            _formatNumber(widget.level),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              // fontFamily: 'Play', // Handled by Theme
+                              shadows: widget.isCompleted
+                                  ? []
+                                  : [
+                                      const Shadow(
+                                        color: Colors.black26,
+                                        offset: Offset(1, 1),
+                                        blurRadius: 3,
+                                      ),
+                                    ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
               ),
+
+              // 4. Current Indicator (Dot)
               if (widget.isCurrent)
                 Positioned(
                   bottom: 8,
@@ -132,18 +188,21 @@ class _LevelGridItemState extends State<LevelGridItem>
                   right: 0,
                   child: Center(
                     child: Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
                         color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white,
-                            blurRadius: 5,
-                            spreadRadius: 2,
-                          ),
-                        ],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.play.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 8,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFFDD2476),
+                        ),
                       ),
                     ),
                   ),

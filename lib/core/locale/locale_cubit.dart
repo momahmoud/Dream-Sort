@@ -5,13 +5,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 class LocaleCubit extends Cubit<Locale> {
   static const String _localeKey = 'locale';
 
-  LocaleCubit() : super(const Locale('en')) {
+  LocaleCubit() : super(const Locale('ar')) {
     _loadSavedLocale();
   }
 
   void _loadSavedLocale() {
     final box = Hive.box('game_data');
-    final savedLocale = box.get(_localeKey, defaultValue: 'en') as String;
+    final savedLocale = box.get(_localeKey, defaultValue: 'ar') as String;
     emit(Locale(savedLocale));
   }
 

@@ -66,7 +66,11 @@ class BallWidget extends StatelessWidget {
           ],
         ),
         child: Center(
-          child: Icon(Icons.terrain, color: Colors.grey.shade800, size: 20),
+          child: Icon(
+            Icons.lock_rounded,
+            color: Colors.grey.shade800,
+            size: 18,
+          ),
         ),
       );
     }
@@ -107,6 +111,20 @@ class BallWidget extends StatelessWidget {
       ),
       child: Stack(
         children: [
+          // Gloss / Inner Glow Effect (User Suggestion)
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(width * 0.2),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(0.4), // Stronger highlight
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
           // Specular highlight
           Positioned(
             top: height * 0.1,
