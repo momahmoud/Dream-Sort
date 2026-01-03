@@ -24,6 +24,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get multiplayer => 'لاعبين';
 
   @override
+  String get dailyChallenge => 'تحدي اليوم';
+
+  @override
   String get muteSound => 'كتم الصوت';
 
   @override
@@ -48,8 +51,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get renovateRoom => 'تجديد الغرفة';
 
   @override
-  String notEnoughStars(int cost) {
-    return 'نجوم غير كافية! تحتاج $cost.';
+  String notEnoughCoins(int cost) {
+    return 'عملات غير كافية! تحتاج $cost.';
   }
 
   @override
@@ -180,7 +183,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get resetConfirmMessage =>
-      'سيؤدي هذا إلى حذف جميع نجومك وعناصرك وتقدم المستوى. لا يمكن التراجع عن هذا.';
+      'سيؤدي هذا إلى حذف جميع عملاتك وعناصرك وتقدم المستوى. لا يمكن التراجع عن هذا.';
 
   @override
   String get cancel => 'إلغاء';
@@ -214,4 +217,244 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get join => 'انضمام';
+
+  @override
+  String get accessibility => 'سهولة الاستخدام';
+
+  @override
+  String get colorBlindMode => 'رموز عمى الألوان';
+
+  @override
+  String get perfect => 'ممتاز!';
+
+  @override
+  String get needHelp => 'هل تحتاج مساعدة؟';
+
+  @override
+  String get addTubeDesc => 'أضف أنبوباً فارغاً إضافياً لتسهيل حل هذا اللغز!';
+
+  @override
+  String get addTube => 'إضافة أنبوب';
+
+  @override
+  String get shuffleTitle => 'تغيير الترتيب؟';
+
+  @override
+  String get shuffleDesc =>
+      'أعد ترتيب الكرات للعثور على حركات جديدة!\n(الأنابيب المكتملة تظل آمنة)';
+
+  @override
+  String get shuffleAction => 'إعادة الترتيب (-20';
+
+  @override
+  String get watchVideo => 'شاهد الفيديو';
+
+  @override
+  String get earnFreeCoins => 'شاهد فيديو قصير لتربح فوراً\n+50 عملة مجانية!';
+
+  @override
+  String get noThanks => 'لا، شكراً';
+
+  @override
+  String get needMoreCoins => 'هل تحتاج لعملات أكثر؟';
+
+  @override
+  String get needHint => 'هل تحتاج تلميحاً؟';
+
+  @override
+  String get hintDesc =>
+      'عالق؟ دع الذكاء الاصطناعي يجد لك أفضل حركة!\nالتكلفة: 25 عملة.';
+
+  @override
+  String get getHint => 'الحصول على تلميح (-25';
+
+  @override
+  String earnedCoins(Object amount) {
+    return 'لقد حصلت على $amount ';
+  }
+
+  @override
+  String get dailyRewardTitle => 'المكافأة اليومية';
+
+  @override
+  String dailyStreak(int streak) {
+    return 'سلسلة $streak أيام';
+  }
+
+  @override
+  String get claim => 'استلام';
+
+  @override
+  String get decorTypeTube => 'أنابيب';
+
+  @override
+  String get decorTypeBall => 'كرات';
+
+  @override
+  String get decorTypeWall => 'جدران';
+
+  @override
+  String get decorTypeFloor => 'أرضيات';
+
+  @override
+  String get decorTypePlant => 'نباتات';
+
+  @override
+  String get decorTypeLamp => 'مصابيح';
+
+  @override
+  String get decorTypeRug => 'سجاد';
+
+  @override
+  String get decorTypePainting => 'لوحات';
+
+  @override
+  String get item_tube_default => 'قوارير زجاجية';
+
+  @override
+  String get item_tube_bamboo => 'خيزران زين';
+
+  @override
+  String get item_tube_metal => 'سبيكة سايبر';
+
+  @override
+  String get item_tube_gold_rim => 'ذهبي ملكي';
+
+  @override
+  String get item_tube_crystal => 'كريستال جليدي';
+
+  @override
+  String get item_tube_magma => 'صهر الصهارة';
+
+  @override
+  String get item_ball_default => 'كرات ناعمة';
+
+  @override
+  String get item_ball_neon => 'أجرام نيون';
+
+  @override
+  String get item_ball_emoji => 'وجوه تعبيرية';
+
+  @override
+  String get item_ball_jewel => 'جواهر ثمينة';
+
+  @override
+  String get item_ball_planets => 'كواكب المجرة';
+
+  @override
+  String get item_ball_sports => 'حزمة الرياضة';
+
+  @override
+  String get item_wall_default => 'سماء منتصف الليل';
+
+  @override
+  String get item_wall_purple => 'سديم أرجواني';
+
+  @override
+  String get item_wall_teal => 'الهاوية العميقة';
+
+  @override
+  String get item_wall_red => 'مخمل قرمزي';
+
+  @override
+  String get item_wall_grey => 'صخر داكن';
+
+  @override
+  String get item_wall_black => 'فراغ أسود';
+
+  @override
+  String get item_wall_sunset => 'غروب دافئ';
+
+  @override
+  String get item_wall_matrix => 'أخضر رقمي';
+
+  @override
+  String get item_floor_default => 'بلوط مصقول';
+
+  @override
+  String get item_floor_marble => 'رخام جليدي';
+
+  @override
+  String get item_floor_stone => 'صخر بركاني';
+
+  @override
+  String get item_floor_carpet => 'مخمل فاخر';
+
+  @override
+  String get item_floor_gold => 'أرضية مذهبة';
+
+  @override
+  String get item_floor_grass => 'متضخم';
+
+  @override
+  String get item_plant_none => 'بدون ديكور';
+
+  @override
+  String get item_plant_fern => 'سرخس الغابة';
+
+  @override
+  String get item_plant_bamboo => 'سيقان زين';
+
+  @override
+  String get item_plant_tree => 'بونساي قديم';
+
+  @override
+  String get item_plant_lotus => 'لوتس مقدس';
+
+  @override
+  String get item_plant_cactus => 'شوكة الصحراء';
+
+  @override
+  String get item_lamp_none => 'ضوء طبيعي';
+
+  @override
+  String get item_lamp_classic => 'ظل محيط';
+
+  @override
+  String get item_lamp_modern => 'لمبة بلازما';
+
+  @override
+  String get item_lamp_sun => 'وهج شمسي';
+
+  @override
+  String get item_lamp_torch => 'نار السرداب';
+
+  @override
+  String get item_lamp_neon => 'أضواء النيون';
+
+  @override
+  String get item_rug_none => 'أرضية فارغة';
+
+  @override
+  String get item_rug_shag => 'سجاد مريح';
+
+  @override
+  String get item_rug_round => 'دائرة غامضة';
+
+  @override
+  String get item_rug_geometric => 'سجادة هندسية';
+
+  @override
+  String get item_rug_royal => 'نسيج ملكي';
+
+  @override
+  String get item_rug_persian => 'فارسي عظيم';
+
+  @override
+  String get item_paint_none => 'جدار فارغ';
+
+  @override
+  String get item_paint_abstract => 'فوضى حديثة';
+
+  @override
+  String get item_paint_surreal => 'حلم سريالي';
+
+  @override
+  String get item_paint_portrait => 'سلف نبيل';
+
+  @override
+  String get item_paint_landscape => 'قمة الجبل';
+
+  @override
+  String get item_paint_starry => 'كون عميق';
 }

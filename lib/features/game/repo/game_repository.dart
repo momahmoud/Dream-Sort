@@ -5,7 +5,9 @@ import 'package:dream_sort/features/game/models/decor_models.dart';
 class GameRepository {
   static const String boxName = 'game_data';
   static const String maxLevelKey = 'max_level';
-  static const String starsKey = 'stars';
+  static const String coinsKey = 'stars';
+  static const String lastLoginKey = 'last_login';
+  static const String streakKey = 'login_streak';
 
   Box? _box;
 
@@ -24,19 +26,19 @@ class GameRepository {
     }
   }
 
-  int getStars() {
-    return _box?.get(starsKey, defaultValue: 120) ?? 120;
+  int getCoins() {
+    return _box?.get(coinsKey, defaultValue: 120) ?? 120;
   }
 
-  Future<void> addStars(int amount) async {
-    final current = getStars();
-    await _box?.put(starsKey, current + amount);
+  Future<void> addCoins(int amount) async {
+    final current = getCoins();
+    await _box?.put(coinsKey, current + amount);
   }
 
-  Future<void> spendStars(int amount) async {
-    final current = getStars();
+  Future<void> spendCoins(int amount) async {
+    final current = getCoins();
     if (current >= amount) {
-      await _box?.put(starsKey, current - amount);
+      await _box?.put(coinsKey, current - amount);
     }
   }
 
@@ -88,11 +90,56 @@ class GameRepository {
     return const Color(0xFF1A1A2E); // Fallback default
   }
 
+  String getTubeSkin() {
+    final equipped = getEquippedItems();
+    final tubeId = equipped[DecorType.tube.name] ?? 'tube_default';
+    final item = DecorationData.items.firstWhere(
+      (i) => i.id == tubeId,
+      orElse: () =>
+          DecorationData.items.firstWhere((i) => i.type == DecorType.tube),
+    );
+    return item.assetPath;
+  }
+
+  String getBallSkin() {
+    final equipped = getEquippedItems();
+    final ballId = equipped[DecorType.ball.name] ?? 'ball_default';
+    final item = DecorationData.items.firstWhere(
+      (i) => i.id == ballId,
+      orElse: () =>
+          DecorationData.items.firstWhere((i) => i.type == DecorType.ball),
+    );
+    return item.assetPath;
+  }
+
   // --- Settings ---
   bool get isMuted => _box?.get('is_muted', defaultValue: false) ?? false;
 
   Future<void> setMuted(bool muted) async {
     await _box?.put('is_muted', muted);
+  }
+
+  bool get isColorBlindEnabled =>
+      _box?.get('is_color_blind', defaultValue: true) ?? true;
+
+  Future<void> setColorBlindEnabled(bool enabled) async {
+    await _box?.put('is_color_blind', enabled);
+  }
+
+  // --- Daily Rewards ---
+  int getLoginStreak() {
+    return _box?.get(streakKey, defaultValue: 0) ?? 0;
+  }
+
+  DateTime? getLastLogin() {
+    final timestamp = _box?.get(lastLoginKey);
+    if (timestamp != null) return DateTime.parse(timestamp);
+    return null;
+  }
+
+  Future<void> updateLoginData(int newStreak, DateTime lastLogin) async {
+    await _box?.put(streakKey, newStreak);
+    await _box?.put(lastLoginKey, lastLogin.toIso8601String());
   }
 
   Future<void> resetProgress() async {

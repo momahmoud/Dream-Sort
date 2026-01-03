@@ -91,13 +91,13 @@ class _WinOverlayWidgetState extends State<WinOverlayWidget>
             boxShadow: [
               // Outer glow matching the screenshot
               BoxShadow(
-                color: accentColor.withOpacity(0.5),
+                color: accentColor.withValues(alpha: 0.5),
                 blurRadius: 30,
                 spreadRadius: 2,
               ),
               // Inner subtle shine
               BoxShadow(
-                color: Colors.white.withOpacity(0.05),
+                color: Colors.white.withValues(alpha: 0.05),
                 blurRadius: 0,
                 spreadRadius: 0,
                 offset: const Offset(0, 0),
@@ -121,7 +121,7 @@ class _WinOverlayWidgetState extends State<WinOverlayWidget>
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.amber.withOpacity(0.4),
+                        color: Colors.amber.withValues(alpha: 0.4),
                         blurRadius: 20,
                         spreadRadius: 5,
                       ),
@@ -157,66 +157,219 @@ class _WinOverlayWidgetState extends State<WinOverlayWidget>
                 ),
               ),
 
-              const SizedBox(height: 32),
+              // Coin Result
+              BlocBuilder<GameBloc, GameState>(
+                builder: (context, state) {
+                  int reward = state.isDailyChallenge ? 100 : 25;
+                  if (state.undosUsed == 0) {
+                    reward += state.isDailyChallenge ? 50 : 20;
+                  } else if (state.undosUsed <= 2) {
+                    reward += state.isDailyChallenge ? 25 : 10;
+                  }
+
+                  return Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.add, color: Colors.amber, size: 24),
+                        Text(
+                          '$reward',
+                          style: const TextStyle(
+                            color: Colors.amber,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SvgPicture.asset(
+                          'assets/images/coin.svg',
+                          width: 32,
+                          height: 32,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+
+              // Perfect Badge
+              BlocBuilder<GameBloc, GameState>(
+                builder: (context, state) {
+                  if (state.undosUsed > 0) return const SizedBox(height: 16);
+                  return Container(
+                    margin: const EdgeInsets.only(top: 12, bottom: 20),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.amber, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.amber.withValues(alpha: 0.3),
+                          blurRadius: 10,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.auto_awesome,
+                          color: Colors.amber,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          l10n.perfect,
+                          style: const TextStyle(
+                            color: Colors.amber,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.2,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(
+                          Icons.auto_awesome,
+                          color: Colors.amber,
+                          size: 20,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
 
               // 3. Shiny Gradient Button
-              GestureDetector(
-                onTap: () {
-                  context.read<GameBloc>().add(NextLevel());
-                  widget.onRestartTimer();
+              StatefulBuilder(
+                builder: (context, setState) {
+                  return GestureDetector(
+                    onTap: () {
+                      context.read<GameBloc>().add(NextLevel());
+                      widget.onRestartTimer();
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFF66BB6A),
+                                  Color(0xFF43A047),
+                                  Color(0xFF2E7D32),
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: accentColor.withValues(alpha: 0.4),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ],
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  l10n.nextLevel,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                const Icon(
+                                  Icons.arrow_forward_rounded,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Shine Effect
+                          Positioned.fill(child: _ShinyOverlay()),
+                        ],
+                      ),
+                    ),
+                  );
                 },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFF66BB6A), // Light Green
-                        Color(0xFF43A047), // Base Green
-                        Color(0xFF2E7D32), // Dark Green
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: accentColor.withOpacity(0.4),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.2),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        l10n.nextLevel,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Icon(
-                        Icons.arrow_forward_rounded,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ShinyOverlay extends StatefulWidget {
+  @override
+  State<_ShinyOverlay> createState() => _ShinyOverlayState();
+}
+
+class _ShinyOverlayState extends State<_ShinyOverlay>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(
+            -200 + (400 * _controller.value), // Sweep across
+            0,
+          ),
+          child: Transform.rotate(
+            angle: 0.5, // Slanted shine
+            child: Container(
+              width: 40,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.white.withValues(alpha: 0.0),
+                    Colors.white.withValues(alpha: 0.3),
+                    Colors.white.withValues(alpha: 0.0),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

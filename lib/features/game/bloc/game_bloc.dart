@@ -16,7 +16,8 @@ abstract class GameEvent extends Equatable {
 class LoadLevel extends GameEvent {
   final int? levelId;
   final int? seed;
-  const LoadLevel({this.levelId, this.seed});
+  final bool isDailyChallenge;
+  const LoadLevel({this.levelId, this.seed, this.isDailyChallenge = false});
 }
 
 class TubeTapped extends GameEvent {
@@ -79,11 +80,13 @@ class GameState extends Equatable {
   final int? selectedTubeIndex;
   final GameStatus status;
   final int levelId;
-  final int starCount;
+  final int coinCount;
   final MoveDetails? lastMove;
   final int completedTubeCount; // Added for Multiplayer Tracking
   final bool isFrozen; // Added for Freeze Power-up
   final int remainingUndos;
+  final int undosUsed;
+  final bool isDailyChallenge;
 
   const GameState({
     required this.tubes,
@@ -91,11 +94,13 @@ class GameState extends Equatable {
     this.selectedTubeIndex,
     this.status = GameStatus.playing,
     this.levelId = 1,
-    required this.starCount,
+    required this.coinCount,
     this.lastMove,
     this.completedTubeCount = 0,
     this.isFrozen = false,
     this.remainingUndos = 5,
+    this.undosUsed = 0,
+    this.isDailyChallenge = false,
   });
 
   bool get isLevelCompleted {
@@ -109,11 +114,13 @@ class GameState extends Equatable {
     bool clearSelection = false,
     GameStatus? status,
     int? levelId,
-    int? starCount,
+    int? coinCount,
     MoveDetails? lastMove,
     int? completedTubeCount,
     bool? isFrozen,
     int? remainingUndos,
+    int? undosUsed,
+    bool? isDailyChallenge,
   }) {
     return GameState(
       tubes: tubes ?? this.tubes,
@@ -123,11 +130,13 @@ class GameState extends Equatable {
           : (selectedTubeIndex ?? this.selectedTubeIndex),
       status: status ?? this.status,
       levelId: levelId ?? this.levelId,
-      starCount: starCount ?? this.starCount,
+      coinCount: coinCount ?? this.coinCount,
       lastMove: lastMove ?? this.lastMove,
       completedTubeCount: completedTubeCount ?? this.completedTubeCount,
       isFrozen: isFrozen ?? this.isFrozen,
       remainingUndos: remainingUndos ?? this.remainingUndos,
+      undosUsed: undosUsed ?? this.undosUsed,
+      isDailyChallenge: isDailyChallenge ?? this.isDailyChallenge,
     );
   }
 
@@ -138,10 +147,11 @@ class GameState extends Equatable {
     selectedTubeIndex,
     status,
     levelId,
-    starCount,
+    coinCount,
     lastMove,
     completedTubeCount,
     isFrozen,
+    isDailyChallenge,
   ];
 }
 
@@ -153,7 +163,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   GameBloc({required GameRepository repo, required AudioController audio})
     : _repo = repo,
       _audio = audio,
-      super(const GameState(tubes: [], starCount: 0)) {
+      super(const GameState(tubes: [], coinCount: 0)) {
     on<LoadLevel>(_onLoadLevel);
     on<TubeTapped>(_onTubeTapped);
     on<UndoMove>(_onUndoMove);
@@ -169,7 +179,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   void _onRequestHint(RequestHint event, Emitter<GameState> emit) {
     const hintCost = 25;
-    if (state.starCount < hintCost) return; // Not enough coins
+    if (state.coinCount < hintCost) return; // Not enough coins
 
     // 1. Find all valid moves
     List<MoveDetails> validMoves = [];
@@ -327,13 +337,14 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     newTubes[sourceIndex] = tempSource;
     newTubes[targetIndex] = tempTarget;
 
-    // Reveal Logic
+    // REVEAL LOGIC
     if (!tempSource.isEmpty) {
       final topItem = tempSource.topItem!;
       if (topItem.isHidden) {
         final revealedItem = SortingItem(
           colorIndex: topItem.colorIndex,
           isHidden: false,
+          isStone: topItem.isStone,
         );
         final currentItems = List<SortingItem>.from(tempSource.items);
         currentItems[currentItems.length - 1] = revealedItem;
@@ -346,9 +357,9 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
     // Spend Cost
     if (cost > 0) {
-      _repo.spendStars(cost);
+      _repo.spendCoins(cost);
     }
-    final newStars = state.starCount - cost;
+    final newStars = state.coinCount - cost;
 
     final move = MoveDetails(
       sourceIndex: sourceIndex,
@@ -368,17 +379,29 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       _audio.playWin();
       final maxLevel = _repo.getMaxLevel();
       if (state.levelId >= maxLevel) _repo.unlockLevel(state.levelId + 1);
-      _repo.addStars(25);
+
+      // PERFECT REWARD SYSTEM
+      int baseReward = state.isDailyChallenge ? 100 : 25;
+      int bonus = 0;
+      if (state.undosUsed == 0) {
+        bonus = state.isDailyChallenge ? 50 : 20;
+      } else if (state.undosUsed <= 2) {
+        bonus = state.isDailyChallenge ? 25 : 10;
+      }
+
+      final totalReward = baseReward + bonus;
+      _repo.addCoins(totalReward);
 
       emit(
         state.copyWith(
           tubes:
               newTubes, // Just simplistic win emit, real one reveals all balls
           status: GameStatus.won,
-          starCount: newStars + 25,
+          coinCount: newStars + totalReward,
           clearSelection: true,
           completedTubeCount: completed,
           lastMove: move,
+          isDailyChallenge: state.isDailyChallenge,
         ),
       );
     } else {
@@ -388,7 +411,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
           history: currentHistory,
           clearSelection: true,
           lastMove: move,
-          starCount: newStars,
+          coinCount: newStars,
           completedTubeCount: completed,
         ),
       );
@@ -396,14 +419,14 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   void _onAddCurrency(AddCurrency event, Emitter<GameState> emit) {
-    _repo.addStars(event.amount);
-    emit(state.copyWith(starCount: state.starCount + event.amount));
+    _repo.addCoins(event.amount);
+    emit(state.copyWith(coinCount: state.coinCount + event.amount));
   }
 
   void _onRequestShuffle(RequestShuffle event, Emitter<GameState> emit) {
     const shuffleCost = 20;
-    if (state.starCount >= shuffleCost) {
-      final newStars = state.starCount - shuffleCost;
+    if (state.coinCount >= shuffleCost) {
+      final newStars = state.coinCount - shuffleCost;
 
       // 1. Identify valid tubes to shuffle (not completed)
       final allTubes = List<Tube>.from(state.tubes);
@@ -449,7 +472,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       }
 
       // 4. Save & Emit
-      _repo.spendStars(shuffleCost);
+      _repo.spendCoins(shuffleCost);
       _audio.playMove(); // Use move sound or specific shuffle sound
 
       // Check Win Condition
@@ -472,14 +495,14 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         }
 
         // Add Stars
-        _repo.addStars(25);
-        final starCountAfterWin = newStars + 25;
+        _repo.addCoins(25);
+        final coinCountAfterWin = newStars + 25;
 
         emit(
           state.copyWith(
             tubes: wonTubes,
             status: GameStatus.won, // Trigger Win
-            starCount: starCountAfterWin,
+            coinCount: coinCountAfterWin,
             clearSelection: true,
             completedTubeCount: completed,
             remainingUndos: state.remainingUndos, // Keep undo count? Or reset?
@@ -488,7 +511,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       } else {
         emit(
           state.copyWith(
-            starCount: newStars,
+            coinCount: newStars,
             tubes: allTubes,
             clearSelection: true,
             completedTubeCount: completed,
@@ -500,8 +523,8 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   void _onRequestHelp(RequestHelp event, Emitter<GameState> emit) {
     const helpCost = 50;
-    if (state.starCount >= helpCost) {
-      final newStars = state.starCount - helpCost;
+    if (state.coinCount >= helpCost) {
+      final newStars = state.coinCount - helpCost;
 
       // Create a new empty tube
       final newTube = Tube(items: []);
@@ -509,7 +532,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       final newTubes = List<Tube>.from(state.tubes)..add(newTube);
 
       // Save new star count
-      _repo.spendStars(helpCost);
+      _repo.spendCoins(helpCost);
 
       // Check Win Condition (Unlikely but possible if bugged state)
       final isWon = newTubes.every((t) => t.isCompleted);
@@ -521,13 +544,13 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         if (state.levelId >= maxLevel) {
           _repo.unlockLevel(state.levelId + 1);
         }
-        _repo.addStars(25);
+        _repo.addCoins(25);
 
         emit(
           state.copyWith(
             tubes: newTubes,
             status: GameStatus.won,
-            starCount: newStars + 25,
+            coinCount: newStars + 25,
             clearSelection: true,
             completedTubeCount: completed,
           ),
@@ -535,7 +558,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       } else {
         emit(
           state.copyWith(
-            starCount: newStars,
+            coinCount: newStars,
             tubes: newTubes,
             clearSelection: true,
             completedTubeCount: completed,
@@ -548,7 +571,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   void _onLoadLevel(LoadLevel event, Emitter<GameState> emit) {
     final levelToLoad = event.levelId ?? _repo.getMaxLevel();
     final tubes = _generateLevel(levelToLoad, seed: event.seed);
-    final stars = _repo.getStars();
+    final stars = _repo.getCoins();
     final completed = tubes.where((t) => t.isCompleted).length;
 
     // Undo Count Scaling
@@ -568,10 +591,11 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         tubes: tubes,
         levelId: levelToLoad,
         status: GameStatus.playing,
-        starCount: stars,
+        coinCount: stars,
         completedTubeCount: completed,
         isFrozen: false,
         remainingUndos: initialUndos,
+        isDailyChallenge: event.isDailyChallenge,
       ),
     );
   }
@@ -656,6 +680,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         status: GameStatus.playing, // Reset win status if we undo
         completedTubeCount: completed,
         remainingUndos: state.remainingUndos - 1,
+        undosUsed: state.undosUsed + 1,
       ),
     );
   }
@@ -678,13 +703,6 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         // Prevent selecting if top item is hidden
         if (state.tubes[tappedIndex].topItem!.isHidden) {
           // Maybe play error sound?
-          return;
-        }
-
-        // Prevent selecting if top item is Stone
-        if (state.tubes[tappedIndex].topItem!.isStone) {
-          HapticFeedback.heavyImpact();
-          _audio.playError();
           return;
         }
 
@@ -752,20 +770,17 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       newTubes[sourceIndex] = tempSource;
       newTubes[tappedIndex] = tempTarget;
 
-      // REVEAL LOGIC:
-      // If the new source tube has items, and the new top item is HIDDEN, reveal it.
       if (!tempSource.isEmpty) {
         final topItem = tempSource.topItem!;
         if (topItem.isHidden) {
           final revealedItem = SortingItem(
             colorIndex: topItem.colorIndex,
             isHidden: false,
+            isStone: topItem.isStone,
           );
 
-          // Replace top item
           final currentItems = List<SortingItem>.from(tempSource.items);
           currentItems[currentItems.length - 1] = revealedItem;
-
           newTubes[sourceIndex] = Tube(
             items: currentItems,
             capacity: tempSource.capacity,
@@ -785,11 +800,19 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       final isWon = newTubes.every((t) => t.isCompleted);
       final completed = newTubes.where((t) => t.isCompleted).length;
 
+      // THAW LOGIC (Legacy - simplified)
+      // We keep the revealed logic above which handles isHidden
+
       if (isWon) {
         // Reveal all balls for victory screen
         final wonTubes = newTubes.map((tube) {
           final revealedItems = tube.items.map((item) {
-            return SortingItem(colorIndex: item.colorIndex, isHidden: false);
+            return SortingItem(
+              colorIndex: item.colorIndex,
+              isHidden: false,
+              isStone:
+                  false, // Explicitly false as they are just revealed items
+            );
           }).toList();
           return Tube(items: revealedItems, capacity: tube.capacity);
         }).toList();
@@ -800,20 +823,30 @@ class GameBloc extends Bloc<GameEvent, GameState> {
           _repo.unlockLevel(state.levelId + 1);
         }
 
-        // Add Stars
-        _repo.addStars(25);
-        final newStars = state.starCount + 25;
+        // PERFECT REWARD SYSTEM
+        int baseReward = state.isDailyChallenge ? 100 : 25;
+        int bonus = 0;
+        if (state.undosUsed == 0) {
+          bonus = state.isDailyChallenge ? 50 : 20;
+        } else if (state.undosUsed <= 2) {
+          bonus = state.isDailyChallenge ? 25 : 10;
+        }
+
+        final totalReward = baseReward + bonus;
+        _repo.addCoins(totalReward);
+        final newStars = state.coinCount + totalReward;
 
         emit(
           GameState(
             tubes: wonTubes,
-            history: const [], // Clear history on win? Or keep?
+            history: const [],
             status: GameStatus.won,
             levelId: state.levelId,
-            starCount: newStars,
+            coinCount: newStars,
             lastMove: move,
             completedTubeCount: completed,
             isFrozen: false,
+            isDailyChallenge: state.isDailyChallenge,
           ),
         );
       } else {
@@ -829,23 +862,14 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       }
     } else {
       // Invalid move.
-      // User might want to change selection to this new tube if it has items
       if (!targetTube.isEmpty) {
-        // Change selection
         HapticFeedback.selectionClick();
         _audio.playSelect();
         emit(state.copyWith(selectedTubeIndex: tappedIndex));
       } else {
-        // Just invalid drop on empty? (Shouldn't happen as empty accepts all, unless constrained)
-        // Or specific constraints.
-        // If it's truly invalid:
-        HapticFeedback.heavyImpact(); // NEW: Strong feedback for error
-        _audio.playError(); // NEW
-        emit(
-          state.copyWith(clearSelection: true),
-        ); // Or keep selection? Let's Deselect to be safe or keep?
-        // Usually keeping selection is better UX, but visual feedback is needed.
-        // For now, deselecting is clear "No".
+        HapticFeedback.heavyImpact();
+        _audio.playError();
+        emit(state.copyWith(clearSelection: true));
       }
     }
   }
@@ -853,75 +877,42 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   bool _isValidMove(Tube source, Tube target) {
     if (source.isEmpty) return false;
     if (target.isFull) return false;
-
-    // If target is empty, any item can go there (usually)
     if (target.isEmpty) return true;
-
-    // Must match colors
     return source.topItem!.colorIndex == target.topItem!.colorIndex;
   }
 
   // Solvable Level Generator
   List<Tube> _generateLevel(int level, {int? seed}) {
-    // 1. Determine constraints based on level
-    // Increased cap to allow for many more tubes / distinct levels
     final int effectiveMaxColors = 24;
-
-    // Linear scaling: Add a color every ~2 levels, but keep raising the ceiling.
-    // Lvl 1: 3 colors. Lvl 50: ~15 colors?
-    // Let's go faster: Add 1 color every 1.5 levels approx?
-    // Old: (level + 1).clamp(...). This was 1-to-1 scaling!
-    // But it was capped at 13.
-    // Let's let it grow naturally up to 24.
     final int numColors = (level <= 1)
         ? 3
         : (level + 2).clamp(3, effectiveMaxColors);
 
-    // Dynamic Empty Tubes:
-    // levels 1-9: 2 empty
-    // levels 10-24: 3 empty
-    // levels 25+: 4 empty (needed for Fog management)
     int numEmptyTubes = 2;
     if (level >= 10) numEmptyTubes = 3;
     if (level >= 25) numEmptyTubes = 4;
 
     final int numTubes = numColors + numEmptyTubes;
-    // 2. Determine Per-Tube Capacities
-    // We stick to STANDARD capacity (4) for visual consistency.
-    // Difficulty is handled by Stones (Blockers) and Fog.
     final random = seed != null ? Random(seed) : Random();
     List<int> tubeCapacities = List.filled(numTubes, 4);
 
-    // 3. Start with a SOLVED state
     List<List<SortingItem>> itemsInTubes = [];
-    for (int i = 0; i < numTubes; i++) itemsInTubes.add([]);
+    for (int i = 0; i < numTubes; i++) {
+      itemsInTubes.add([]);
+    }
 
-    // Fill tubes with colors
     for (int i = 0; i < numColors; i++) {
       itemsInTubes[i] = List.generate(4, (_) => SortingItem(colorIndex: i));
     }
 
-    // 4. BLOCKERS (Stones) for Level 15+
-    // Strategy: Place stones deep in the "Empty" tubes to constrict them?
-    // Or put a stone at the bottom of a random color tube?
-    // Let's put 1 or 2 stones total.
-    if (level >= 15) {
-      int stonesToPlace = (level >= 20) ? 2 : 1;
+    // 4. BLOCKERS (Stones)
+    if (level >= 15 || seed != null) {
+      int stonesToPlace = (level >= 20 || seed != null) ? 2 : 1;
       int stonesPlaced = 0;
       int safetyLimit = 0;
-
       while (stonesPlaced < stonesToPlace && safetyLimit < 100) {
         safetyLimit++;
-        // Pick a random tube from the "Empty" region usually?
-        // Or any tube that has space?
-        // Careful: If we put a stone in a Color tube, we replace a color item? NO. We add it?
-        // We can't reduce the number of color items (4). We must ADD.
-        // So we can only put stones in tubes that have capacity > 4 (if any) or EMPTY tubes.
-        // Placing a stone in an empty tube effectively reduces the number of empty slots.
-
-        // Let's target the "Empty/Buffer" tubes (indices >= numColors).
         int targetIndex = numColors + random.nextInt(numEmptyTubes);
-
         if (itemsInTubes[targetIndex].isEmpty) {
           itemsInTubes[targetIndex].add(
             const SortingItem(colorIndex: -1, isStone: true),
@@ -931,12 +922,9 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       }
     }
 
-    // 4. Shuffle moves (Reverse Engineering)
-    // Note: random was already initialized above if needed, but we used it for caps.
-    // Reset seed? No, same stream is fine.
-
-    // Significant shuffle increase for higher levels
+    // 4. Shuffle moves
     int targetMoves = 50 + (level * 25);
+    if (seed != null) targetMoves += 100; // Harder daily
     int successfulMoves = 0;
     int attempts = 0;
     const maxAttempts = 50000;
@@ -948,18 +936,12 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       attempts++;
       int source = random.nextInt(numTubes);
       int target = random.nextInt(numTubes);
-
       if (source == target) continue;
       if (source == lastTarget && target == lastSource) continue;
 
       if (itemsInTubes[source].isNotEmpty &&
           itemsInTubes[target].length < tubeCapacities[target]) {
-        // CRITICAL FIX: Never move Stones during shuffle.
-        // If we move a stone, we create a state where the user (who cannot move stones)
-        // is expected to move it back, which is impossible.
         if (itemsInTubes[source].last.isStone) continue;
-
-        // Check specific capacity
         final item = itemsInTubes[source].removeLast();
         itemsInTubes[target].add(item);
         successfulMoves++;
@@ -968,60 +950,36 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       }
     }
 
-    // 5. APPLY HIDDEN BALLS / FOG (Level 7+)
-    // Difficulty Scaling:
-    // Level 7-9: Bottom ball hidden
-    // Level 10-14: Bottom 2 balls hidden
-    // Level 15-24: Bottom 3 balls hidden (Only top visible!)
-    // Level 25+: FOG MODE (All items hidden except top)
-    if (level >= 7) {
-      int itemsToHide = 1;
-      if (level >= 10) itemsToHide = 2;
-      if (level >= 15) itemsToHide = 3;
+    // 5. Apply Special Tile Types (Frozen & Mystery)
+    for (int t = 0; t < itemsInTubes.length; t++) {
+      final tubeItems = itemsInTubes[t];
+      if (tubeItems.isEmpty) continue;
 
-      // For level 25+, we treat "itemsToHide" as "All - 1" effectively.
-      // But sticking to the index logic works if we just say "Hide everything < length-1"
-      bool isFogMode = (level >= 25);
+      for (int i = 0; i < tubeItems.length; i++) {
+        var itm = tubeItems[i];
+        if (itm.isStone) continue;
 
-      for (int t = 0; t < itemsInTubes.length; t++) {
-        final tubeItems = itemsInTubes[t];
-        if (tubeItems.isEmpty) continue;
+        // Fog/Hidden (Standard logic)
+        if (level >= 7 || seed != null) {
+          int hideThreshold = level >= 15 ? 3 : (level >= 10 ? 2 : 1);
+          if (seed != null) hideThreshold = 2; // Fixed for daily
 
-        // Hide item indices
-        for (int i = 0; i < tubeItems.length; i++) {
-          bool shouldHide = false;
-
-          if (isFogMode) {
-            // Fog Mode: Hide EVERYTHING except the very top item
-            if (i < tubeItems.length - 1) {
-              shouldHide = true;
-            }
-          } else {
-            // Standard difficulty scaling
-            if (i < itemsToHide && i < tubeItems.length - 1) {
-              shouldHide = true;
-            }
-          }
-
-          if (shouldHide && !tubeItems[i].isStone) {
-            // Never hide stones (important for UX)
-            final newItem = SortingItem(
-              colorIndex: tubeItems[i].colorIndex,
+          if (i < hideThreshold && i < tubeItems.length - 1) {
+            itm = SortingItem(
+              colorIndex: itm.colorIndex,
               isHidden: true,
-              isStone: tubeItems[i].isStone,
+              isStone: itm.isStone,
             );
-            tubeItems[i] = newItem;
           }
         }
+        tubeItems[i] = itm;
       }
     }
 
-    // Map using the specific capacity for each tube
     List<Tube> finalTubes = [];
     for (int i = 0; i < numTubes; i++) {
       finalTubes.add(Tube(items: itemsInTubes[i], capacity: tubeCapacities[i]));
     }
-
     return finalTubes;
   }
 }

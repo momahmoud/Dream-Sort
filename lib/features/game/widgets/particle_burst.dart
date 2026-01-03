@@ -128,7 +128,7 @@ class BurstPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
 
     for (var p in particles) {
-      paint.color = p.color.withOpacity(opacity);
+      paint.color = p.color.withValues(alpha: opacity);
       canvas.drawCircle(center + p.position, 4 * p.scale, paint);
     }
   }

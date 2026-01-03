@@ -23,8 +23,15 @@ import '../../../l10n/app_localizations.dart';
 
 class GamePage extends StatefulWidget {
   final int? initialLevel;
+  final int? seed;
+  final bool isDailyChallenge;
 
-  const GamePage({super.key, this.initialLevel});
+  const GamePage({
+    super.key,
+    this.initialLevel,
+    this.seed,
+    this.isDailyChallenge = false,
+  });
 
   @override
   State<GamePage> createState() => _GamePageState();
@@ -218,10 +225,17 @@ class _GamePageState extends State<GamePage> {
     final l10n = AppLocalizations.of(context)!;
     // Force rebuild when popping back from DecorPage to update wall color
     return BlocProvider(
-      create: (context) => GameBloc(
-        repo: context.read<GameRepository>(),
-        audio: context.read<AudioController>(),
-      )..add(LoadLevel(levelId: widget.initialLevel)),
+      create: (context) =>
+          GameBloc(
+            repo: context.read<GameRepository>(),
+            audio: context.read<AudioController>(),
+          )..add(
+            LoadLevel(
+              levelId: widget.initialLevel,
+              seed: widget.seed,
+              isDailyChallenge: widget.isDailyChallenge,
+            ),
+          ),
       child: BlocListener<GameBloc, GameState>(
         listener: (context, state) => _handleGameStateChange(context, state),
         child: ValueListenableBuilder(
@@ -257,7 +271,7 @@ class _GamePageState extends State<GamePage> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.black.withOpacity(0.8),
+                        Colors.black.withValues(alpha: 0.8),
                         Colors.transparent,
                       ],
                       begin: Alignment.topCenter,
@@ -306,10 +320,10 @@ class _GamePageState extends State<GamePage> {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withValues(alpha: 0.2),
                                 width: 1,
                               ),
                             ),
@@ -346,10 +360,10 @@ class _GamePageState extends State<GamePage> {
                     child: Container(
                       padding: const EdgeInsets.all(8), // Square-ish or Circle
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           width: 1,
                         ),
                       ),
@@ -397,13 +411,13 @@ class _GamePageState extends State<GamePage> {
                                           decoration: BoxDecoration(
                                             color: const Color(
                                               0xFF1A1A2E,
-                                            ).withOpacity(0.8),
+                                            ).withValues(alpha: 0.8),
                                             borderRadius: BorderRadius.circular(
                                               24,
                                             ),
                                             border: Border.all(
-                                              color: Colors.white.withOpacity(
-                                                0.1,
+                                              color: Colors.white.withValues(
+                                                alpha: 0.1,
                                               ),
                                               width: 1,
                                             ),
@@ -418,10 +432,10 @@ class _GamePageState extends State<GamePage> {
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              const Text(
-                                                'Need More Stars?',
+                                              Text(
+                                                l10n.needMoreCoins,
                                                 textAlign: TextAlign.center,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   fontSize: 24,
                                                   fontWeight: FontWeight.w900,
                                                   color: Colors.white,
@@ -429,8 +443,8 @@ class _GamePageState extends State<GamePage> {
                                                 ),
                                               ),
                                               const SizedBox(height: 12),
-                                              const Text(
-                                                'Watch a short video to instantly earn\n+50 Free Stars!',
+                                              Text(
+                                                l10n.earnFreeCoins,
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   fontSize: 16,
@@ -462,7 +476,9 @@ class _GamePageState extends State<GamePage> {
                                                             content: Row(
                                                               children: [
                                                                 Text(
-                                                                  'You earned $reward ',
+                                                                  l10n.earnedCoins(
+                                                                    reward,
+                                                                  ),
                                                                 ),
                                                                 SvgPicture.asset(
                                                                   'assets/images/coin.svg',
@@ -510,7 +526,9 @@ class _GamePageState extends State<GamePage> {
                                                     boxShadow: [
                                                       BoxShadow(
                                                         color: Colors.amber
-                                                            .withOpacity(0.4),
+                                                            .withValues(
+                                                              alpha: 0.4,
+                                                            ),
                                                         blurRadius: 12,
                                                         offset: const Offset(
                                                           0,
@@ -553,7 +571,7 @@ class _GamePageState extends State<GamePage> {
                                                   foregroundColor:
                                                       Colors.white38,
                                                 ),
-                                                child: const Text('No, thanks'),
+                                                child: Text(l10n.noThanks),
                                               ),
                                             ],
                                           ),
@@ -604,7 +622,7 @@ class _GamePageState extends State<GamePage> {
                               color: Colors.black38,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: Colors.amber.withOpacity(0.6),
+                                color: Colors.amber.withValues(alpha: 0.6),
                                 width: 1.5,
                               ),
                             ),
@@ -618,7 +636,7 @@ class _GamePageState extends State<GamePage> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  '${state.starCount}',
+                                  '${state.coinCount}',
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.white,
@@ -761,8 +779,8 @@ class _GamePageState extends State<GamePage> {
                     child: BlocBuilder<GameBloc, GameState>(
                       builder: (context, state) {
                         const int addCost = 50;
-                        final canAffordAdd = state.starCount >= addCost;
-                        final canAffordShuffle = state.starCount >= 20;
+                        final canAffordAdd = state.coinCount >= addCost;
+                        final canAffordShuffle = state.coinCount >= 20;
 
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -808,16 +826,21 @@ class _GamePageState extends State<GamePage> {
                                                             24,
                                                           ),
                                                       decoration: BoxDecoration(
-                                                        color: const Color(
-                                                          0xFF1A1A2E,
-                                                        ).withOpacity(0.8),
+                                                        color:
+                                                            const Color(
+                                                              0xFF1A1A2E,
+                                                            ).withValues(
+                                                              alpha: 0.8,
+                                                            ),
                                                         borderRadius:
                                                             BorderRadius.circular(
                                                               24,
                                                             ),
                                                         border: Border.all(
                                                           color: Colors.white
-                                                              .withOpacity(0.1),
+                                                              .withValues(
+                                                                alpha: 0.1,
+                                                              ),
                                                           width: 1,
                                                         ),
                                                         boxShadow: [
@@ -837,8 +860,8 @@ class _GamePageState extends State<GamePage> {
                                                         mainAxisSize:
                                                             MainAxisSize.min,
                                                         children: [
-                                                          const Text(
-                                                            'Need Help?',
+                                                          Text(
+                                                            l10n.needHelp,
                                                             textAlign: TextAlign
                                                                 .center,
                                                             style: TextStyle(
@@ -855,8 +878,8 @@ class _GamePageState extends State<GamePage> {
                                                           const SizedBox(
                                                             height: 12,
                                                           ),
-                                                          const Text(
-                                                            'Add an extra empty tube to make\nsolving this puzzle easier!',
+                                                          Text(
+                                                            l10n.addTubeDesc,
                                                             textAlign: TextAlign
                                                                 .center,
                                                             style: TextStyle(
@@ -911,8 +934,9 @@ class _GamePageState extends State<GamePage> {
                                                                   BoxShadow(
                                                                     color: Colors
                                                                         .green
-                                                                        .withOpacity(
-                                                                          0.4,
+                                                                        .withValues(
+                                                                          alpha:
+                                                                              0.4,
                                                                         ),
                                                                     blurRadius:
                                                                         12,
@@ -928,8 +952,8 @@ class _GamePageState extends State<GamePage> {
                                                                 mainAxisAlignment:
                                                                     MainAxisAlignment
                                                                         .center,
-                                                                children: const [
-                                                                  Icon(
+                                                                children: [
+                                                                  const Icon(
                                                                     Icons
                                                                         .add_circle_outline_rounded,
                                                                     color: Colors
@@ -940,7 +964,7 @@ class _GamePageState extends State<GamePage> {
                                                                     width: 8,
                                                                   ),
                                                                   Text(
-                                                                    'Add Tube',
+                                                                    l10n.addTube,
                                                                     style: TextStyle(
                                                                       color: Colors
                                                                           .white,
@@ -970,8 +994,8 @@ class _GamePageState extends State<GamePage> {
                                                                   Colors
                                                                       .white38,
                                                             ),
-                                                            child: const Text(
-                                                              'No, thanks',
+                                                            child: Text(
+                                                              l10n.noThanks,
                                                             ),
                                                           ),
                                                         ],
@@ -1036,8 +1060,8 @@ class _GamePageState extends State<GamePage> {
                                             fontWeight: FontWeight.w800,
                                             shadows: [
                                               Shadow(
-                                                color: Colors.black.withOpacity(
-                                                  0.8,
+                                                color: Colors.black.withValues(
+                                                  alpha: 0.8,
                                                 ),
                                                 offset: const Offset(1, 1),
                                                 blurRadius: 3,
@@ -1101,7 +1125,9 @@ class _GamePageState extends State<GamePage> {
                                                         ),
                                                     border: Border.all(
                                                       color: Colors.white
-                                                          .withOpacity(0.1),
+                                                          .withValues(
+                                                            alpha: 0.1,
+                                                          ),
                                                       width: 1,
                                                     ),
                                                     boxShadow: [
@@ -1119,11 +1145,11 @@ class _GamePageState extends State<GamePage> {
                                                     mainAxisSize:
                                                         MainAxisSize.min,
                                                     children: [
-                                                      const Text(
-                                                        'Shuffle?',
+                                                      Text(
+                                                        l10n.shuffleTitle,
                                                         textAlign:
                                                             TextAlign.center,
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 24,
                                                           fontWeight:
                                                               FontWeight.w900,
@@ -1134,11 +1160,11 @@ class _GamePageState extends State<GamePage> {
                                                       const SizedBox(
                                                         height: 12,
                                                       ),
-                                                      const Text(
-                                                        'Rearrange balls to find new moves!\n(Completed tubes stay safe)',
+                                                      Text(
+                                                        l10n.shuffleDesc,
                                                         textAlign:
                                                             TextAlign.center,
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 16,
                                                           color: Colors.white70,
                                                           height: 1.4,
@@ -1185,8 +1211,9 @@ class _GamePageState extends State<GamePage> {
                                                               BoxShadow(
                                                                 color: Colors
                                                                     .blue
-                                                                    .withOpacity(
-                                                                      0.4,
+                                                                    .withValues(
+                                                                      alpha:
+                                                                          0.4,
                                                                     ),
                                                                 blurRadius: 12,
                                                                 offset:
@@ -1214,9 +1241,9 @@ class _GamePageState extends State<GamePage> {
                                                               ),
                                                               Row(
                                                                 children: [
-                                                                  const Text(
-                                                                    'Shuffle (-20',
-                                                                    style: TextStyle(
+                                                                  Text(
+                                                                    l10n.shuffleAction,
+                                                                    style: const TextStyle(
                                                                       color: Colors
                                                                           .white,
                                                                       fontSize:
@@ -1266,8 +1293,8 @@ class _GamePageState extends State<GamePage> {
                                                                   Colors
                                                                       .white38,
                                                             ),
-                                                        child: const Text(
-                                                          'Cancel',
+                                                        child: Text(
+                                                          l10n.cancel,
                                                         ),
                                                       ),
                                                     ],
@@ -1330,8 +1357,8 @@ class _GamePageState extends State<GamePage> {
                                             fontWeight: FontWeight.w800,
                                             shadows: [
                                               Shadow(
-                                                color: Colors.black.withOpacity(
-                                                  0.8,
+                                                color: Colors.black.withValues(
+                                                  alpha: 0.8,
                                                 ),
                                                 offset: const Offset(1, 1),
                                                 blurRadius: 3,
@@ -1356,7 +1383,7 @@ class _GamePageState extends State<GamePage> {
                               children: [
                                 GameFloatingButton(
                                   icon: Icons.lightbulb_rounded,
-                                  disabled: state.starCount < 25,
+                                  disabled: state.coinCount < 25,
                                   onTap: () {
                                     showDialog(
                                       context: context,
@@ -1387,14 +1414,16 @@ class _GamePageState extends State<GamePage> {
                                                   decoration: BoxDecoration(
                                                     color: const Color(
                                                       0xFF1A1A2E,
-                                                    ).withOpacity(0.8),
+                                                    ).withValues(alpha: 0.8),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                           24,
                                                         ),
                                                     border: Border.all(
                                                       color: Colors.white
-                                                          .withOpacity(0.1),
+                                                          .withValues(
+                                                            alpha: 0.1,
+                                                          ),
                                                       width: 1,
                                                     ),
                                                     boxShadow: [
@@ -1412,8 +1441,8 @@ class _GamePageState extends State<GamePage> {
                                                     mainAxisSize:
                                                         MainAxisSize.min,
                                                     children: [
-                                                      const Text(
-                                                        'Need a Hint?',
+                                                      Text(
+                                                        l10n.needHint,
                                                         textAlign:
                                                             TextAlign.center,
                                                         style: TextStyle(
@@ -1427,8 +1456,8 @@ class _GamePageState extends State<GamePage> {
                                                       const SizedBox(
                                                         height: 12,
                                                       ),
-                                                      const Text(
-                                                        'Stuck? Let the AI find the best move for you!\nCost: 25 Stars.',
+                                                      Text(
+                                                        l10n.hintDesc,
                                                         textAlign:
                                                             TextAlign.center,
                                                         style: TextStyle(
@@ -1476,8 +1505,9 @@ class _GamePageState extends State<GamePage> {
                                                               BoxShadow(
                                                                 color: Colors
                                                                     .orange
-                                                                    .withOpacity(
-                                                                      0.4,
+                                                                    .withValues(
+                                                                      alpha:
+                                                                          0.4,
                                                                     ),
                                                                 blurRadius: 12,
                                                                 offset:
@@ -1505,9 +1535,9 @@ class _GamePageState extends State<GamePage> {
                                                               ),
                                                               Row(
                                                                 children: [
-                                                                  const Text(
-                                                                    'Get Hint (-25',
-                                                                    style: TextStyle(
+                                                                  Text(
+                                                                    l10n.getHint,
+                                                                    style: const TextStyle(
                                                                       color: Colors
                                                                           .white,
                                                                       fontSize:
@@ -1557,8 +1587,8 @@ class _GamePageState extends State<GamePage> {
                                                                   Colors
                                                                       .white38,
                                                             ),
-                                                        child: const Text(
-                                                          'Cancel',
+                                                        child: Text(
+                                                          l10n.cancel,
                                                         ),
                                                       ),
                                                     ],
@@ -1614,15 +1644,15 @@ class _GamePageState extends State<GamePage> {
                                     Text(
                                       '25',
                                       style: TextStyle(
-                                        color: state.starCount >= 25
+                                        color: state.coinCount >= 25
                                             ? const Color(0xFFFFC107)
                                             : Colors.grey,
                                         fontSize: 13,
                                         fontWeight: FontWeight.w800,
                                         shadows: [
                                           Shadow(
-                                            color: Colors.black.withOpacity(
-                                              0.8,
+                                            color: Colors.black.withValues(
+                                              alpha: 0.8,
                                             ),
                                             offset: const Offset(1, 1),
                                             blurRadius: 3,
@@ -1659,8 +1689,8 @@ class _GamePageState extends State<GamePage> {
                             const ConfettiOverlay(),
                             // Win Card
                             Container(
-                              color: Colors.black.withOpacity(
-                                0.5,
+                              color: Colors.black.withValues(
+                                alpha: 0.5,
                               ), // Dim background
                               child: WinOverlayWidget(
                                 onRestartTimer:

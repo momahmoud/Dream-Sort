@@ -53,7 +53,7 @@ class _SettingsPageState extends State<SettingsPage> {
             onPressed: () async {
               Navigator.pop(ctx);
               await context.read<GameRepository>().resetProgress();
-              if (mounted) {
+              if (context.mounted) {
                 ScaffoldMessenger.of(
                   context,
                 ).showSnackBar(SnackBar(content: Text(l10n.progressReset)));
@@ -160,12 +160,44 @@ class _SettingsPageState extends State<SettingsPage> {
                             onChanged: (_) {
                               context.read<AudioController>().toggleMute();
                             },
-                            activeThumbColor: Colors.cyanAccent,
+                            activeThumbColor: Colors.pinkAccent,
                           ),
                         );
                       },
                     ),
                   ],
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              // 2.5 Accessibility Section
+              _SectionHeader(title: l10n.accessibility),
+              const SizedBox(height: 10),
+              Container(
+                decoration: _cardDecoration,
+                child: StatefulBuilder(
+                  builder: (context, setState) {
+                    final repo = context.read<GameRepository>();
+                    return ListTile(
+                      leading: const Icon(
+                        Icons.visibility_rounded,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        l10n.colorBlindMode,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      trailing: Switch(
+                        value: repo.isColorBlindEnabled,
+                        onChanged: (val) async {
+                          await repo.setColorBlindEnabled(val);
+                          setState(() {});
+                        },
+                        activeThumbColor: Colors.pinkAccent,
+                      ),
+                    );
+                  },
                 ),
               ),
 

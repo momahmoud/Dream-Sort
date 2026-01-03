@@ -28,7 +28,7 @@ class LevelsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final repo = context.read<GameRepository>();
     final maxLevel = repo.getMaxLevel();
-    final stars = repo.getStars();
+    final coins = repo.getCoins();
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -80,7 +80,7 @@ class LevelsPage extends StatelessWidget {
               color: Colors.black38,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: Colors.amber.withOpacity(0.6),
+                color: Colors.amber.withValues(alpha: 0.6),
                 width: 1.5,
               ),
             ),
@@ -94,7 +94,7 @@ class LevelsPage extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  _formatNumber(context, stars),
+                  _formatNumber(context, coins),
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,

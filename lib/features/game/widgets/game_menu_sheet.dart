@@ -44,8 +44,11 @@ class GameMenuSheet extends StatelessWidget {
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.all(16),
                   ),
-                  icon: const Icon(Icons.star, color: Colors.yellowAccent),
-                  label: const Text('Watch Ad +50 Stars'),
+                  icon: const Icon(
+                    Icons.monetization_on_rounded,
+                    color: Colors.yellowAccent,
+                  ),
+                  label: const Text('Watch Ad +50 Coins'),
                   onPressed: () {
                     // Capture bloc before popping
                     final gameBloc = context.read<GameBloc>();
@@ -61,7 +64,7 @@ class GameMenuSheet extends StatelessWidget {
                         gameBloc.add(const AddCurrency(50));
 
                         messenger.showSnackBar(
-                          const SnackBar(content: Text('You earned 50 Stars!')),
+                          SnackBar(content: Text(l10n.earnedCoins(50))),
                         );
                       },
                     );

@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 
-enum DecorType { wall, floor, plant, lamp, rug, painting, tube }
+enum DecorType { tube, ball, wall, floor, plant, lamp, rug, painting }
 
 class DecorItem extends Equatable {
   final String id;
   final DecorType type;
   final String name;
   final int cost;
-  final String assetPath; // Color hex for Wall/Floor/Tube
+  final String assetPath; // Color hex or ID for skins
   final IconData? iconData; // Icon for Props
   final bool isDefault;
 
@@ -29,41 +29,103 @@ class DecorItem extends Equatable {
 class DecorationData {
   static const List<DecorItem> items = [
     // --- TUBES ---
+    // Tubes affect the aesthetic of the containers holding the balls.
     DecorItem(
       id: 'tube_default',
       type: DecorType.tube,
-      name: 'Glass Tube',
+      name: 'Glass Vials',
       cost: 0,
-      assetPath: '0xFFFFFFFF', // White constant
+      assetPath: 'glass',
       isDefault: true,
     ),
     DecorItem(
-      id: 'tube_gold',
+      id: 'tube_bamboo',
       type: DecorType.tube,
-      name: 'Gold Rim',
-      cost: 500,
-      assetPath: '0xFFFFD700',
+      name: 'Zen Bamboo',
+      cost: 400,
+      assetPath: 'bamboo',
     ),
     DecorItem(
-      id: 'tube_neon',
+      id: 'tube_metal',
       type: DecorType.tube,
-      name: 'Neon Blue',
+      name: 'Cyber Alloy',
       cost: 800,
-      assetPath: '0xFF00E5FF',
+      assetPath: 'metal',
     ),
     DecorItem(
-      id: 'tube_rose',
+      id: 'tube_gold_rim',
       type: DecorType.tube,
-      name: 'Rose Gold',
+      name: 'Royal Gold',
+      cost: 1200,
+      assetPath: 'gold_rim',
+    ),
+    DecorItem(
+      id: 'tube_crystal',
+      type: DecorType.tube,
+      name: 'Ice Crystal',
+      cost: 2000,
+      assetPath: 'crystal',
+    ),
+    DecorItem(
+      id: 'tube_magma',
+      type: DecorType.tube,
+      name: 'Magma Forge',
+      cost: 3000,
+      assetPath: 'magma',
+    ),
+
+    // --- BALLS ---
+    // Ball skins change the core gameplay pieces.
+    DecorItem(
+      id: 'ball_default',
+      type: DecorType.ball,
+      name: 'Smooth Spheres',
+      cost: 0,
+      assetPath: 'classic',
+      isDefault: true,
+    ),
+    DecorItem(
+      id: 'ball_neon',
+      type: DecorType.ball,
+      name: 'Neon Orbs',
       cost: 600,
-      assetPath: '0xFFFF4081',
+      assetPath: 'neon',
+    ),
+    DecorItem(
+      id: 'ball_emoji',
+      type: DecorType.ball,
+      name: 'Emoji Faces',
+      cost: 1000,
+      assetPath: 'emoji',
+    ),
+    DecorItem(
+      id: 'ball_jewel',
+      type: DecorType.ball,
+      name: 'Precious Jewels',
+      cost: 1500,
+      assetPath: 'jewel',
+    ),
+    DecorItem(
+      id: 'ball_planets',
+      type: DecorType.ball,
+      name: 'Galaxy Planets',
+      cost: 2500,
+      assetPath: 'planets',
+    ),
+    DecorItem(
+      id: 'ball_sports',
+      type: DecorType.ball,
+      name: 'Sports Pack',
+      cost: 2000,
+      assetPath: 'sports',
     ),
 
     // --- WALLS ---
+    // Background colors for the room.
     DecorItem(
       id: 'wall_default',
       type: DecorType.wall,
-      name: 'Midnight Blue',
+      name: 'Midnight Sky',
       cost: 0,
       assetPath: '0xFF1A1A2E',
       isDefault: true,
@@ -71,58 +133,59 @@ class DecorationData {
     DecorItem(
       id: 'wall_purple',
       type: DecorType.wall,
-      name: 'Royal Purple',
-      cost: 50,
+      name: 'Nebula Purple',
+      cost: 150,
       assetPath: '0xFF2E003E',
     ),
     DecorItem(
       id: 'wall_teal',
       type: DecorType.wall,
-      name: 'Deep Teal',
-      cost: 100,
+      name: 'Deep Abyss',
+      cost: 250,
       assetPath: '0xFF004D40',
     ),
     DecorItem(
       id: 'wall_red',
       type: DecorType.wall,
-      name: 'Velvet Red',
-      cost: 150,
+      name: 'Crimson Velvet',
+      cost: 350,
       assetPath: '0xFF3E0000',
     ),
     DecorItem(
       id: 'wall_grey',
       type: DecorType.wall,
-      name: 'Slate Grey',
-      cost: 200,
+      name: 'Dark Slate',
+      cost: 450,
       assetPath: '0xFF37474F',
     ),
     DecorItem(
       id: 'wall_black',
       type: DecorType.wall,
-      name: 'Inky Black',
-      cost: 300,
+      name: 'Void Black',
+      cost: 600,
       assetPath: '0xFF000000',
     ),
     DecorItem(
       id: 'wall_sunset',
       type: DecorType.wall,
-      name: 'Sunset',
-      cost: 400,
+      name: 'Warm Sunset',
+      cost: 800,
       assetPath: '0xFF4A148C',
     ),
     DecorItem(
       id: 'wall_matrix',
       type: DecorType.wall,
-      name: 'Matrix',
-      cost: 600,
+      name: 'Binary Green',
+      cost: 1500,
       assetPath: '0xFF002200',
     ),
 
     // --- FLOORS ---
+    // Room base styling.
     DecorItem(
       id: 'floor_default',
       type: DecorType.floor,
-      name: 'Wood Floor',
+      name: 'Polished Oak',
       cost: 0,
       assetPath: '0xFF3E2723',
       isDefault: true,
@@ -130,36 +193,36 @@ class DecorationData {
     DecorItem(
       id: 'floor_marble',
       type: DecorType.floor,
-      name: 'White Marble',
-      cost: 100,
+      name: 'Ice Marble',
+      cost: 300,
       assetPath: '0xFFECEFF1',
     ),
     DecorItem(
       id: 'floor_stone',
       type: DecorType.floor,
-      name: 'Dark Stone',
-      cost: 150,
+      name: 'Volcanic Rock',
+      cost: 500,
       assetPath: '0xFF212121',
     ),
     DecorItem(
       id: 'floor_carpet',
       type: DecorType.floor,
-      name: 'Red Carpet',
-      cost: 250,
+      name: 'Plush Velvet',
+      cost: 800,
       assetPath: '0xFF5D1010',
     ),
     DecorItem(
       id: 'floor_gold',
       type: DecorType.floor,
-      name: 'Gold Tiles',
-      cost: 500,
+      name: 'Gilded Floor',
+      cost: 2000,
       assetPath: '0xFFFFD700',
     ),
     DecorItem(
       id: 'floor_grass',
       type: DecorType.floor,
-      name: 'Grass',
-      cost: 300,
+      name: 'Overgrown',
+      cost: 1200,
       assetPath: '0xFF1B5E20',
     ),
 
@@ -167,158 +230,176 @@ class DecorationData {
     DecorItem(
       id: 'plant_none',
       type: DecorType.plant,
-      name: 'No Plant',
+      name: 'No Decor',
       cost: 0,
       isDefault: true,
     ),
     DecorItem(
       id: 'plant_fern',
       type: DecorType.plant,
-      name: 'Fern',
-      cost: 150,
-      iconData: IconData(0xe3ae, fontFamily: 'MaterialIcons'), // local_florist
+      name: 'Forest Fern',
+      cost: 400,
+      iconData: IconData(0xe3ae, fontFamily: 'MaterialIcons'),
     ),
     DecorItem(
       id: 'plant_bamboo',
       type: DecorType.plant,
-      name: 'Bamboo',
-      cost: 250,
-      iconData: IconData(0xe337, fontFamily: 'MaterialIcons'), // grass
+      name: 'Zen Stalks',
+      cost: 600,
+      iconData: IconData(0xe337, fontFamily: 'MaterialIcons'),
     ),
     DecorItem(
       id: 'plant_tree',
       type: DecorType.plant,
-      name: 'Ficus',
-      cost: 400,
-      iconData: IconData(0xe3e4, fontFamily: 'MaterialIcons'), // nature
+      name: 'Ancient Bonsai',
+      cost: 1200,
+      iconData: IconData(0xe3e4, fontFamily: 'MaterialIcons'),
     ),
     DecorItem(
       id: 'plant_lotus',
       type: DecorType.plant,
-      name: 'Lotus',
-      cost: 600,
-      iconData: IconData(0xeb3f, fontFamily: 'MaterialIcons'), // spa
+      name: 'Sacred Lotus',
+      cost: 1800,
+      iconData: IconData(0xeb3f, fontFamily: 'MaterialIcons'),
     ),
     DecorItem(
       id: 'plant_cactus',
       type: DecorType.plant,
-      name: 'Cactus',
-      cost: 350,
-      iconData: IconData(0xeecb, fontFamily: 'MaterialIcons'), // texture
+      name: 'Desert Spike',
+      cost: 900,
+      iconData: IconData(0xeecb, fontFamily: 'MaterialIcons'),
     ),
 
     // --- LAMPS ---
     DecorItem(
       id: 'lamp_none',
       type: DecorType.lamp,
-      name: 'No Lamp',
+      name: 'Natural Light',
       cost: 0,
       isDefault: true,
     ),
     DecorItem(
       id: 'lamp_classic',
       type: DecorType.lamp,
-      name: 'Table Lamp',
-      cost: 150,
-      iconData: IconData(0xe363, fontFamily: 'MaterialIcons'), // light
+      name: 'Ambient Shade',
+      cost: 300,
+      iconData: IconData(0xe363, fontFamily: 'MaterialIcons'),
     ),
     DecorItem(
       id: 'lamp_modern',
       type: DecorType.lamp,
-      name: 'Modern Bulb',
-      cost: 300,
-      iconData: IconData(0xe364, fontFamily: 'MaterialIcons'), // lightbulb
+      name: 'Plasma Bulb',
+      cost: 800,
+      iconData: IconData(0xe364, fontFamily: 'MaterialIcons'),
     ),
     DecorItem(
       id: 'lamp_sun',
       type: DecorType.lamp,
-      name: 'Sun Lamp',
-      cost: 500,
-      iconData: IconData(0xe6e6, fontFamily: 'MaterialIcons'), // wb_sunny
+      name: 'Solar Flare',
+      cost: 2000,
+      iconData: IconData(0xe6e6, fontFamily: 'MaterialIcons'),
     ),
     DecorItem(
       id: 'lamp_torch',
       type: DecorType.lamp,
-      name: 'Torch',
-      cost: 450,
-      iconData: IconData(
-        0xef4b,
-        fontFamily: 'MaterialIcons',
-      ), // local_fire_department
+      name: 'Dungeon Fire',
+      cost: 1500,
+      iconData: IconData(0xef4b, fontFamily: 'MaterialIcons'),
+    ),
+    DecorItem(
+      id: 'lamp_neon',
+      type: DecorType.lamp,
+      name: 'Neon Vibes',
+      cost: 2500,
+      iconData: IconData(0xe0b3, fontFamily: 'MaterialIcons'), // Bolt/Electric
     ),
 
     // --- RUGS ---
     DecorItem(
       id: 'rug_none',
       type: DecorType.rug,
-      name: 'No Rug',
+      name: 'Bare Floor',
       cost: 0,
       isDefault: true,
     ),
     DecorItem(
       id: 'rug_shag',
       type: DecorType.rug,
-      name: 'Shag Rug',
-      cost: 100,
-      iconData: IconData(0xe395, fontFamily: 'MaterialIcons'), // layers
+      name: 'Comfy Shag',
+      cost: 200,
+      iconData: IconData(0xe395, fontFamily: 'MaterialIcons'),
     ),
     DecorItem(
       id: 'rug_round',
       type: DecorType.rug,
-      name: 'Circle Rug',
-      cost: 200,
-      iconData: IconData(0xef4a, fontFamily: 'MaterialIcons'), // circle
+      name: 'Mystic Circle',
+      cost: 600,
+      iconData: IconData(0xef4a, fontFamily: 'MaterialIcons'),
+    ),
+    DecorItem(
+      id: 'rug_geometric',
+      type: DecorType.rug,
+      name: 'Geometric Mat',
+      cost: 1200,
+      iconData: IconData(0xe02f, fontFamily: 'MaterialIcons'), // Dashboard/Grid
     ),
     DecorItem(
       id: 'rug_royal',
       type: DecorType.rug,
-      name: 'Royal Rug',
-      cost: 450,
-      iconData: IconData(0xe660, fontFamily: 'MaterialIcons'), // widgets
+      name: 'Royal Tapestry',
+      cost: 1500,
+      iconData: IconData(0xe660, fontFamily: 'MaterialIcons'),
     ),
     DecorItem(
       id: 'rug_persian',
       type: DecorType.rug,
-      name: 'Persian',
-      cost: 600,
-      iconData: IconData(0xe2eb, fontFamily: 'MaterialIcons'), // grid_on
+      name: 'Grand Persian',
+      cost: 2500,
+      iconData: IconData(0xe2eb, fontFamily: 'MaterialIcons'),
     ),
 
     // --- PAINTINGS ---
     DecorItem(
       id: 'paint_none',
       type: DecorType.painting,
-      name: 'No Art',
+      name: 'Empty Wall',
       cost: 0,
       isDefault: true,
     ),
     DecorItem(
       id: 'paint_abstract',
       type: DecorType.painting,
-      name: 'Abstract',
-      cost: 300,
-      iconData: IconData(0xe332, fontFamily: 'MaterialIcons'), // image
+      name: 'Modern Chaos',
+      cost: 700,
+      iconData: IconData(0xe332, fontFamily: 'MaterialIcons'),
+    ),
+    DecorItem(
+      id: 'paint_surreal',
+      type: DecorType.painting,
+      name: 'Surreal Dream',
+      cost: 1500,
+      iconData: IconData(0xe0cd, fontFamily: 'MaterialIcons'), // Filter/Art
     ),
     DecorItem(
       id: 'paint_portrait',
       type: DecorType.painting,
-      name: 'Portrait',
-      cost: 500,
-      iconData: IconData(0xe853, fontFamily: 'MaterialIcons'), // account_box
+      name: 'Noble Ancestor',
+      cost: 1200,
+      iconData: IconData(0xe853, fontFamily: 'MaterialIcons'),
     ),
     DecorItem(
       id: 'paint_landscape',
       type: DecorType.painting,
-      name: 'Landscape',
-      cost: 800,
-      iconData: IconData(0xe336, fontFamily: 'MaterialIcons'), // landscape
+      name: 'Mountain Peak',
+      cost: 2500,
+      iconData: IconData(0xe336, fontFamily: 'MaterialIcons'),
     ),
     DecorItem(
       id: 'paint_starry',
       type: DecorType.painting,
-      name: 'Starry',
-      cost: 1000,
-      iconData: IconData(0xe43d, fontFamily: 'MaterialIcons'), // shutter_speed
+      name: 'Deep Cosmos',
+      cost: 5000,
+      iconData: IconData(0xe43d, fontFamily: 'MaterialIcons'),
     ),
   ];
 }

@@ -46,59 +46,61 @@ class GameBoard extends StatelessWidget {
                       final count = tubes.length;
 
                       final widgets = List.generate(count, (index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: TubeWidget(
-                            key: tubeKeys != null && index < tubeKeys!.length
-                                ? tubeKeys![index]
-                                : null,
-                            tube: tubes[index],
-                            isSelected: state.selectedTubeIndex == index,
-                            hiddenItemCount: hiddenTargets?[index] ?? 0,
-                            skinColor: tubeSkinColor,
-                            isCompleted:
-                                tubes[index].items.isNotEmpty &&
-                                tubes[index].isCompleted &&
-                                (hiddenTargets?[index] ?? 0) == 0,
-                            onTap: isInteractive
-                                ? () {
-                                    final bloc = context.read<GameBloc>();
-                                    // Local Validity Check for Shake Feedback
-                                    final selectedIndex =
-                                        state.selectedTubeIndex;
-                                    if (selectedIndex != null &&
-                                        selectedIndex != index) {
-                                      final source = state.tubes[selectedIndex];
-                                      final target = state.tubes[index];
-                                      final isValid = _isMoveValid(
-                                        source,
-                                        target,
-                                      );
+                        return _StaggeredEntrance(
+                          index: index,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: TubeWidget(
+                              key: tubeKeys != null && index < tubeKeys!.length
+                                  ? tubeKeys![index]
+                                  : null,
+                              tube: tubes[index],
+                              isSelected: state.selectedTubeIndex == index,
+                              hiddenItemCount: hiddenTargets?[index] ?? 0,
+                              skinColor: tubeSkinColor,
+                              isCompleted:
+                                  tubes[index].items.isNotEmpty &&
+                                  tubes[index].isCompleted &&
+                                  (hiddenTargets?[index] ?? 0) == 0,
+                              onTap: isInteractive
+                                  ? () {
+                                      final bloc = context.read<GameBloc>();
+                                      // Local Validity Check for Shake Feedback
+                                      final selectedIndex =
+                                          state.selectedTubeIndex;
+                                      if (selectedIndex != null &&
+                                          selectedIndex != index) {
+                                        final source =
+                                            state.tubes[selectedIndex];
+                                        final target = state.tubes[index];
+                                        final isValid = _isMoveValid(
+                                          source,
+                                          target,
+                                        );
 
-                                      if (!isValid) {
-                                        // Trigger Shake
-                                        if (tubeKeys != null &&
-                                            index < tubeKeys!.length) {
-                                          final key = tubeKeys![index];
-                                          (key.currentState as TubeWidgetState?)
-                                              ?.shake();
+                                        if (!isValid) {
+                                          // Trigger Shake
+                                          if (tubeKeys != null &&
+                                              index < tubeKeys!.length) {
+                                            final key = tubeKeys![index];
+                                            (key.currentState
+                                                    as TubeWidgetState?)
+                                                ?.shake();
+                                          }
                                         }
                                       }
+                                      bloc.add(TubeTapped(index));
                                     }
-                                    bloc.add(TubeTapped(index));
-                                  }
-                                : () {},
+                                  : () {},
+                            ),
                           ),
                         );
                       });
 
                       // Layout Logic:
-                      // Ensure rows are balanced and symmetric.
-                      // Max 4 columns works best for vertical mobile and split screens.
                       const int maxColumns = 8;
                       List<Widget> rows = [];
 
-                      // Chunk the widgets
                       for (int i = 0; i < count; i += maxColumns) {
                         final end = (i + maxColumns < count)
                             ? i + maxColumns
@@ -111,11 +113,8 @@ class GameBoard extends StatelessWidget {
                             children: chunk,
                           ),
                         );
-                        // Add spacing if not last
                         if (end < count) {
-                          rows.add(
-                            const SizedBox(height: 5),
-                          ); // Increased spacing slightly
+                          rows.add(const SizedBox(height: 5));
                         }
                       }
 
@@ -125,52 +124,6 @@ class GameBoard extends StatelessWidget {
                       );
                     },
                   ),
-                  if (state.isFrozen)
-                    IgnorePointer(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.lightBlue.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.cyanAccent,
-                            width: 2,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.blue.withValues(alpha: 0.5),
-                              blurRadius: 20,
-                              spreadRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Icon(Icons.ac_unit, color: Colors.white, size: 40),
-                            SizedBox(height: 8),
-                            Text(
-                              'FROZEN!',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24,
-                                shadows: [
-                                  Shadow(
-                                    blurRadius: 10,
-                                    color: Colors.blue,
-                                    offset: Offset(0, 0),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),
@@ -185,5 +138,66 @@ class GameBoard extends StatelessWidget {
     if (target.isFull) return false;
     if (target.isEmpty) return true;
     return source.topItem!.colorIndex == target.topItem!.colorIndex;
+  }
+}
+
+class _StaggeredEntrance extends StatefulWidget {
+  final int index;
+  final Widget child;
+
+  const _StaggeredEntrance({required this.index, required this.child});
+
+  @override
+  State<_StaggeredEntrance> createState() => _StaggeredEntranceState();
+}
+
+class _StaggeredEntranceState extends State<_StaggeredEntrance>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scale;
+  late Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _scale = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
+
+    _opacity = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    // Delay based on index
+    Future.delayed(Duration(milliseconds: 100 * widget.index), () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Opacity(
+          opacity: _opacity.value,
+          child: Transform.scale(scale: _scale.value, child: child),
+        );
+      },
+      child: widget.child,
+    );
   }
 }

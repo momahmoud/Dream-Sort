@@ -1,5 +1,6 @@
 import 'package:dream_sort/features/game/models/decor_models.dart';
 import 'package:flutter/material.dart';
+import 'package:dream_sort/l10n/app_localizations.dart';
 
 class DecorCategoryTabs extends StatelessWidget {
   final DecorType selectedType;
@@ -51,7 +52,7 @@ class DecorCategoryTabs extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    type.name.toUpperCase(),
+                    _getCategoryName(context, type).toUpperCase(),
                     style: TextStyle(
                       color: isSelected ? Colors.black : Colors.white70,
                       fontWeight: FontWeight.bold,
@@ -66,6 +67,28 @@ class DecorCategoryTabs extends StatelessWidget {
         }).toList(),
       ),
     );
+  }
+
+  String _getCategoryName(BuildContext context, DecorType type) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (type) {
+      case DecorType.wall:
+        return l10n.decorTypeWall;
+      case DecorType.floor:
+        return l10n.decorTypeFloor;
+      case DecorType.rug:
+        return l10n.decorTypeRug;
+      case DecorType.plant:
+        return l10n.decorTypePlant;
+      case DecorType.lamp:
+        return l10n.decorTypeLamp;
+      case DecorType.painting:
+        return l10n.decorTypePainting;
+      case DecorType.tube:
+        return l10n.decorTypeTube;
+      case DecorType.ball:
+        return l10n.decorTypeBall;
+    }
   }
 
   IconData _getCategoryIcon(DecorType type) {
@@ -84,6 +107,8 @@ class DecorCategoryTabs extends StatelessWidget {
         return Icons.image;
       case DecorType.tube:
         return Icons.science;
+      case DecorType.ball:
+        return Icons.circle;
     }
   }
 }

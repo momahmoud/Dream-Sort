@@ -197,6 +197,20 @@ class AudioController {
     } catch (_) {}
   }
 
+  Future<void> playComplete() async {
+    if (await Vibration.hasVibrator()) {
+      Vibration.vibrate(duration: 100);
+    }
+
+    if (isMuted) return;
+    try {
+      final p = AudioPlayer();
+      await p.setPlaybackRate(1.2); // Slightly higher pitch
+      await p.play(AssetSource('audio/equip.wav'));
+      p.onPlayerComplete.listen((_) => p.dispose());
+    } catch (_) {}
+  }
+
   Future<void> playMusic() async {
     // Disabled by user request
     return;

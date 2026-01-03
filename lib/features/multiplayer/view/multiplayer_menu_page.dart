@@ -52,7 +52,9 @@ class _MultiplayerMenuPageState extends State<MultiplayerMenuPage> {
                 )
                 .then((_) {
                   // Reset menu when coming back
-                  context.read<MultiplayerMenuBloc>().add(ResetMenu());
+                  if (context.mounted) {
+                    context.read<MultiplayerMenuBloc>().add(ResetMenu());
+                  }
                 });
           }
         },
@@ -176,7 +178,7 @@ class _MultiplayerMenuPageState extends State<MultiplayerMenuPage> {
               border: Border.all(color: Colors.white24, width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -264,7 +266,7 @@ class _MultiplayerMenuPageState extends State<MultiplayerMenuPage> {
                   border: Border.all(color: Colors.white24, width: 1.5),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.black.withValues(alpha: 0.5),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -338,7 +340,7 @@ class _MultiplayerMenuPageState extends State<MultiplayerMenuPage> {
                                   height: 40,
                                   decoration: BoxDecoration(
                                     color: isSelected
-                                        ? AppTheme.accent.withOpacity(0.3)
+                                        ? AppTheme.accent.withValues(alpha: 0.3)
                                         : Colors.black26,
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
@@ -430,7 +432,7 @@ class _MultiplayerMenuPageState extends State<MultiplayerMenuPage> {
               border: Border.all(color: Colors.white24, width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -649,7 +651,7 @@ class _LevelButton extends StatelessWidget {
         width: 60,
         height: 60,
         decoration: BoxDecoration(
-          color: getColor().withOpacity(0.2),
+          color: getColor().withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: getColor(), width: 2),
         ),

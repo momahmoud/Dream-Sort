@@ -19,11 +19,11 @@ class DecorPage extends StatefulWidget {
 
 class _DecorPageState extends State<DecorPage> {
   late GameRepository _repo;
-  int _stars = 0;
+  int _coins = 0;
   List<String> _unlocked = [];
   Map<String, String> _equipped = {};
 
-  DecorType _selectedType = DecorType.wall;
+  DecorType _selectedType = DecorType.tube;
 
   @override
   void initState() {
@@ -34,7 +34,7 @@ class _DecorPageState extends State<DecorPage> {
 
   void _refreshData() {
     setState(() {
-      _stars = _repo.getStars();
+      _coins = _repo.getCoins();
       _unlocked = _repo.getUnlockedItems();
       _equipped = _repo.getEquippedItems();
     });
@@ -42,8 +42,8 @@ class _DecorPageState extends State<DecorPage> {
 
   void _buyItem(DecorItem item) async {
     final l10n = AppLocalizations.of(context)!;
-    if (_stars >= item.cost) {
-      await _repo.spendStars(item.cost);
+    if (_coins >= item.cost) {
+      await _repo.spendCoins(item.cost);
       await _repo.unlockItem(item.id);
       await _repo.equipItem(item.type.name, item.id);
       if (mounted) context.read<AudioController>().playBuy();
@@ -52,7 +52,7 @@ class _DecorPageState extends State<DecorPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.notEnoughStars(item.cost)),
+            content: Text(l10n.notEnoughCoins(item.cost)),
             backgroundColor: Colors.redAccent,
             duration: const Duration(seconds: 1),
           ),
@@ -109,7 +109,7 @@ class _DecorPageState extends State<DecorPage> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '$_stars',
+                  '$_coins',
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
