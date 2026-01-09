@@ -1,3 +1,4 @@
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:dream_sort/core/services/ads_service.dart';
 import 'package:dream_sort/core/theme/app_theme.dart';
 import 'package:dream_sort/features/game/view/decor_page.dart';
@@ -29,6 +30,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    FlutterNativeSplash.remove();
     // Initialize Ads and show Consent Form if required
     AdsService.init();
 

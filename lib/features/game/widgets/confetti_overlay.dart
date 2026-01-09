@@ -64,12 +64,17 @@ class _ConfettiOverlayState extends State<ConfettiOverlay>
   @override
   Widget build(BuildContext context) {
     return IgnorePointer(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          _updateParticles(constraints.biggest);
-          return CustomPaint(
-            painter: ConfettiPainter(_particles),
-            size: Size.infinite,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              _updateParticles(constraints.biggest);
+              return CustomPaint(
+                painter: ConfettiPainter(_particles),
+                size: Size.infinite,
+              );
+            },
           );
         },
       ),
