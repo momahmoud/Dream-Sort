@@ -11,7 +11,7 @@ class AdsService {
   static bool _isRewardedLoading = false;
 
   static bool _isInitialized = false;
-  static const bool _adsEnabled = false; // Ads disabled for now
+  static const bool _adsEnabled = true; // Ads disabled for now
 
   static bool get isEnabled => _adsEnabled;
 

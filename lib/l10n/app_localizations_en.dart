@@ -251,6 +251,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get watchVideo => 'Watch Video';
 
   @override
+  String get watchAdPlus50Coins => 'Watch Ad +50 Coins';
+
+  @override
   String get earnFreeCoins =>
       'Watch a short video to instantly earn\n+50 Free Coins!';
 

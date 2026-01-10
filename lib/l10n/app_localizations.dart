@@ -548,6 +548,12 @@ abstract class AppLocalizations {
   /// **'Watch Video'**
   String get watchVideo;
 
+  /// No description provided for @watchAdPlus50Coins.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch Ad +50 Coins'**
+  String get watchAdPlus50Coins;
+
   /// No description provided for @earnFreeCoins.
   ///
   /// In en, this message translates to:

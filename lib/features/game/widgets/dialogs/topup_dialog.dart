@@ -16,7 +16,7 @@ class TopupDialog extends StatelessWidget {
       description: l10n.earnFreeCoins,
       icon: SvgPicture.asset('assets/images/coin.svg', width: 48, height: 48),
       borderColor: Colors.amber,
-      actionLabel: 'Watch Video',
+      actionLabel: l10n.watchAdPlus50Coins,
       actionIconData: Icons.play_circle_filled_rounded,
       actionGradientColors: const [Color(0xFFFFC107), Color(0xFFFF9800)],
       actionShadowColor: Colors.amber,

@@ -27,7 +27,7 @@ class GameRepository {
   }
 
   int getCoins() {
-    return _box?.get(coinsKey, defaultValue: 120) ?? 120;
+    return _box?.get(coinsKey, defaultValue: 100) ?? 100;
   }
 
   Future<void> addCoins(int amount) async {

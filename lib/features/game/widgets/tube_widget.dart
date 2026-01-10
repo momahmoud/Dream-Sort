@@ -185,8 +185,8 @@ class TubeWidgetState extends State<TubeWidget> with TickerProviderStateMixin {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.amber.withOpacity(
-                                _glowAnimation.value,
+                              color: Colors.amber.withValues(
+                                alpha: _glowAnimation.value,
                               ),
                               blurRadius: 15,
                               spreadRadius: 2,

@@ -448,7 +448,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           color: color,
           boxShadow: [
             BoxShadow(
-              color: color.withValues(alpha: color.opacity * 2),
+              color: color.withValues(alpha: color.a * 2),
               blurRadius: size / 2,
               spreadRadius: size / 4,
             ),

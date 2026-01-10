@@ -250,6 +250,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get watchVideo => 'شاهد الفيديو';
 
   @override
+  String get watchAdPlus50Coins => 'شاهد إعلان +50 عملة';
+
+  @override
   String get earnFreeCoins => 'شاهد فيديو قصير لتربح فوراً\n+50 عملة مجانية!';
 
   @override

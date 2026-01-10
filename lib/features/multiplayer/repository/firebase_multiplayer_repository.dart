@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:dream_sort/features/game/models/game_models.dart';
 import 'package:dream_sort/features/multiplayer/models/multiplayer_room.dart';
 import 'package:dream_sort/features/multiplayer/repository/multiplayer_repository.dart';
@@ -37,10 +39,10 @@ class FirebaseMultiplayerRepository implements MultiplayerRepository {
     required String playerName,
     required int levelId,
   }) async {
-    print('Attempting to create room for $playerName');
+    debugPrint('Attempting to create room for $playerName');
     try {
       final code = _generateRoomCode();
-      print('Generated Room Code: $code');
+      debugPrint('Generated Room Code: $code');
 
       final roomRef = _db.ref('rooms/$code');
 
@@ -65,17 +67,17 @@ class FirebaseMultiplayerRepository implements MultiplayerRepository {
         levelId: levelId,
       );
 
-      print('Setting room data in Firebase...');
+      debugPrint('Setting room data in Firebase...');
       await roomRef.set(room.toJson());
-      print('Room created successfully in Firebase!');
+      debugPrint('Room created successfully in Firebase!');
       _lastRoom = room;
       _currentRoomId = code;
       _subscribeToRoom(code);
 
       return code;
     } catch (e, stack) {
-      print('FAILED to create room: $e');
-      print(stack);
+      debugPrint('FAILED to create room: $e');
+      debugPrint(stack.toString());
       rethrow;
     }
   }
@@ -175,7 +177,7 @@ class FirebaseMultiplayerRepository implements MultiplayerRepository {
           _lastRoom = room;
           _roomController.add(room);
         } catch (e) {
-          print('Error parsing room update: $e');
+          debugPrint('Error parsing room update: $e');
         }
       }
     });
