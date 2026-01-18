@@ -214,7 +214,7 @@ class DailyRewardDialog extends StatelessWidget {
     } else {
       // First time login
       streak = 1;
-      reward = 50;
+      reward = 25;
       shouldShow = true;
     }
 
@@ -235,8 +235,8 @@ class DailyRewardDialog extends StatelessWidget {
   }
 
   static int _calculateReward(int streak) {
-    if (streak <= 1) return 50;
-    if (streak >= 7) return 250;
-    return 50 + (streak - 1) * 20; // 50, 70, 90, 110, 130, 150, 250
+    if (streak <= 1) return 25;
+    if (streak >= 7) return 100;
+    return 25 + (streak - 1) * 10; // 25, 35, 45, 55, 65, 75, 100
   }
 }

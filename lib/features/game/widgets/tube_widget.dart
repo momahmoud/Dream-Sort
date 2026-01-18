@@ -146,7 +146,7 @@ class TubeWidgetState extends State<TubeWidget> with TickerProviderStateMixin {
     final int capacity = widget.tube.capacity;
 
     final double tubeBodyHeight = bottomPad + (capacity * ballSize) + topPad;
-    final double totalWidgetHeight = tubeBodyHeight + 30.0;
+    final double totalWidgetHeight = tubeBodyHeight + 15.0;
     const double tubeWidth = 32.0;
     const double tubeRadius = tubeWidth / 2;
 

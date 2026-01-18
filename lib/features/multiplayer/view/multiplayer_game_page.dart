@@ -153,33 +153,83 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
               SafeArea(
                 child: Row(
                   children: [
-                    // PLAYER 2 (Left side, Rotated 180 degrees so they can play from the other side)
+                    // PLAYER 1 (Left side, Rotated 180 degrees so they can play from the other side)
                     Expanded(
                       child: RotatedBox(
                         quarterTurns: 2,
                         child: BlocProvider.value(
-                          value: _blocP2,
+                          value: _blocP1,
                           child: BlocListener<GameBloc, GameState>(
                             listener: (context, state) {
                               if (state.status == GameStatus.won) {
-                                _handleWin('PLAYER 2');
+                                _handleWin('PLAYER 1');
                               }
                               // Attack Logic
                               if (state.completedTubeCount >
-                                  _p2CompletedTubes) {
-                                _p2CompletedTubes = state.completedTubeCount;
-                                // Attack P1!
-                                _blocP1.add(AddPenalty());
+                                  _p1CompletedTubes) {
+                                _p1CompletedTubes = state.completedTubeCount;
+                                // Attack P2!
+                                _blocP2.add(AddPenalty());
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(l10n.sentPenalty('PLAYER 2')),
+                                    content: Text(l10n.sentPenalty('PLAYER 1')),
                                     duration: const Duration(milliseconds: 500),
-                                    backgroundColor: Colors.redAccent,
+                                    backgroundColor: Colors.blueAccent,
                                   ),
                                 );
                               }
                             },
                             child: RepaintBoundary(
+                              child: Center(
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(
+                                        color: Colors.white24,
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: GameBoard(
+                                      onWin: () {}, // Handled by listener
+                                      tubeSkinColor: tubeSkinColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // PLAYER 2 (Right side)
+                    Expanded(
+                      child: BlocProvider.value(
+                        value: _blocP2,
+                        child: BlocListener<GameBloc, GameState>(
+                          listener: (context, state) {
+                            if (state.status == GameStatus.won) {
+                              _handleWin('PLAYER 2');
+                            }
+                            // Attack Logic
+                            if (state.completedTubeCount > _p2CompletedTubes) {
+                              _p2CompletedTubes = state.completedTubeCount;
+                              // Attack P1!
+                              _blocP1.add(AddPenalty());
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(l10n.sentPenalty('PLAYER 2')),
+                                  duration: const Duration(milliseconds: 500),
+                                  backgroundColor: Colors.redAccent,
+                                ),
+                              );
+                            }
+                          },
+                          child: RepaintBoundary(
+                            child: Center(
                               child: Container(
                                 decoration: const BoxDecoration(
                                   border: Border(
@@ -202,78 +252,32 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
                         ),
                       ),
                     ),
-
-                    // PLAYER 1 (Right side)
-                    Expanded(
-                      child: BlocProvider.value(
-                        value: _blocP1,
-                        child: BlocListener<GameBloc, GameState>(
-                          listener: (context, state) {
-                            if (state.status == GameStatus.won) {
-                              _handleWin('PLAYER 1');
-                            }
-                            // Attack Logic
-                            if (state.completedTubeCount > _p1CompletedTubes) {
-                              _p1CompletedTubes = state.completedTubeCount;
-                              // Attack P2!
-                              _blocP2.add(AddPenalty());
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(l10n.sentPenalty('PLAYER 1')),
-                                  duration: const Duration(milliseconds: 500),
-                                  backgroundColor: Colors.blueAccent,
-                                ),
-                              );
-                            }
-                          },
-                          child: RepaintBoundary(
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  left: BorderSide(
-                                    color: Colors.white24,
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: GameBoard(
-                                  onWin: () {}, // Handled by listener
-                                  tubeSkinColor: tubeSkinColor,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
 
-              // Player 2 Label (Left side - rotated for their view)
+              // Player 1 Label (Left side - rotated for their view)
               Positioned(
                 left: 20,
                 top: MediaQuery.of(context).size.height / 2 - 140,
                 child: RotatedBox(
                   quarterTurns: 2,
                   child: _buildPlayerLabel(
-                    player: 'P2',
-                    color: Colors.redAccent,
-                    score: _p2CompletedTubes,
+                    player: 'P1',
+                    color: Colors.blueAccent,
+                    score: _p1CompletedTubes,
                   ),
                 ),
               ),
 
-              // Player 1 Label (Right side)
+              // Player 2 Label (Right side)
               Positioned(
                 right: 20,
                 bottom: MediaQuery.of(context).size.height / 2 - 140,
                 child: _buildPlayerLabel(
-                  player: 'P1',
-                  color: Colors.blueAccent,
-                  score: _p1CompletedTubes,
+                  player: 'P2',
+                  color: Colors.redAccent,
+                  score: _p2CompletedTubes,
                 ),
               ),
 
@@ -300,10 +304,10 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
               //   ),
               // ),
 
-              // P2 CONTROLS (Top Left - Rotated)
+              // P1 CONTROLS (Bottom Left - Rotated)
               Positioned(
-                bottom: MediaQuery.of(context).padding.top + 30,
-                left: 40,
+                top: MediaQuery.of(context).padding.top + 30,
+                right: 40,
                 child: RotatedBox(
                   quarterTurns: 2,
                   child: Column(
@@ -312,13 +316,13 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
                     children: [
                       // Undo
                       BlocProvider.value(
-                        value: _blocP2,
+                        value: _blocP1,
                         child: BlocBuilder<GameBloc, GameState>(
                           builder: (context, state) {
                             return GameFloatingButton(
                               icon: Icons.undo_rounded,
                               disabled: state.history.isEmpty,
-                              onTap: () => _blocP2.add(UndoMove()),
+                              onTap: () => _blocP1.add(UndoMove()),
                             );
                           },
                         ),
@@ -327,29 +331,29 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
                       // Reset
                       GameFloatingButton(
                         icon: Icons.refresh_rounded,
-                        onTap: () => _blocP2.add(ResetLevel()),
+                        onTap: () => _blocP1.add(ResetLevel()),
                       ),
                     ],
                   ),
                 ),
               ),
 
-              // P1 CONTROLS (Bottom Right - Normal)
+              // P2 CONTROLS (Top Right - Normal)
               Positioned(
-                top: MediaQuery.of(context).padding.top + 30,
-                right: 30,
+                bottom: MediaQuery.of(context).padding.top + 30,
+                left: 30,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Undo
                     BlocProvider.value(
-                      value: _blocP1,
+                      value: _blocP2,
                       child: BlocBuilder<GameBloc, GameState>(
                         builder: (context, state) {
                           return GameFloatingButton(
                             icon: Icons.undo_rounded,
                             disabled: state.history.isEmpty,
-                            onTap: () => _blocP1.add(UndoMove()),
+                            onTap: () => _blocP2.add(UndoMove()),
                           );
                         },
                       ),
@@ -358,7 +362,7 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
                     // Reset
                     GameFloatingButton(
                       icon: Icons.refresh_rounded,
-                      onTap: () => _blocP1.add(ResetLevel()),
+                      onTap: () => _blocP2.add(ResetLevel()),
                     ),
                   ],
                 ),

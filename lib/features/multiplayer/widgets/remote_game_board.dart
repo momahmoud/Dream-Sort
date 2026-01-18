@@ -28,6 +28,19 @@ class RemoteGameBoard extends StatelessWidget {
                 builder: (context, constraints) {
                   final count = tubes.length;
 
+                  // Calculate max columns based on available width
+                  // Each tube is 32px wide + 8px padding on each side = 48px
+                  const double tubeWidth = 32.0;
+                  const double tubePadding = 16.0;
+                  const double tubeWithPadding = tubeWidth + tubePadding;
+
+                  final screenWidth = MediaQuery.of(context).size.width;
+                  // Remote board is typically smaller (half screen), so less padding
+                  final availableWidth = screenWidth / 2 - 16;
+                  final maxColumns = (availableWidth / tubeWithPadding)
+                      .floor()
+                      .clamp(3, 5);
+
                   final widgets = List.generate(count, (index) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -40,9 +53,7 @@ class RemoteGameBoard extends StatelessWidget {
                     );
                   });
 
-                  // Layout Logic specific for this smaller view potentially,
-                  // but we'll stick to the standard logic for consistency.
-                  const int maxColumns = 5;
+                  // Layout Logic with dynamic columns:
                   List<Widget> rows = [];
 
                   for (int i = 0; i < count; i += maxColumns) {

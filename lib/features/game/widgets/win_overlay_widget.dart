@@ -160,11 +160,11 @@ class _WinOverlayWidgetState extends State<WinOverlayWidget>
               // Coin Result
               BlocBuilder<GameBloc, GameState>(
                 builder: (context, state) {
-                  int reward = state.isDailyChallenge ? 100 : 25;
+                  int reward = state.isDailyChallenge ? 40 : 10;
                   if (state.undosUsed == 0) {
-                    reward += state.isDailyChallenge ? 50 : 20;
+                    reward += state.isDailyChallenge ? 20 : 10;
                   } else if (state.undosUsed <= 2) {
-                    reward += state.isDailyChallenge ? 25 : 10;
+                    reward += state.isDailyChallenge ? 10 : 5;
                   }
 
                   return Container(

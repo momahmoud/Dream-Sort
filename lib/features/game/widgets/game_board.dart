@@ -45,6 +45,22 @@ class GameBoard extends StatelessWidget {
                       final tubes = state.tubes;
                       final count = tubes.length;
 
+                      // Calculate max columns based on available width
+                      // Each tube is 32px wide + 8px padding on each side = 48px
+                      // Add some margin for safety
+                      const double tubeWidth = 32.0;
+                      const double tubePadding = 16.0; // 8px on each side
+                      const double tubeWithPadding = tubeWidth + tubePadding;
+
+                      // Get screen width and calculate how many tubes can fit
+                      final screenWidth = MediaQuery.of(context).size.width;
+                      final availableWidth =
+                          screenWidth -
+                          32; // 16px padding on each side of screen
+                      final maxColumns = (availableWidth / tubeWithPadding)
+                          .floor()
+                          .clamp(3, 8);
+
                       final widgets = List.generate(count, (index) {
                         return _StaggeredEntrance(
                           index: index,
@@ -97,8 +113,7 @@ class GameBoard extends StatelessWidget {
                         );
                       });
 
-                      // Layout Logic:
-                      const int maxColumns = 8;
+                      // Layout Logic with dynamic columns:
                       List<Widget> rows = [];
 
                       for (int i = 0; i < count; i += maxColumns) {
@@ -114,7 +129,7 @@ class GameBoard extends StatelessWidget {
                           ),
                         );
                         if (end < count) {
-                          rows.add(const SizedBox(height: 5));
+                          rows.add(const SizedBox(height: 0));
                         }
                       }
 

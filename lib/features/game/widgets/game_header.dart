@@ -155,7 +155,7 @@ class GameHeader extends StatelessWidget implements PreferredSizeWidget {
                         Navigator.pop(ctx);
                         AdsService.showRewarded(
                           onUserEarnedReward: (amount) {
-                            const reward = 50;
+                            const reward = 25;
                             if (context.mounted) {
                               context.read<GameBloc>().add(AddCurrency(reward));
                               ScaffoldMessenger.of(context).showSnackBar(

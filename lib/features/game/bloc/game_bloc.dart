@@ -381,12 +381,12 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       if (state.levelId >= maxLevel) _repo.unlockLevel(state.levelId + 1);
 
       // PERFECT REWARD SYSTEM
-      int baseReward = state.isDailyChallenge ? 100 : 25;
+      int baseReward = state.isDailyChallenge ? 40 : 10;
       int bonus = 0;
       if (state.undosUsed == 0) {
-        bonus = state.isDailyChallenge ? 50 : 20;
+        bonus = state.isDailyChallenge ? 20 : 10;
       } else if (state.undosUsed <= 2) {
-        bonus = state.isDailyChallenge ? 25 : 10;
+        bonus = state.isDailyChallenge ? 10 : 5;
       }
 
       final totalReward = baseReward + bonus;
@@ -495,8 +495,8 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         }
 
         // Add Stars
-        _repo.addCoins(25);
-        final coinCountAfterWin = newStars + 25;
+        _repo.addCoins(10);
+        final coinCountAfterWin = newStars + 10;
 
         emit(
           state.copyWith(
@@ -544,13 +544,13 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         if (state.levelId >= maxLevel) {
           _repo.unlockLevel(state.levelId + 1);
         }
-        _repo.addCoins(25);
+        _repo.addCoins(10);
 
         emit(
           state.copyWith(
             tubes: newTubes,
             status: GameStatus.won,
-            coinCount: newStars + 25,
+            coinCount: newStars + 10,
             clearSelection: true,
             completedTubeCount: completed,
           ),
@@ -700,9 +700,16 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     // 1. No tube selected yet
     if (sourceIndex == null) {
       if (!state.tubes[tappedIndex].isEmpty) {
+        final topItem = state.tubes[tappedIndex].topItem!;
         // Prevent selecting if top item is hidden
-        if (state.tubes[tappedIndex].topItem!.isHidden) {
+        if (topItem.isHidden) {
           // Maybe play error sound?
+          return;
+        }
+        // Prevent selecting if top item is a stone/blocker
+        if (topItem.isStone) {
+          HapticFeedback.heavyImpact();
+          _audio.playError();
           return;
         }
 
@@ -824,12 +831,12 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         }
 
         // PERFECT REWARD SYSTEM
-        int baseReward = state.isDailyChallenge ? 100 : 25;
+        int baseReward = state.isDailyChallenge ? 40 : 10;
         int bonus = 0;
         if (state.undosUsed == 0) {
-          bonus = state.isDailyChallenge ? 50 : 20;
+          bonus = state.isDailyChallenge ? 20 : 10;
         } else if (state.undosUsed <= 2) {
-          bonus = state.isDailyChallenge ? 25 : 10;
+          bonus = state.isDailyChallenge ? 10 : 5;
         }
 
         final totalReward = baseReward + bonus;
@@ -876,6 +883,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   bool _isValidMove(Tube source, Tube target) {
     if (source.isEmpty) return false;
+    if (source.topItem!.isStone) return false; // Cannot move stones/blockers
     if (target.isFull) return false;
     if (target.isEmpty) return true;
     return source.topItem!.colorIndex == target.topItem!.colorIndex;
