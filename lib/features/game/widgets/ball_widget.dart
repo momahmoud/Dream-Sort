@@ -22,10 +22,10 @@ class BallWidget extends StatefulWidget {
   State<BallWidget> createState() => _BallWidgetState();
 }
 
-class _BallWidgetState extends State<BallWidget>
-    with SingleTickerProviderStateMixin {
+class _BallWidgetState extends State<BallWidget> with TickerProviderStateMixin {
   late AnimationController _revealController;
   late Animation<double> _flareAnimation;
+  late AnimationController _fogController;
 
   @override
   void initState() {
@@ -37,6 +37,11 @@ class _BallWidgetState extends State<BallWidget>
     _flareAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _revealController, curve: Curves.easeOut),
     );
+
+    _fogController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat(reverse: true);
   }
 
   @override
@@ -50,6 +55,7 @@ class _BallWidgetState extends State<BallWidget>
   @override
   void dispose() {
     _revealController.dispose();
+    _fogController.dispose();
     super.dispose();
   }
 
@@ -461,31 +467,49 @@ class _BallWidgetState extends State<BallWidget>
     final height = widget.size * (44 / 48);
     final opacity = widget.opacity;
 
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: Colors.grey.shade800.withValues(alpha: opacity * 0.9),
-        borderRadius: BorderRadius.circular(width * 0.2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2 * opacity),
-            blurRadius: 2,
-            offset: const Offset(1, 2),
+    return AnimatedBuilder(
+      animation: _fogController,
+      builder: (context, _) {
+        final breathe = 1.0 + (_fogController.value * 0.1); // 1.0 -> 1.1
+        final glowOpacity = 0.2 + (_fogController.value * 0.3); // 0.2 -> 0.5
+
+        return Transform.scale(
+          scale: breathe,
+          child: Container(
+            width: width,
+            height: height,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade800.withValues(alpha: opacity * 0.9),
+              borderRadius: BorderRadius.circular(width * 0.2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blueGrey.withValues(
+                    alpha: glowOpacity * opacity,
+                  ),
+                  blurRadius: 6,
+                  spreadRadius: 1,
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2 * opacity),
+                  blurRadius: 2,
+                  offset: const Offset(1, 2),
+                ),
+              ],
+              border: Border.all(
+                color: Colors.white12.withValues(alpha: opacity * 0.3),
+                width: 1,
+              ),
+            ),
+            child: Center(
+              child: Icon(
+                Icons.cloud_rounded,
+                color: Colors.white24.withValues(alpha: glowOpacity * opacity),
+                size: 16,
+              ),
+            ),
           ),
-        ],
-        border: Border.all(
-          color: Colors.white12.withValues(alpha: opacity * 0.3),
-          width: 1,
-        ),
-      ),
-      child: Center(
-        child: Icon(
-          Icons.cloud_rounded,
-          color: Colors.white10.withValues(alpha: 0.2 * opacity),
-          size: 16,
-        ),
-      ),
+        );
+      },
     );
   }
 

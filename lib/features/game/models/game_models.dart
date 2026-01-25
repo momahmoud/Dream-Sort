@@ -55,13 +55,18 @@ class Tube extends Equatable {
 
   /// Checks if the tube is "completed" (Full and all same color)
   bool get isCompleted {
+    // Empty is considered "sorted"
     if (items.isEmpty) {
-      return true; // Empty is considered "sorted" usually, or wait, usually empty tubes are fine.
-    }
-    // A tube is "Sorted" if it's empty OR (Full AND all items same color)
-    if (isEmpty) {
       return true;
     }
+
+    // If the tube contains only stones (blockers), it is considered "completed"
+    // effectively ignoring it for the win condition.
+    if (items.every((item) => item.isStone)) {
+      return true;
+    }
+
+    // Standard completion: Full AND all items same color
     if (!isFull) return false;
 
     final firstColor = items.first.colorIndex;

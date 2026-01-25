@@ -11,7 +11,7 @@ class AdsService {
   static bool _isRewardedLoading = false;
 
   static bool _isInitialized = false;
-  static const bool _adsEnabled = true; // Ads disabled for now
+  static const bool _adsEnabled = true;
 
   static bool get isEnabled => _adsEnabled;
 
@@ -26,6 +26,8 @@ class AdsService {
     RequestConfiguration configuration = RequestConfiguration(
       tagForChildDirectedTreatment: TagForChildDirectedTreatment.yes,
       maxAdContentRating: MaxAdContentRating.g,
+      // Add your test device ID from the logs here to test with real ads logic or verify behavior
+      testDeviceIds: kDebugMode ? [] : [],
     );
     await MobileAds.instance.updateRequestConfiguration(configuration);
 
@@ -42,6 +44,12 @@ class AdsService {
       },
       (FormError error) {
         debugPrint('Consent info update failed: ${error.message}');
+        // Helpful hint for the developer
+        if (error.message.contains('no form(s) configured')) {
+          debugPrint(
+            'HINT: To fix this, go to AdMob Console > Privacy & messaging > GDPR and create a message for this app.',
+          );
+        }
         _initializeMobileAdsSdk();
       },
     );

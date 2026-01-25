@@ -4,6 +4,8 @@ import 'package:dream_sort/features/game/widgets/tube_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/audio/audio_controller.dart';
+
 class GameBoard extends StatelessWidget {
   final bool isInteractive;
   final VoidCallback? onWin;
@@ -54,9 +56,7 @@ class GameBoard extends StatelessWidget {
 
                       // Get screen width and calculate how many tubes can fit
                       final screenWidth = MediaQuery.of(context).size.width;
-                      final availableWidth =
-                          screenWidth -
-                          32; // 16px padding on each side of screen
+                      final availableWidth = screenWidth - 32;
                       final maxColumns = (availableWidth / tubeWithPadding)
                           .floor()
                           .clamp(3, 8);
@@ -81,6 +81,24 @@ class GameBoard extends StatelessWidget {
                               onTap: isInteractive
                                   ? () {
                                       final bloc = context.read<GameBloc>();
+
+                                      // STONE CHECK (Visual Feedback)
+                                      final thisTube = state.tubes[index];
+                                      if (!thisTube.isEmpty &&
+                                          thisTube.topItem!.isStone) {
+                                        // Trigger Stone Effect locally
+                                        context
+                                            .read<AudioController>()
+                                            .playStoneImpact();
+                                        if (tubeKeys != null &&
+                                            index < tubeKeys!.length) {
+                                          (tubeKeys![index].currentState
+                                                  as TubeWidgetState?)
+                                              ?.triggerStoneEffect();
+                                        }
+                                        return; // Don't send event to bloc (or send it if bloc needs to log it, but bloc just errors anyway)
+                                      }
+
                                       // Local Validity Check for Shake Feedback
                                       final selectedIndex =
                                           state.selectedTubeIndex;

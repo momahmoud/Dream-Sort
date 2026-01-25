@@ -133,6 +133,26 @@ class AudioController {
     } catch (_) {}
   }
 
+  // New: Stone Impact (Heavy, dull thud)
+  Future<void> playStoneImpact() async {
+    if (await Vibration.hasVibrator()) {
+      Vibration.vibrate(duration: 40); // Heavy thud
+    }
+
+    if (isMuted) return;
+    try {
+      final player = _getNextPoolPlayer();
+      await player.stop();
+      // Very low pitch and volume to simulate a rock thud
+      await player.setPlaybackRate(0.6);
+      await player.setVolume(0.8);
+      await player.play(
+        AssetSource('audio/pop.wav'),
+        mode: PlayerMode.lowLatency,
+      );
+    } catch (_) {}
+  }
+
   // New: Error buzz (reusing pop with very low pitch/fast repetition if possible, or just a distinct low thud)
   Future<void> playError() async {
     if (await Vibration.hasVibrator()) {

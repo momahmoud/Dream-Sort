@@ -12,10 +12,8 @@ class GameBottomControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 55,
-      left: 16,
-      right: 16,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(15, 0, 15, 1),
       child: BlocBuilder<GameBloc, GameState>(
         builder: (context, state) {
           const int addCost = 50;

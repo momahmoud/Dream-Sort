@@ -14,6 +14,7 @@ import 'package:dream_sort/features/game/widgets/game_header.dart';
 import 'package:dream_sort/features/game/widgets/room_view.dart';
 import 'package:dream_sort/features/game/widgets/game_board.dart';
 import 'package:dream_sort/features/game/widgets/win_overlay_widget.dart';
+import 'package:dream_sort/features/game/widgets/hint_overlay.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -181,10 +182,10 @@ class _GamePageState extends State<GamePage> {
                   // 2. Main Game Content
                   SafeArea(
                     bottom: false,
-                    child: Column(
+                    child: Stack(
                       children: [
                         // The Tubes Grid
-                        Expanded(
+                        Positioned.fill(
                           child: BlocBuilder<GameBloc, GameState>(
                             builder: (context, state) {
                               return AnimatedSwitcher(
@@ -209,20 +210,39 @@ class _GamePageState extends State<GamePage> {
                                     tubeSkinColor: tubeSkinColor,
                                     tubeKeys: _tubeKeys,
                                     hiddenTargets: _hiddenTargets,
-                                    bottomPadding:
-                                        100, // Safe space for buttons
+                                    bottomPadding: 140,
                                   ),
                                 ),
                               );
                             },
                           ),
                         ),
-                        if (_isBannerAdReady && _bannerAd != null)
-                          SizedBox(
-                            width: _bannerAd!.size.width.toDouble(),
-                            height: _bannerAd!.size.height.toDouble(),
-                            child: AdWidget(ad: _bannerAd!),
+                        // Controls & Ad
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const GameBottomControls(),
+                              BlocBuilder<GameBloc, GameState>(
+                                builder: (context, state) {
+                                  if (_isBannerAdReady &&
+                                      _bannerAd != null &&
+                                      state.status != GameStatus.won) {
+                                    return SizedBox(
+                                      width: _bannerAd!.size.width.toDouble(),
+                                      height: _bannerAd!.size.height.toDouble(),
+                                      child: AdWidget(ad: _bannerAd!),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+                            ],
                           ),
+                        ),
                       ],
                     ),
                   ),
@@ -239,8 +259,22 @@ class _GamePageState extends State<GamePage> {
                     },
                   ),
 
-                  // 4. Floating Controls (Undo, Add, Shuffle, Restart)
-                  const GameBottomControls(),
+                  // 4. Hint Overlay
+                  BlocBuilder<GameBloc, GameState>(
+                    builder: (context, state) {
+                      if (state.hintMove != null &&
+                          state.hintMove!.sourceIndex < _tubeKeys.length &&
+                          state.hintMove!.targetIndex < _tubeKeys.length) {
+                        return HintOverlay(
+                          sourceKey: _tubeKeys[state.hintMove!.sourceIndex],
+                          targetKey: _tubeKeys[state.hintMove!.targetIndex],
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+
+                  // 4. Floating Controls (moved to Column)
 
                   // 5. Win Overlay & Confetti
                   BlocConsumer<GameBloc, GameState>(

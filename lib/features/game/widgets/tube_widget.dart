@@ -5,6 +5,7 @@ import 'package:dream_sort/features/game/models/game_models.dart';
 import 'package:dream_sort/features/game/repo/game_repository.dart';
 import 'package:dream_sort/features/game/widgets/ball_widget.dart';
 import 'package:dream_sort/features/game/widgets/particle_burst.dart';
+import 'package:dream_sort/features/game/widgets/stone_particle_burst.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -40,6 +41,7 @@ class TubeWidgetState extends State<TubeWidget> with TickerProviderStateMixin {
 
   bool _isPressed = false;
   bool _triggerBurst = false;
+  bool _triggerStoneBurst = false;
 
   late AnimationController _glowController;
   late Animation<double> _glowAnimation;
@@ -133,6 +135,13 @@ class TubeWidgetState extends State<TubeWidget> with TickerProviderStateMixin {
 
   void shake() {
     _shakeController.forward(from: 0);
+  }
+
+  void triggerStoneEffect() {
+    if (mounted) {
+      setState(() => _triggerStoneBurst = true);
+      shake(); // Also shake for impact
+    }
   }
 
   @override
@@ -313,6 +322,23 @@ class TubeWidgetState extends State<TubeWidget> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
+
+                Positioned(
+                  top: -20, // Slightly above rim
+                  left: -35 + tubeRadius,
+                  child: SizedBox(
+                    width: 70,
+                    height: 70,
+                    child: StoneParticleBurst(
+                      isBursting: _triggerStoneBurst,
+                      onComplete: () {
+                        if (mounted) {
+                          setState(() => _triggerStoneBurst = false);
+                        }
+                      },
+                    ),
+                  ),
+                ),
 
                 if (widget.isCompleted)
                   Positioned(

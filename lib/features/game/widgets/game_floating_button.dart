@@ -17,8 +17,8 @@ class GameFloatingButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final widget = Container(
-      width: 50,
-      height: 50,
+      width: 45,
+      height: 45,
       decoration: BoxDecoration(
         color: disabled
             ? Colors.black.withValues(alpha: 0.2)

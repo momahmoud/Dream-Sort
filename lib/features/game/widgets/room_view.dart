@@ -3,6 +3,7 @@ import 'package:dream_sort/features/game/models/decor_models.dart';
 import 'package:dream_sort/features/game/models/game_models.dart';
 import 'package:dream_sort/features/game/widgets/ball_widget.dart';
 import 'package:dream_sort/features/game/widgets/tube_widget.dart';
+import 'package:dream_sort/features/game/widgets/dynamic_background.dart';
 import 'package:flutter/material.dart';
 
 class RoomView extends StatelessWidget {
@@ -50,19 +51,10 @@ class RoomView extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        // WALL (Background)
+        // WALL (Background - Dynamic)
         Positioned.fill(
           bottom: 150,
-          child: Container(
-            decoration: BoxDecoration(
-              color: wallColor,
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [wallColor, Color.lerp(wallColor, Colors.black, 0.2)!],
-              ),
-            ),
-          ),
+          child: DynamicBackground(baseColor: wallColor),
         ),
 
         // Floating Motes (Atmosphere)
