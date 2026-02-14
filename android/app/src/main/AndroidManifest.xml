@@ -6,6 +6,7 @@
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:allowBackup="false"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="false">
         <activity
             android:name=".MainActivity"
@@ -38,7 +39,7 @@
         <!-- AdMob App ID -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-7845241086697562~8937421163"/>
+            android:value="ca-app-pub-8247997383766310~1165780265"/>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

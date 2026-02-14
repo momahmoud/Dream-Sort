@@ -43,27 +43,53 @@ class _GamePageState extends State<GamePage> {
   // Ads
   BannerAd? _bannerAd;
   bool _isBannerAdReady = false;
+  bool _isBannerAdLoading = false;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _loadBannerAd();
   }
 
-  void _loadBannerAd() {
+  Future<void> _loadBannerAd() async {
+    if (_isBannerAdReady || _bannerAd != null || _isBannerAdLoading) return;
+    _isBannerAdLoading = true;
+
+    final AnchoredAdaptiveBannerAdSize? size =
+        await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+          MediaQuery.of(context).size.width.truncate(),
+        );
+
+    if (size == null) {
+      debugPrint('Unable to get height of anchored banner.');
+      _isBannerAdLoading = false;
+      return;
+    }
+
     _bannerAd = AdsService.loadBanner(
+      size: size,
       onAdLoaded: (ad) {
         if (!mounted) {
           ad.dispose();
           return;
         }
         setState(() {
+          _bannerAd = ad as BannerAd;
           _isBannerAdReady = true;
+          _isBannerAdLoading = false;
         });
       },
       onAdFailed: (error) {
         debugPrint('BannerAd failed to load: $error');
         _isBannerAdReady = false;
+        _isBannerAdLoading = false;
+        _bannerAd?.dispose();
+        _bannerAd = null;
       },
     );
   }

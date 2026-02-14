@@ -6,6 +6,7 @@ import 'package:dream_sort/core/locale/locale_cubit.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dream_sort/features/game/repo/game_repository.dart';
+import 'package:dream_sort/core/services/ads_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -41,6 +42,7 @@ void main() async {
     await Hive.initFlutter();
   }
   await dotenv.load(fileName: ".env");
+  await AdsService.init();
 
   final gameRepo = GameRepository();
   await gameRepo.init();
