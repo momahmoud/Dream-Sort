@@ -4,9 +4,15 @@ import 'game_action_dialog.dart';
 
 class AddTubeDialog extends StatelessWidget {
   final VoidCallback onConfirm;
+  final VoidCallback onWatchAd;
   final int cost;
 
-  const AddTubeDialog({super.key, required this.onConfirm, required this.cost});
+  const AddTubeDialog({
+    super.key,
+    required this.onConfirm,
+    required this.onWatchAd,
+    required this.cost,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +29,9 @@ class AddTubeDialog extends StatelessWidget {
       onAction: onConfirm,
       cost: '$cost)',
       cancelLabel: l10n.noThanks,
+      onSecondaryAction: onWatchAd,
+      secondaryActionLabel: l10n.watchAd,
+      secondaryActionIconData: Icons.play_circle_outline_rounded,
     );
   }
 }

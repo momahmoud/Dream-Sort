@@ -13,23 +13,15 @@ class HintDialog extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return GameActionDialog(
       title: l10n.needHint,
-      description: l10n.hintDesc,
+      description: l10n.hintDesc(cost),
       icon: const Icon(Icons.lightbulb_rounded, color: Colors.white, size: 24),
-      borderColor: Colors
-          .orange, // Icon was white, but container border was implied or absent?
-      // Original:
-      // border: Border.all(color: Colors.orange, width: 2) NO, it didn't have border on icon??
-      // Wait, let's check GamePage.
-      // Hint Dialog Icon Container: border: Border.all(color: Colors.white.withValues(alpha: 0.1)).
-      // Actually, looking at Shuffle: border: Colors.blue.
-      // Hint: I don't see the specific icon container border in the snippet I saw earlier for Hint.
-      // I'll assume Orange for consistency.
-      actionLabel: l10n.getHint,
+      borderColor: Colors.orange,
+      actionLabel: l10n.getHint(cost),
       actionIconData: Icons.lightbulb_rounded,
       actionGradientColors: const [Colors.orange, Colors.deepOrange],
       actionShadowColor: Colors.orange,
       onAction: onConfirm,
-      cost: ')',
+      cost: cost.toString(),
       cancelLabel: l10n.cancel,
     );
   }

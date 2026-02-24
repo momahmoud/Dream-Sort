@@ -42,6 +42,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get quitGame => 'الخروج';
 
   @override
+  String get quitGameDesc =>
+      'سيتم فقدان تقدمك. هل أنت متأكد أنك تريد المغادرة؟';
+
+  @override
+  String get quitGameAction => 'خروج';
+
+  @override
+  String get keepPlaying => 'متابعة اللعب';
+
+  @override
   String get selectLevel => 'اختر المستوى';
 
   @override
@@ -106,6 +116,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get dreamSorted => 'تم الفرز!';
+
+  @override
+  String get rewardBase => 'أساسي';
+
+  @override
+  String get rewardUndoBonus => 'مكافأة التراجع';
+
+  @override
+  String get rewardTimeBonus => 'مكافأة الوقت';
+
+  @override
+  String get rewardComboBonus => 'مكافأة التسلسل';
 
   @override
   String levelTitle(int level) {
@@ -228,6 +250,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String get perfect => 'ممتاز!';
 
   @override
+  String get resetLevelTitle => 'إعادة تشغيل المستوى؟';
+
+  @override
+  String get resetLevelDesc => 'سيتم فقدان تقدمك وستُعاد ضبط التراجعات.';
+
+  @override
+  String get resetLevelAction => 'إعادة التشغيل';
+
+  @override
+  String get outOfUndosTitle => 'نفدت التراجعات!';
+
+  @override
+  String outOfUndosDesc(int count) {
+    return 'اشترِ $count تراجعات إضافية للمتابعة.';
+  }
+
+  @override
+  String buyUndos(int count, int cost) {
+    return 'شراء $count تراجعات ($cost عملة)';
+  }
+
+  @override
+  String watchAdFreeUndos(int count) {
+    return 'شاهد إعلانًا — $count تراجعات مجانًا';
+  }
+
+  @override
   String get needHelp => 'هل تحتاج مساعدة؟';
 
   @override
@@ -244,16 +293,25 @@ class AppLocalizationsAr extends AppLocalizations {
       'أعد ترتيب الكرات للعثور على حركات جديدة!\n(الأنابيب المكتملة تظل آمنة)';
 
   @override
-  String get shuffleAction => 'إعادة الترتيب (-20';
+  String shuffleAction(int cost) {
+    return 'إعادة الترتيب ($cost)';
+  }
 
   @override
   String get watchVideo => 'شاهد الفيديو';
 
   @override
-  String get watchAdPlus50Coins => 'شاهد إعلان +50 عملة';
+  String get watchAd => 'شاهد الإعلان';
 
   @override
-  String get earnFreeCoins => 'شاهد فيديو قصير لتربح فوراً\n+50 عملة مجانية!';
+  String get notEnoughCoinsWatchAd =>
+      'ليس لديك عملات كافية! شاهد إعلاناً بدلاً من ذلك.';
+
+  @override
+  String get watchAdPlus50Coins => 'شاهد إعلان +25 عملة';
+
+  @override
+  String get earnFreeCoins => 'شاهد فيديو قصير لتربح فوراً\n+25 عملة مجانية!';
 
   @override
   String get noThanks => 'لا، شكراً';
@@ -265,11 +323,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get needHint => 'هل تحتاج تلميحاً؟';
 
   @override
-  String get hintDesc =>
-      'عالق؟ دع الذكاء الاصطناعي يجد لك أفضل حركة!\nالتكلفة: 25 عملة.';
+  String hintDesc(int cost) {
+    return 'عالق؟ دع الذكاء الاصطناعي يجد لك أفضل حركة!\nالتكلفة: $cost عملة.';
+  }
 
   @override
-  String get getHint => 'الحصول على تلميح (-25';
+  String getHint(int cost) {
+    return 'الحصول على التلميح ($cost)';
+  }
+
+  @override
+  String get undoText => 'تراجع';
 
   @override
   String earnedCoins(Object amount) {
@@ -286,6 +350,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get claim => 'استلام';
+
+  @override
+  String comeBackTomorrowForCoins(int amount) {
+    return 'عد غداً لتحصل على $amount عملة!';
+  }
 
   @override
   String get decorTypeTube => 'أنابيب';

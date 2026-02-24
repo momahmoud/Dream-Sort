@@ -16,19 +16,12 @@ class ShuffleDialog extends StatelessWidget {
       description: l10n.shuffleDesc,
       icon: const Icon(Icons.shuffle_rounded, color: Colors.blue, size: 40),
       borderColor: Colors.blue,
-      actionLabel: l10n.shuffleAction,
+      actionLabel: l10n.shuffleAction(cost),
       actionIconData: Icons.shuffle_rounded,
       actionGradientColors: const [Color(0xFF2196F3), Color(0xFF1976D2)],
       actionShadowColor: Colors.blue,
       onAction: onConfirm,
-      cost:
-          ')', // The generic dialog adds the icon, but logic might vary lightly. For now, strict adherence.
-      // Wait, in GamePage, it was `Text(l10n.shuffleAction) ... Text(')')`.
-      // In AddTube it was cost then ')'.
-      // My GameActionDialog logic: Text(actionLabel) ... Text(cost).
-      // If I pass cost as "$cost)", it resolves.
-      // Actually shuffle dialog had: "Shuffle (Icon) )" ? No "Shuffle (Coin) )"
-      // Let's adjust to match visual: "Shuffle 20)" -> label="Shuffle", cost="20)"
+      cost: cost.toString(),
       cancelLabel: l10n.cancel,
     );
   }

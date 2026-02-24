@@ -42,6 +42,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quitGame => 'Quit Game';
 
   @override
+  String get quitGameDesc =>
+      'Your progress will be lost. Are you sure you want to leave?';
+
+  @override
+  String get quitGameAction => 'Quit';
+
+  @override
+  String get keepPlaying => 'Keep Playing';
+
+  @override
   String get selectLevel => 'Select Level';
 
   @override
@@ -106,6 +116,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dreamSorted => 'DREAM SORTED!';
+
+  @override
+  String get rewardBase => 'Base';
+
+  @override
+  String get rewardUndoBonus => 'Undo Bonus';
+
+  @override
+  String get rewardTimeBonus => 'Time Bonus';
+
+  @override
+  String get rewardComboBonus => 'Combo Bonus';
 
   @override
   String levelTitle(int level) {
@@ -228,6 +250,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get perfect => 'PERFECT!';
 
   @override
+  String get resetLevelTitle => 'Restart Level?';
+
+  @override
+  String get resetLevelDesc =>
+      'Your progress will be lost and undos will reset.';
+
+  @override
+  String get resetLevelAction => 'Restart';
+
+  @override
+  String get outOfUndosTitle => 'Out of Undos!';
+
+  @override
+  String outOfUndosDesc(int count) {
+    return 'Buy $count more undos to keep going.';
+  }
+
+  @override
+  String buyUndos(int count, int cost) {
+    return 'Buy $count Undos ($cost coins)';
+  }
+
+  @override
+  String watchAdFreeUndos(int count) {
+    return 'Watch Ad — Free $count Undos';
+  }
+
+  @override
   String get needHelp => 'Need Help?';
 
   @override
@@ -245,17 +295,25 @@ class AppLocalizationsEn extends AppLocalizations {
       'Rearrange balls to find new moves!\n(Completed tubes stay safe)';
 
   @override
-  String get shuffleAction => 'Shuffle (-20';
+  String shuffleAction(int cost) {
+    return 'Shuffle ($cost)';
+  }
 
   @override
   String get watchVideo => 'Watch Video';
 
   @override
-  String get watchAdPlus50Coins => 'Watch Ad +50 Coins';
+  String get watchAd => 'Watch Ad';
+
+  @override
+  String get notEnoughCoinsWatchAd => 'Not enough coins! Watch an ad instead.';
+
+  @override
+  String get watchAdPlus50Coins => 'Watch Ad +25 Coins';
 
   @override
   String get earnFreeCoins =>
-      'Watch a short video to instantly earn\n+50 Free Coins!';
+      'Watch a short video to instantly earn\n+25 Free Coins!';
 
   @override
   String get noThanks => 'No, thanks';
@@ -267,11 +325,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get needHint => 'Need a Hint?';
 
   @override
-  String get hintDesc =>
-      'Stuck? Let the AI find the best move for you!\nCost: 25 Coins.';
+  String hintDesc(int cost) {
+    return 'Stuck? Let the AI find the best move for you!\nCost: $cost Coins.';
+  }
 
   @override
-  String get getHint => 'Get Hint (-25';
+  String getHint(int cost) {
+    return 'Get Hint ($cost)';
+  }
+
+  @override
+  String get undoText => 'Undo';
 
   @override
   String earnedCoins(Object amount) {
@@ -288,6 +352,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get claim => 'CLAIM';
+
+  @override
+  String comeBackTomorrowForCoins(int amount) {
+    return 'Come back tomorrow for $amount coins!';
+  }
 
   @override
   String get decorTypeTube => 'Tubes';

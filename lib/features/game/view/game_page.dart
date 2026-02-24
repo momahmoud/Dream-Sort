@@ -7,6 +7,7 @@ import 'package:dream_sort/features/game/bloc/game_bloc.dart';
 import 'package:dream_sort/features/game/models/decor_models.dart';
 import 'package:dream_sort/features/game/repo/game_repository.dart';
 import 'package:dream_sort/features/game/widgets/confetti_overlay.dart';
+import 'package:dream_sort/features/game/widgets/dialogs/game_action_dialog.dart';
 import 'package:dream_sort/features/game/widgets/flying_ball_manager.dart';
 import 'package:dream_sort/features/game/widgets/game_bottom_controls.dart';
 import 'package:dream_sort/features/game/widgets/game_header.dart';
@@ -15,7 +16,9 @@ import 'package:dream_sort/features/game/widgets/room_view.dart';
 import 'package:dream_sort/features/game/widgets/game_board.dart';
 import 'package:dream_sort/features/game/widgets/win_overlay_widget.dart';
 import 'package:dream_sort/features/game/widgets/hint_overlay.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:dream_sort/l10n/app_localizations.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -39,6 +42,7 @@ class GamePage extends StatefulWidget {
 class _GamePageState extends State<GamePage> {
   List<GlobalKey> _tubeKeys = [];
   final Map<int, int> _hiddenTargets = {};
+  DateTime? _lastLevelStartTime;
 
   // Ads
   BannerAd? _bannerAd;
@@ -100,9 +104,38 @@ class _GamePageState extends State<GamePage> {
     super.dispose();
   }
 
+  Future<bool> _showQuitDialog(BuildContext innerContext) async {
+    final state = innerContext.read<GameBloc>().state;
+    if (state.moveHistory.isEmpty || state.status == GameStatus.won) {
+      return true;
+    }
+    final l10n = AppLocalizations.of(innerContext)!;
+    final confirmed = await showDialog<bool>(
+      context: innerContext,
+      builder: (_) => GameActionDialog(
+        title: l10n.quitGame,
+        description: l10n.quitGameDesc,
+        icon: const Icon(Icons.exit_to_app_rounded, color: Colors.white, size: 36),
+        borderColor: Colors.redAccent,
+        actionLabel: l10n.quitGameAction,
+        actionIconData: Icons.exit_to_app_rounded,
+        actionGradientColors: const [Color(0xFFE53935), Color(0xFFB71C1C)],
+        actionShadowColor: Colors.red,
+        onAction: () => Navigator.of(innerContext).pop(true),
+        cancelLabel: l10n.keepPlaying,
+      ),
+    );
+    return confirmed == true;
+  }
+
   void _handleGameStateChange(BuildContext context, GameState state) {
     // 1. Manage Tube Keys
-    if (_tubeKeys.length != state.tubes.length) {
+    bool isNewGameInstance = _lastLevelStartTime != state.levelStartTime;
+    if (isNewGameInstance) {
+      _lastLevelStartTime = state.levelStartTime;
+    }
+
+    if (_tubeKeys.length != state.tubes.length || isNewGameInstance) {
       setState(() {
         _tubeKeys = List.generate(state.tubes.length, (_) => GlobalKey());
       });
@@ -139,7 +172,10 @@ class _GamePageState extends State<GamePage> {
           ),
       child: BlocListener<GameBloc, GameState>(
         listener: (context, state) => _handleGameStateChange(context, state),
-        child: ValueListenableBuilder(
+        child: Stack(
+          children: [
+            const _PressureModeRunner(),
+            ValueListenableBuilder(
           valueListenable: Hive.box(
             'game_data',
           ).listenable(keys: ['equipped_items']),
@@ -159,7 +195,15 @@ class _GamePageState extends State<GamePage> {
               } catch (_) {}
             }
 
-            return Scaffold(
+            return PopScope(
+              canPop: false,
+              onPopInvokedWithResult: (didPop, _) async {
+                if (didPop) return;
+                final nav = Navigator.of(context);
+                final canLeave = await _showQuitDialog(context);
+                if (canLeave) nav.pop();
+              },
+              child: Scaffold(
               extendBodyBehindAppBar: true,
               appBar: const GameHeader(),
               body: Stack(
@@ -231,7 +275,9 @@ class _GamePageState extends State<GamePage> {
                                   );
                                 },
                                 child: RepaintBoundary(
-                                  key: ValueKey(state.levelId),
+                                  key: ValueKey(
+                                    '${state.levelId}_${state.levelStartTime?.millisecondsSinceEpoch ?? 0}',
+                                  ),
                                   child: GameBoard(
                                     tubeSkinColor: tubeSkinColor,
                                     tubeKeys: _tubeKeys,
@@ -300,7 +346,18 @@ class _GamePageState extends State<GamePage> {
                     },
                   ),
 
-                  // 4. Floating Controls (moved to Column)
+                  // Combo flash overlay
+                  BlocBuilder<GameBloc, GameState>(
+                    builder: (context, state) {
+                      final amount = state.lastComboReward;
+                      if (amount == null) return const SizedBox.shrink();
+                      return _ComboFlashOverlay(
+                        amount: amount,
+                        onClear: () =>
+                            context.read<GameBloc>().add(ClearComboReward()),
+                      );
+                    },
+                  ),
 
                   // 5. Win Overlay & Confetti
                   BlocConsumer<GameBloc, GameState>(
@@ -331,10 +388,154 @@ class _GamePageState extends State<GamePage> {
                   ),
                 ],
               ),
+            ),   // closes Scaffold
+          );     // closes PopScope
+          },
+        ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ComboFlashOverlay extends StatefulWidget {
+  final int amount;
+  final VoidCallback onClear;
+
+  const _ComboFlashOverlay({
+    required this.amount,
+    required this.onClear,
+  });
+
+  @override
+  State<_ComboFlashOverlay> createState() => _ComboFlashOverlayState();
+}
+
+class _ComboFlashOverlayState extends State<_ComboFlashOverlay>
+    with SingleTickerProviderStateMixin {
+  Timer? _clearTimer;
+  late AnimationController _controller;
+  late Animation<double> _scale;
+  late Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _scale = Tween<double>(begin: 0.5, end: 1.2).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
+    );
+    _opacity = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+    _controller.forward();
+    _clearTimer = Timer(const Duration(milliseconds: 2200), () {
+      if (mounted) widget.onClear();
+    });
+  }
+
+  @override
+  void dispose() {
+    _clearTimer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Center(
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Opacity(
+              opacity: _opacity.value,
+              child: Transform.scale(
+                scale: _scale.value,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withValues(alpha: 0.9),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.amber.withValues(alpha: 0.5),
+                        blurRadius: 16,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '+${widget.amount}',
+                        style: const TextStyle(
+                          color: Colors.black87,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Text(
+                        'Combo!',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             );
           },
         ),
       ),
     );
   }
+}
+
+class _PressureModeRunner extends StatefulWidget {
+  const _PressureModeRunner();
+
+  @override
+  State<_PressureModeRunner> createState() => _PressureModeRunnerState();
+}
+
+class _PressureModeRunnerState extends State<_PressureModeRunner> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      final bloc = context.read<GameBloc>();
+      final state = bloc.state;
+      if (state.levelId < 40 || state.status != GameStatus.playing) return;
+      final at = state.lastActivityAt;
+      if (at == null) return;
+      if (DateTime.now().difference(at).inSeconds >= 10) {
+        bloc.add(PressureFreezeTube());
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox.shrink();
 }

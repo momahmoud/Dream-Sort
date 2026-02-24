@@ -348,7 +348,7 @@ class _OnlineMultiplayerGamePageState extends State<OnlineMultiplayerGamePage> {
                         builder: (context, state) {
                           return GameFloatingButton(
                             icon: Icons.undo_rounded,
-                            disabled: state.history.isEmpty,
+                            disabled: state.moveHistory.isEmpty,
                             onTap: () => _gameBloc.add(UndoMove()),
                           );
                         },

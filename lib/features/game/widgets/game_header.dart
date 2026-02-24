@@ -1,5 +1,8 @@
 import 'package:dream_sort/core/services/ads_service.dart';
 import 'package:dream_sort/features/game/bloc/game_bloc.dart';
+import 'package:dream_sort/features/game/constants/reward_constants.dart';
+import 'package:dream_sort/features/game/widgets/dialogs/buy_undos_dialog.dart';
+import 'package:dream_sort/features/game/widgets/dialogs/game_action_dialog.dart';
 import 'package:dream_sort/features/game/widgets/dialogs/topup_dialog.dart';
 import 'package:dream_sort/features/game/widgets/game_menu_sheet.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +15,26 @@ class GameHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  void _showBuyUndosDialog(BuildContext context, GameBloc bloc) {
+    showDialog(
+      context: context,
+      builder: (_) => BuyUndosDialog(
+        cost: RewardConstants.undoPackCost,
+        count: RewardConstants.undoPackCount,
+        onConfirm: () {
+          Navigator.of(context).pop();
+          bloc.add(const BuyUndos());
+        },
+        onWatchAd: () {
+          Navigator.of(context).pop();
+          AdsService.showRewarded(
+            onUserEarnedReward: (_) => bloc.add(const BuyUndos(free: true)),
+          );
+        },
+      ),
+    );
+  }
 
   void _showMenuBottomSheet(BuildContext context, GameBloc bloc) {
     showModalBottomSheet(
@@ -47,19 +70,13 @@ class GameHeader extends StatelessWidget implements PreferredSizeWidget {
       ),
       title: BlocBuilder<GameBloc, GameState>(
         builder: (context, state) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'L.V ${state.levelId}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                ),
-              ),
-            ],
+          return Text(
+            'L.V ${state.levelId}',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
           );
         },
       ),
@@ -68,14 +85,16 @@ class GameHeader extends StatelessWidget implements PreferredSizeWidget {
         // Undo
         BlocBuilder<GameBloc, GameState>(
           builder: (context, state) {
-            final isDisabled =
-                state.history.isEmpty || state.remainingUndos <= 0;
+            final noHistory = state.moveHistory.isEmpty;
+            final depleted = state.remainingUndos <= 0;
+            final isDisabled = noHistory;
+            final bloc = context.read<GameBloc>();
             return GestureDetector(
               onTap: isDisabled
                   ? null
-                  : () {
-                      context.read<GameBloc>().add(UndoMove());
-                    },
+                  : depleted
+                  ? () => _showBuyUndosDialog(context, bloc)
+                  : () => bloc.add(UndoMove()),
               child: AnimatedOpacity(
                 duration: const Duration(milliseconds: 200),
                 opacity: isDisabled ? 0.3 : 1.0,
@@ -85,32 +104,38 @@ class GameHeader extends StatelessWidget implements PreferredSizeWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: depleted && !isDisabled
+                        ? Colors.purple.withValues(alpha: 0.25)
+                        : Colors.white.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: depleted && !isDisabled
+                          ? Colors.purpleAccent.withValues(alpha: 0.6)
+                          : Colors.white.withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
-                        Icons.undo_rounded,
+                      Icon(
+                        depleted && !isDisabled
+                            ? Icons.undo_rounded
+                            : Icons.undo_rounded,
                         color: Colors.white,
                         size: 18,
                       ),
-                      if (state.remainingUndos > 0) ...[
-                        const SizedBox(width: 6),
-                        Text(
-                          '${state.remainingUndos}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                      const SizedBox(width: 6),
+                      Text(
+                        depleted && !isDisabled
+                            ? '+'
+                            : '${state.remainingUndos}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
-                      ],
+                      ),
                     ],
                   ),
                 ),
@@ -120,24 +145,60 @@ class GameHeader extends StatelessWidget implements PreferredSizeWidget {
         ),
 
         const SizedBox(width: 8),
-        GestureDetector(
-          onTap: () => context.read<GameBloc>().add(ResetLevel()),
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.2),
-                width: 1,
+        BlocBuilder<GameBloc, GameState>(
+          builder: (context, state) {
+            final bloc = context.read<GameBloc>();
+            return GestureDetector(
+              onTap: () {
+                if (state.moveHistory.isEmpty) {
+                  bloc.add(ResetLevel());
+                  return;
+                }
+                final l10n = AppLocalizations.of(context)!;
+                showDialog(
+                  context: context,
+                  builder: (_) => GameActionDialog(
+                    title: l10n.resetLevelTitle,
+                    description: l10n.resetLevelDesc,
+                    icon: const Icon(
+                      Icons.refresh_rounded,
+                      color: Colors.white,
+                      size: 36,
+                    ),
+                    borderColor: Colors.orange,
+                    actionLabel: l10n.resetLevelAction,
+                    actionIconData: Icons.refresh_rounded,
+                    actionGradientColors: const [
+                      Color(0xFFFF6B35),
+                      Color(0xFFE64A19),
+                    ],
+                    actionShadowColor: Colors.deepOrange,
+                    onAction: () {
+                      Navigator.of(context).pop();
+                      bloc.add(ResetLevel());
+                    },
+                    cancelLabel: l10n.cancel,
+                  ),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    width: 1,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.refresh_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
               ),
-            ),
-            child: const Icon(
-              Icons.refresh_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
-          ),
+            );
+          },
         ),
         const SizedBox(width: 8),
 
@@ -155,7 +216,7 @@ class GameHeader extends StatelessWidget implements PreferredSizeWidget {
                         Navigator.pop(ctx);
                         AdsService.showRewarded(
                           onUserEarnedReward: (amount) {
-                            const reward = 25;
+                            final reward = RewardConstants.rewardedAdCoins;
                             if (context.mounted) {
                               context.read<GameBloc>().add(AddCurrency(reward));
                               ScaffoldMessenger.of(context).showSnackBar(

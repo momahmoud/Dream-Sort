@@ -82,6 +82,9 @@ class _BallWidgetState extends State<BallWidget> with TickerProviderStateMixin {
             child: Center(child: _getColorBlindSymbol(widget.item.colorIndex)),
           ),
 
+        // Chains/Lock UI
+        if (widget.item.isLocked) Positioned.fill(child: _buildChains()),
+
         // Reveal Flare Effect
         AnimatedBuilder(
           animation: _flareAnimation,
@@ -479,32 +482,46 @@ class _BallWidgetState extends State<BallWidget> with TickerProviderStateMixin {
             width: width,
             height: height,
             decoration: BoxDecoration(
-              color: Colors.grey.shade800.withValues(alpha: opacity * 0.9),
+              color: const Color(
+                0xFF673AB7,
+              ).withValues(alpha: opacity), // Deep Purple
               borderRadius: BorderRadius.circular(width * 0.2),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.blueGrey.withValues(
+                  color: Colors.purpleAccent.withValues(
                     alpha: glowOpacity * opacity,
                   ),
-                  blurRadius: 6,
-                  spreadRadius: 1,
+                  blurRadius: 8,
+                  spreadRadius: 2,
                 ),
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2 * opacity),
-                  blurRadius: 2,
+                  color: Colors.black.withValues(alpha: 0.3 * opacity),
+                  blurRadius: 3,
                   offset: const Offset(1, 2),
                 ),
               ],
               border: Border.all(
-                color: Colors.white12.withValues(alpha: opacity * 0.3),
-                width: 1,
+                color: Colors.white30.withValues(alpha: opacity),
+                width: 2,
               ),
             ),
             child: Center(
-              child: Icon(
-                Icons.cloud_rounded,
-                color: Colors.white24.withValues(alpha: glowOpacity * opacity),
-                size: 16,
+              child: Text(
+                '?',
+                style: TextStyle(
+                  color: Colors.white.withValues(
+                    alpha: (0.7 + glowOpacity * 0.5).clamp(0.0, 1.0) * opacity,
+                  ),
+                  fontSize: widget.size * 0.6,
+                  fontWeight: FontWeight.w900,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black54,
+                      offset: Offset(1, 1),
+                      blurRadius: 2,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -548,6 +565,31 @@ class _BallWidgetState extends State<BallWidget> with TickerProviderStateMixin {
           Icons.block,
           color: Colors.grey.shade800.withValues(alpha: opacity),
           size: 18,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChains() {
+    final opacity = widget.opacity;
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: Colors.grey.shade400.withValues(
+            alpha: opacity,
+          ), // Metallic ring
+          width: 3,
+        ),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.lock_rounded,
+          color: Colors.white.withValues(alpha: 0.9 * opacity),
+          size: widget.size * 0.5,
+          shadows: [
+            Shadow(color: Colors.black54, blurRadius: 4, offset: Offset(1, 1)),
+          ],
         ),
       ),
     );

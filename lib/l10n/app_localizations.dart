@@ -7,6 +7,9 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_ar.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_hi.dart';
 
 // ignore_for_file: type=lint
 
@@ -96,6 +99,9 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
     Locale('en'),
+    Locale('es'),
+    Locale('fr'),
+    Locale('hi'),
   ];
 
   /// No description provided for @appTitle.
@@ -163,6 +169,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Quit Game'**
   String get quitGame;
+
+  /// No description provided for @quitGameDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress will be lost. Are you sure you want to leave?'**
+  String get quitGameDesc;
+
+  /// No description provided for @quitGameAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Quit'**
+  String get quitGameAction;
+
+  /// No description provided for @keepPlaying.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Playing'**
+  String get keepPlaying;
 
   /// No description provided for @selectLevel.
   ///
@@ -271,6 +295,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'DREAM SORTED!'**
   String get dreamSorted;
+
+  /// No description provided for @rewardBase.
+  ///
+  /// In en, this message translates to:
+  /// **'Base'**
+  String get rewardBase;
+
+  /// No description provided for @rewardUndoBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo Bonus'**
+  String get rewardUndoBonus;
+
+  /// No description provided for @rewardTimeBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Bonus'**
+  String get rewardTimeBonus;
+
+  /// No description provided for @rewardComboBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Combo Bonus'**
+  String get rewardComboBonus;
 
   /// No description provided for @levelTitle.
   ///
@@ -506,6 +554,48 @@ abstract class AppLocalizations {
   /// **'PERFECT!'**
   String get perfect;
 
+  /// No description provided for @resetLevelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart Level?'**
+  String get resetLevelTitle;
+
+  /// No description provided for @resetLevelDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress will be lost and undos will reset.'**
+  String get resetLevelDesc;
+
+  /// No description provided for @resetLevelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart'**
+  String get resetLevelAction;
+
+  /// No description provided for @outOfUndosTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of Undos!'**
+  String get outOfUndosTitle;
+
+  /// No description provided for @outOfUndosDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy {count} more undos to keep going.'**
+  String outOfUndosDesc(int count);
+
+  /// No description provided for @buyUndos.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy {count} Undos ({cost} coins)'**
+  String buyUndos(int count, int cost);
+
+  /// No description provided for @watchAdFreeUndos.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch Ad — Free {count} Undos'**
+  String watchAdFreeUndos(int count);
+
   /// No description provided for @needHelp.
   ///
   /// In en, this message translates to:
@@ -539,8 +629,8 @@ abstract class AppLocalizations {
   /// No description provided for @shuffleAction.
   ///
   /// In en, this message translates to:
-  /// **'Shuffle (-20'**
-  String get shuffleAction;
+  /// **'Shuffle ({cost})'**
+  String shuffleAction(int cost);
 
   /// No description provided for @watchVideo.
   ///
@@ -548,16 +638,28 @@ abstract class AppLocalizations {
   /// **'Watch Video'**
   String get watchVideo;
 
+  /// No description provided for @watchAd.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch Ad'**
+  String get watchAd;
+
+  /// No description provided for @notEnoughCoinsWatchAd.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough coins! Watch an ad instead.'**
+  String get notEnoughCoinsWatchAd;
+
   /// No description provided for @watchAdPlus50Coins.
   ///
   /// In en, this message translates to:
-  /// **'Watch Ad +50 Coins'**
+  /// **'Watch Ad +25 Coins'**
   String get watchAdPlus50Coins;
 
   /// No description provided for @earnFreeCoins.
   ///
   /// In en, this message translates to:
-  /// **'Watch a short video to instantly earn\n+50 Free Coins!'**
+  /// **'Watch a short video to instantly earn\n+25 Free Coins!'**
   String get earnFreeCoins;
 
   /// No description provided for @noThanks.
@@ -581,14 +683,20 @@ abstract class AppLocalizations {
   /// No description provided for @hintDesc.
   ///
   /// In en, this message translates to:
-  /// **'Stuck? Let the AI find the best move for you!\nCost: 25 Coins.'**
-  String get hintDesc;
+  /// **'Stuck? Let the AI find the best move for you!\nCost: {cost} Coins.'**
+  String hintDesc(int cost);
 
   /// No description provided for @getHint.
   ///
   /// In en, this message translates to:
-  /// **'Get Hint (-25'**
-  String get getHint;
+  /// **'Get Hint ({cost})'**
+  String getHint(int cost);
+
+  /// No description provided for @undoText.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undoText;
 
   /// No description provided for @earnedCoins.
   ///
@@ -613,6 +721,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'CLAIM'**
   String get claim;
+
+  /// No description provided for @comeBackTomorrowForCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Come back tomorrow for {amount} coins!'**
+  String comeBackTomorrowForCoins(int amount);
 
   /// No description provided for @decorTypeTube.
   ///
@@ -974,7 +1088,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['ar', 'en'].contains(locale.languageCode);
+      <String>['ar', 'en', 'es', 'fr', 'hi'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -987,6 +1101,12 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsAr();
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'hi':
+      return AppLocalizationsHi();
   }
 
   throw FlutterError(

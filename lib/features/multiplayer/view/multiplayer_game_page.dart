@@ -321,7 +321,7 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
                           builder: (context, state) {
                             return GameFloatingButton(
                               icon: Icons.undo_rounded,
-                              disabled: state.history.isEmpty,
+                              disabled: state.moveHistory.isEmpty,
                               onTap: () => _blocP1.add(UndoMove()),
                             );
                           },
@@ -352,7 +352,7 @@ class _MultiplayerGamePageState extends State<MultiplayerGamePage> {
                         builder: (context, state) {
                           return GameFloatingButton(
                             icon: Icons.undo_rounded,
-                            disabled: state.history.isEmpty,
+                            disabled: state.moveHistory.isEmpty,
                             onTap: () => _blocP2.add(UndoMove()),
                           );
                         },

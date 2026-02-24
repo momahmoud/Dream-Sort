@@ -20,14 +20,32 @@ class LocaleCubit extends Cubit<Locale> {
     emit(locale);
   }
 
-  void toggleLocale() {
-    if (state.languageCode == 'en') {
-      _saveLocale('ar');
-      emit(const Locale('ar'));
-    } else {
-      _saveLocale('en');
-      emit(const Locale('en'));
+  static const List<String> supportedLocales = ['en', 'ar', 'es', 'fr', 'hi'];
+
+  static String getLanguageName(String languageCode) {
+    switch (languageCode) {
+      case 'en':
+        return 'English';
+      case 'ar':
+        return 'العربية (Arabic)';
+      case 'es':
+        return 'Español (Spanish)';
+      case 'fr':
+        return 'Français (French)';
+      case 'hi':
+        return 'हिंदी (Hindi)';
+      default:
+        return languageCode.toUpperCase();
     }
+  }
+
+  void toggleLocale() {
+    final currentIndex = supportedLocales.indexOf(state.languageCode);
+    final nextIndex = (currentIndex + 1) % supportedLocales.length;
+    final nextLocaleCode = supportedLocales[nextIndex];
+
+    _saveLocale(nextLocaleCode);
+    emit(Locale(nextLocaleCode));
   }
 
   void _saveLocale(String languageCode) {

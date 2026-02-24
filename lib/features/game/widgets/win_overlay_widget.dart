@@ -1,4 +1,5 @@
 import 'package:dream_sort/features/game/bloc/game_bloc.dart';
+import 'package:dream_sort/features/game/constants/reward_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -63,6 +64,43 @@ class _WinOverlayWidgetState extends State<WinOverlayWidget>
     _entranceController.dispose();
     _pulseController.dispose();
     super.dispose();
+  }
+
+  static List<Widget> _rewardBreakdownRows({
+    required int base,
+    required int undoBonus,
+    required int timeBonus,
+    required int comboBonus,
+    required String baseLabel,
+    required String undoBonusLabel,
+    required String timeBonusLabel,
+    required String comboBonusLabel,
+  }) {
+    const style = TextStyle(
+      color: Colors.white70,
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+    );
+    return [
+      _row(baseLabel, base, style),
+      if (undoBonus > 0) _row(undoBonusLabel, undoBonus, style),
+      if (timeBonus > 0) _row(timeBonusLabel, timeBonus, style),
+      if (comboBonus > 0) _row(comboBonusLabel, comboBonus, style),
+    ];
+  }
+
+  static Widget _row(String label, int value, TextStyle style) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Text(label, style: style),
+          Text('+$value', style: style.copyWith(color: Colors.amber)),
+        ],
+      ),
+    );
   }
 
   @override
@@ -157,38 +195,95 @@ class _WinOverlayWidgetState extends State<WinOverlayWidget>
                 ),
               ),
 
-              // Coin Result
+              // Coin Result (breakdown must match bloc: base + undo + time + combo = total)
               BlocBuilder<GameBloc, GameState>(
                 builder: (context, state) {
-                  int reward = state.isDailyChallenge ? 40 : 10;
+                  final base = state.isDailyChallenge
+                      ? RewardConstants.baseRewardDaily
+                      : RewardConstants.baseRewardNormal;
+                  int undoBonus = 0;
                   if (state.undosUsed == 0) {
-                    reward += state.isDailyChallenge ? 20 : 10;
-                  } else if (state.undosUsed <= 2) {
-                    reward += state.isDailyChallenge ? 10 : 5;
+                    undoBonus = state.isDailyChallenge
+                        ? RewardConstants.undoBonusPerfectDaily
+                        : RewardConstants.undoBonusPerfectNormal;
+                  } else if (state.undosUsed <= RewardConstants.undoGoodMaxUndos) {
+                    undoBonus = state.isDailyChallenge
+                        ? RewardConstants.undoBonusGoodDaily
+                        : RewardConstants.undoBonusGoodNormal;
                   }
 
-                  return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.add, color: Colors.amber, size: 24),
-                        Text(
-                          '$reward',
-                          style: const TextStyle(
-                            color: Colors.amber,
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
+                  int timeBonus = 0;
+                  if (state.levelStartTime != null &&
+                      state.levelEndTime != null) {
+                    final seconds = state.levelEndTime!
+                        .difference(state.levelStartTime!)
+                        .inSeconds;
+                    if (seconds <= RewardConstants.timeBonusFastSeconds) {
+                      timeBonus = RewardConstants.timeBonusFast;
+                    } else if (seconds <= RewardConstants.timeBonusGoodSeconds) {
+                      timeBonus = RewardConstants.timeBonusGood;
+                    }
+                  }
+
+                  int comboBonus = 0;
+                  if (state.comboCount >= RewardConstants.comboThreshold8) {
+                    comboBonus = RewardConstants.comboRewardAt8;
+                  } else if (state.comboCount >= RewardConstants.comboThreshold5) {
+                    comboBonus = RewardConstants.comboRewardAt5;
+                  } else if (state.comboCount >= RewardConstants.comboThreshold3) {
+                    comboBonus = RewardConstants.comboRewardAt3;
+                  }
+
+                  final total = base + undoBonus + timeBonus + comboBonus;
+
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 240,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: _rewardBreakdownRows(
+                            base: base,
+                            undoBonus: undoBonus,
+                            timeBonus: timeBonus,
+                            comboBonus: comboBonus,
+                            baseLabel: l10n.rewardBase,
+                            undoBonusLabel: l10n.rewardUndoBonus,
+                            timeBonusLabel: l10n.rewardTimeBonus,
+                            comboBonusLabel: l10n.rewardComboBonus,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        SvgPicture.asset(
-                          'assets/images/coin.svg',
-                          width: 32,
-                          height: 32,
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.add,
+                              color: Colors.amber,
+                              size: 24,
+                            ),
+                            Text(
+                              '$total',
+                              style: const TextStyle(
+                                color: Colors.amber,
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            SvgPicture.asset(
+                              'assets/images/coin.svg',
+                              width: 32,
+                              height: 32,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   );
                 },
               ),

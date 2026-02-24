@@ -22,7 +22,6 @@ class _HintOverlayState extends State<HintOverlay>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
 
   Offset? _startPos;
   Offset? _endPos;
@@ -40,11 +39,6 @@ class _HintOverlayState extends State<HintOverlay>
       TweenSequenceItem(tween: ConstantTween(1.0), weight: 60),
       TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0), weight: 20),
     ]).animate(_controller);
-
-    _slideAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {

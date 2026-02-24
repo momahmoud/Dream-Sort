@@ -27,12 +27,23 @@ class AdsService {
       tagForChildDirectedTreatment: TagForChildDirectedTreatment.yes,
       maxAdContentRating: MaxAdContentRating.g,
       // Add your test device ID from the logs here to test with real ads logic or verify behavior
-      testDeviceIds: kDebugMode ? [] : [],
+      testDeviceIds: [],
     );
     await MobileAds.instance.updateRequestConfiguration(configuration);
 
     // UMP Consent Flow
-    final params = ConsentRequestParameters();
+    ConsentRequestParameters params;
+    if (kDebugMode) {
+      ConsentDebugSettings debugSettings = ConsentDebugSettings(
+        debugGeography: DebugGeography.debugGeographyEea,
+        testIdentifiers:
+            [], // Add your test device hashed ID here (e.g. from logs)
+      );
+      params = ConsentRequestParameters(consentDebugSettings: debugSettings);
+    } else {
+      params = ConsentRequestParameters();
+    }
+
     ConsentInformation.instance.requestConsentInfoUpdate(
       params,
       () async {
@@ -182,29 +193,48 @@ class AdsService {
           _isInterstitialLoading = false;
           debugPrint('Interstitial failed to load: $error');
 
-          // Fallback to Test ID if we were using the main ID and not in Debug mode
-          // Fallback to Test ID if we were using the main ID (or any ID that isn't the test ID)
-          // This ensures that even if we forced "Live" IDs in debug mode, we can still fall back to Test IDs if Live fails.
-          // Also useful if the Live account is not approved yet (Code 3).
-          final testId = Platform.isAndroid
-              ? 'ca-app-pub-3940256099942544/1033173712'
-              : 'ca-app-pub-3940256099942544/4411468910';
+          // Fallback to Test ID if main ID fails ONLY in Debug mode
+          if (kDebugMode) {
+            final testId = Platform.isAndroid
+                ? 'ca-app-pub-3940256099942544/1033173712'
+                : 'ca-app-pub-3940256099942544/4411468910';
 
-          if (unitId != testId) {
-            debugPrint('Fallback: Attempting to load Test Interstitial Ad...');
-            preloadInterstitial(adUnitId: testId);
+            if (unitId != testId) {
+              debugPrint(
+                'Fallback: Attempting to load Test Interstitial Ad...',
+              );
+              preloadInterstitial(adUnitId: testId);
+            }
           }
         },
       ),
     );
   }
 
-  static void showInterstitial() {
-    if (!_adsEnabled) return;
+  static void showInterstitial({VoidCallback? onAdClosed}) {
+    if (!_adsEnabled) {
+      onAdClosed?.call();
+      return;
+    }
     if (_interstitialAd != null) {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _interstitialAd = null;
+          preloadInterstitial();
+          onAdClosed?.call(); // Continue the game
+        },
+        onAdFailedToShowFullScreenContent: (ad, err) {
+          ad.dispose();
+          _interstitialAd = null;
+          preloadInterstitial();
+          onAdClosed?.call(); // Continue anyway so user isn't stuck
+        },
+      );
       _interstitialAd!.show();
     } else {
       debugPrint('Interstitial not ready yet.');
+      onAdClosed?.call();
       preloadInterstitial(); // Try to load for next time
     }
   }
@@ -254,15 +284,16 @@ class AdsService {
           _isRewardedLoading = false;
           debugPrint('Rewarded failed to load: $error');
 
-          // Fallback to Test ID if main ID fails and not in Debug mode
-          // Fallback to Test ID if main ID fails
-          final testId = Platform.isAndroid
-              ? 'ca-app-pub-3940256099942544/5224354917'
-              : 'ca-app-pub-3940256099942544/1712485313';
+          // Fallback to Test ID if main ID fails ONLY in Debug mode
+          if (kDebugMode) {
+            final testId = Platform.isAndroid
+                ? 'ca-app-pub-3940256099942544/5224354917'
+                : 'ca-app-pub-3940256099942544/1712485313';
 
-          if (unitId != testId) {
-            debugPrint('Fallback: Attempting to load Test Rewarded Ad...');
-            preloadRewarded(adUnitId: testId);
+            if (unitId != testId) {
+              debugPrint('Fallback: Attempting to load Test Rewarded Ad...');
+              preloadRewarded(adUnitId: testId);
+            }
           }
         },
       ),

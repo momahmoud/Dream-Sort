@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:dream_sort/features/game/constants/reward_constants.dart';
 import 'package:dream_sort/features/game/models/decor_models.dart';
 
 class GameRepository {
@@ -27,7 +28,8 @@ class GameRepository {
   }
 
   int getCoins() {
-    return _box?.get(coinsKey, defaultValue: 100) ?? 100;
+    return _box?.get(coinsKey, defaultValue: RewardConstants.startingCoins) ??
+      RewardConstants.startingCoins;
   }
 
   Future<void> addCoins(int amount) async {

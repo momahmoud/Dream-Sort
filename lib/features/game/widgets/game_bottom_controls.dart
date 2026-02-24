@@ -1,11 +1,13 @@
 import 'package:dream_sort/features/game/bloc/game_bloc.dart';
+import 'package:dream_sort/features/game/constants/reward_constants.dart';
 import 'package:dream_sort/features/game/widgets/dialogs/add_tube_dialog.dart';
-import 'package:dream_sort/features/game/widgets/dialogs/hint_dialog.dart';
 import 'package:dream_sort/features/game/widgets/dialogs/shuffle_dialog.dart';
 import 'package:dream_sort/features/game/widgets/game_floating_button.dart';
+import 'package:dream_sort/core/services/ads_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:dream_sort/l10n/app_localizations.dart';
 
 class GameBottomControls extends StatelessWidget {
   const GameBottomControls({super.key});
@@ -16,9 +18,9 @@ class GameBottomControls extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(15, 0, 15, 1),
       child: BlocBuilder<GameBloc, GameState>(
         builder: (context, state) {
-          const int addCost = 50;
+          final addCost = RewardConstants.helpCost;
           final canAffordAdd = state.coinCount >= addCost;
-          final canAffordShuffle = state.coinCount >= 20;
+          final canAffordShuffle = state.coinCount >= RewardConstants.shuffleCost;
 
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -33,15 +35,39 @@ class GameBottomControls extends StatelessWidget {
                     children: [
                       GameFloatingButton(
                         icon: Icons.queue_rounded,
-                        disabled: !canAffordAdd,
+                        disabled:
+                            false, // Always enabled so they can watch an ad
                         onTap: () {
                           showDialog(
                             context: context,
                             builder: (ctx) => AddTubeDialog(
                               cost: addCost,
                               onConfirm: () {
+                                if (canAffordAdd) {
+                                  Navigator.pop(ctx);
+                                  context.read<GameBloc>().add(RequestHelp());
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.notEnoughCoinsWatchAd,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              onWatchAd: () {
                                 Navigator.pop(ctx);
-                                context.read<GameBloc>().add(RequestHelp());
+                                AdsService.showRewarded(
+                                  onUserEarnedReward: (amount) {
+                                    // Ad watched successfully
+                                    context.read<GameBloc>().add(
+                                      RequestHelp(free: true),
+                                    );
+                                  },
+                                );
                               },
                             ),
                           );
@@ -91,7 +117,7 @@ class GameBottomControls extends StatelessWidget {
                           showDialog(
                             context: context,
                             builder: (ctx) => ShuffleDialog(
-                              cost: 20,
+                              cost: RewardConstants.shuffleCost,
                               onConfirm: () {
                                 Navigator.pop(ctx);
                                 context.read<GameBloc>().add(RequestShuffle());
@@ -105,7 +131,7 @@ class GameBottomControls extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            '20',
+                            '${RewardConstants.shuffleCost}',
                             style: TextStyle(
                               color: canAffordShuffle
                                   ? const Color(0xFFFFC107)
@@ -133,33 +159,24 @@ class GameBottomControls extends StatelessWidget {
                   ),
                 ],
               ),
-              // Hint
+              // Hint — no confirmation dialog, fires immediately
               Column(
                 children: [
                   GameFloatingButton(
                     icon: Icons.lightbulb_rounded,
-                    disabled: state.coinCount < 25,
+                    disabled: state.coinCount < RewardConstants.hintCost,
                     onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => HintDialog(
-                          cost: 25,
-                          onConfirm: () {
-                            Navigator.pop(ctx);
-                            context.read<GameBloc>().add(RequestHint());
-                          },
-                        ),
-                      );
+                      context.read<GameBloc>().add(RequestHint());
                     },
                   ),
                   const SizedBox(height: 1),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        '25',
+                          Text(
+                        '${RewardConstants.hintCost}',
                         style: TextStyle(
-                          color: state.coinCount >= 25
+                          color: state.coinCount >= RewardConstants.hintCost
                               ? const Color(0xFFFFC107)
                               : Colors.grey,
                           fontSize: 13,

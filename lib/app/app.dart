@@ -24,7 +24,13 @@ class DreamSortApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [Locale('en'), Locale('ar')],
+          supportedLocales: const [
+            Locale('en'),
+            Locale('ar'),
+            Locale('es'),
+            Locale('fr'),
+            Locale('hi'),
+          ],
           locale: locale,
           home: const HomePage(),
         );

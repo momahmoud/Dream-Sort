@@ -14,6 +14,9 @@ class GameActionDialog extends StatelessWidget {
   final IconData? actionIconData;
   final String? cost;
   final String cancelLabel;
+  final VoidCallback? onSecondaryAction;
+  final String? secondaryActionLabel;
+  final IconData? secondaryActionIconData;
 
   const GameActionDialog({
     super.key,
@@ -28,6 +31,9 @@ class GameActionDialog extends StatelessWidget {
     this.actionIconData,
     this.cost,
     this.cancelLabel = 'No Thanks',
+    this.onSecondaryAction,
+    this.secondaryActionLabel,
+    this.secondaryActionIconData,
   });
 
   @override
@@ -145,6 +151,43 @@ class GameActionDialog extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (onSecondaryAction != null &&
+                        secondaryActionLabel != null) ...[
+                      const SizedBox(height: 12),
+                      GestureDetector(
+                        onTap: onSecondaryAction,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF42425A),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.white24, width: 1),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (secondaryActionIconData != null) ...[
+                                Icon(
+                                  secondaryActionIconData,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                                const SizedBox(width: 8),
+                              ],
+                              Text(
+                                secondaryActionLabel!,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 16),
 
                     // Cancel Button

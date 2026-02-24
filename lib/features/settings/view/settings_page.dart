@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'package:dream_sort/core/locale/language_selection_dialog.dart';
 import '../../../l10n/app_localizations.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -112,20 +113,41 @@ class _SettingsPageState extends State<SettingsPage> {
                 decoration: _cardDecoration,
                 child: BlocBuilder<LocaleCubit, Locale>(
                   builder: (context, locale) {
-                    final isEnglish = locale.languageCode == 'en';
+                    String languageName;
+                    switch (locale.languageCode) {
+                      case 'en':
+                        languageName = 'English';
+                        break;
+                      case 'ar':
+                        languageName = 'العربية (Arabic)';
+                        break;
+                      case 'es':
+                        languageName = 'Español (Spanish)';
+                        break;
+                      case 'fr':
+                        languageName = 'Français (French)';
+                        break;
+                      case 'hi':
+                        languageName = 'हिंदी (Hindi)';
+                        break;
+                      default:
+                        languageName = locale.languageCode.toUpperCase();
+                    }
+
                     return ListTile(
                       leading: const Icon(Icons.language, color: Colors.white),
                       title: Text(
-                        isEnglish ? 'English' : 'العربية',
+                        languageName,
                         style: const TextStyle(color: Colors.white),
                       ),
-                      trailing: Switch(
-                        value: isEnglish,
-                        onChanged: (val) {
-                          context.read<LocaleCubit>().toggleLocale();
-                        },
-                        activeThumbColor: Colors.pinkAccent,
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: Colors.white54,
+                        size: 16,
                       ),
+                      onTap: () {
+                        showLanguageSelectionDialog(context);
+                      },
                     );
                   },
                 ),

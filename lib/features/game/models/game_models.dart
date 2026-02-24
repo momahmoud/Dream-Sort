@@ -4,18 +4,25 @@ class SortingItem extends Equatable {
   final int colorIndex;
   final bool isHidden;
   final bool isStone; // New: Blocker element
+  final bool isLocked; // New: Chained ball
 
   const SortingItem({
     required this.colorIndex,
     this.isHidden = false,
     this.isStone = false,
+    this.isLocked = false,
   });
 
   @override
-  List<Object?> get props => [colorIndex, isHidden, isStone];
+  List<Object?> get props => [colorIndex, isHidden, isStone, isLocked];
 
   Map<String, dynamic> toJson() {
-    return {'colorIndex': colorIndex, 'isHidden': isHidden, 'isStone': isStone};
+    return {
+      'colorIndex': colorIndex,
+      'isHidden': isHidden,
+      'isStone': isStone,
+      'isLocked': isLocked,
+    };
   }
 
   factory SortingItem.fromJson(Map<String, dynamic> json) {
@@ -23,6 +30,7 @@ class SortingItem extends Equatable {
       colorIndex: json['colorIndex'] as int,
       isHidden: json['isHidden'] as bool? ?? false,
       isStone: json['isStone'] as bool? ?? false,
+      isLocked: json['isLocked'] as bool? ?? false,
     );
   }
 }

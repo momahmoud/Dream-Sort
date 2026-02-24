@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:dream_sort/features/game/constants/reward_constants.dart';
 import 'package:dream_sort/features/game/repo/game_repository.dart';
 import 'package:dream_sort/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -200,6 +201,24 @@ class DailyRewardDialog extends StatelessWidget {
       final nowDate = DateTime(now.year, now.month, now.day);
 
       if (nowDate.isAtSameMomentAs(lastDate)) {
+        final streak = repo.getLoginStreak();
+        final tomorrowReward = _calculateReward(streak + 1);
+        if (context.mounted) {
+          final l10n = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                l10n.comeBackTomorrowForCoins(tomorrowReward),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                ),
+              ),
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
         return; // Already claimed today
       }
 
@@ -212,9 +231,8 @@ class DailyRewardDialog extends StatelessWidget {
       reward = _calculateReward(streak);
       shouldShow = true;
     } else {
-      // First time login
       streak = 1;
-      reward = 25;
+      reward = RewardConstants.dailyRewardBase;
       shouldShow = true;
     }
 
@@ -235,8 +253,11 @@ class DailyRewardDialog extends StatelessWidget {
   }
 
   static int _calculateReward(int streak) {
-    if (streak <= 1) return 25;
-    if (streak >= 7) return 100;
-    return 25 + (streak - 1) * 10; // 25, 35, 45, 55, 65, 75, 100
+    if (streak <= 1) return RewardConstants.dailyRewardBase;
+    if (streak >= RewardConstants.dailyRewardMaxStreak) {
+      return RewardConstants.dailyRewardCap;
+    }
+    return RewardConstants.dailyRewardBase +
+        (streak - 1) * RewardConstants.dailyRewardStreakIncrement;
   }
 }

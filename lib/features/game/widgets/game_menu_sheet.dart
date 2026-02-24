@@ -2,11 +2,13 @@ import 'package:dream_sort/core/audio/audio_controller.dart';
 import 'package:dream_sort/core/locale/locale_cubit.dart';
 import 'package:dream_sort/core/services/ads_service.dart';
 import 'package:dream_sort/features/game/bloc/game_bloc.dart';
+import 'package:dream_sort/features/game/constants/reward_constants.dart';
 import 'package:dream_sort/features/game/view/decor_page.dart';
 import 'package:dream_sort/features/game/view/help_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:dream_sort/core/locale/language_selection_dialog.dart';
 import '../../../l10n/app_localizations.dart';
 
 class GameMenuSheet extends StatelessWidget {
@@ -48,23 +50,19 @@ class GameMenuSheet extends StatelessWidget {
                     Icons.monetization_on_rounded,
                     color: Colors.yellowAccent,
                   ),
-                  label: const Text('Watch Ad +50 Coins'),
+                  label: Text(l10n.watchAdPlus50Coins),
                   onPressed: () {
-                    // Capture bloc before popping
                     final gameBloc = context.read<GameBloc>();
                     final messenger = ScaffoldMessenger.of(context);
 
                     Navigator.pop(context);
 
-                    // Show preloaded rewarded ad
                     AdsService.showRewarded(
                       onUserEarnedReward: (amount) {
-                        debugPrint('User earned reward: $amount');
-                        // Add 50 Stars using captured bloc
-                        gameBloc.add(const AddCurrency(50));
-
+                        final reward = RewardConstants.rewardedAdCoins;
+                        gameBloc.add(AddCurrency(reward));
                         messenger.showSnackBar(
-                          SnackBar(content: Text(l10n.earnedCoins(50))),
+                          SnackBar(content: Text(l10n.earnedCoins(reward))),
                         );
                       },
                     );
@@ -75,15 +73,35 @@ class GameMenuSheet extends StatelessWidget {
           // LANGUAGE TOGGLE
           BlocBuilder<LocaleCubit, Locale>(
             builder: (context, locale) {
+              String languageName;
+              switch (locale.languageCode) {
+                case 'en':
+                  languageName = 'English';
+                  break;
+                case 'ar':
+                  languageName = 'العربية (Arabic)';
+                  break;
+                case 'es':
+                  languageName = 'Español (Spanish)';
+                  break;
+                case 'fr':
+                  languageName = 'Français (French)';
+                  break;
+                case 'hi':
+                  languageName = 'हिंदी (Hindi)';
+                  break;
+                default:
+                  languageName = locale.languageCode.toUpperCase();
+              }
+
               return ListTile(
                 leading: const Icon(Icons.language, color: Colors.white),
                 title: Text(
-                  locale.languageCode == 'en' ? 'Arabic' : 'English',
+                  languageName,
                   style: const TextStyle(color: Colors.white),
                 ),
                 onTap: () {
-                  context.read<LocaleCubit>().toggleLocale();
-                  // No need to pop, let them see the change immediately or pop if desired
+                  showLanguageSelectionDialog(context);
                 },
               );
             },
@@ -138,8 +156,8 @@ class GameMenuSheet extends StatelessWidget {
               style: const TextStyle(color: Colors.white),
             ),
             onTap: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              Navigator.pop(context); // close the bottom sheet
+              Navigator.maybePop(context); // triggers PopScope → shows quit dialog
             },
           ),
           const SizedBox(height: 16),

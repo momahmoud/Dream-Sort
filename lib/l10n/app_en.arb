@@ -13,6 +13,9 @@
   "decorShop": "Decor Shop",
   "howToPlay": "How to Play",
   "quitGame": "Quit Game",
+  "quitGameDesc": "Your progress will be lost. Are you sure you want to leave?",
+  "quitGameAction": "Quit",
+  "keepPlaying": "Keep Playing",
   "selectLevel": "Select Level",
   "level": "Level",
   "renovateRoom": "Renovate Room",
@@ -76,6 +79,10 @@
   },
   "nextLevel": "Next Level",
   "dreamSorted": "DREAM SORTED!",
+  "rewardBase": "Base",
+  "rewardUndoBonus": "Undo Bonus",
+  "rewardTimeBonus": "Time Bonus",
+  "rewardComboBonus": "Combo Bonus",
   "levelTitle": "Level {level}",
   "@levelTitle": {
     "placeholders": {
@@ -122,20 +129,67 @@
   "accessibility": "Accessibility",
   "colorBlindMode": "Color-Blind Symbols",
   "perfect": "PERFECT!",
+  "resetLevelTitle": "Restart Level?",
+  "resetLevelDesc": "Your progress will be lost and undos will reset.",
+  "resetLevelAction": "Restart",
+  "outOfUndosTitle": "Out of Undos!",
+  "outOfUndosDesc": "Buy {count} more undos to keep going.",
+  "@outOfUndosDesc": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "buyUndos": "Buy {count} Undos ({cost} coins)",
+  "@buyUndos": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "cost": { "type": "int" }
+    }
+  },
+  "watchAdFreeUndos": "Watch Ad — Free {count} Undos",
+  "@watchAdFreeUndos": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "needHelp": "Need Help?",
   "addTubeDesc": "Add an extra empty tube to make\nsolving this puzzle easier!",
   "addTube": "Add Tube",
   "shuffleTitle": "Shuffle?",
   "shuffleDesc": "Rearrange balls to find new moves!\n(Completed tubes stay safe)",
-  "shuffleAction": "Shuffle (-20",
+  "shuffleAction": "Shuffle ({cost})",
+  "@shuffleAction": {
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
+  },
   "watchVideo": "Watch Video",
-  "watchAdPlus50Coins": "Watch Ad +50 Coins",
-  "earnFreeCoins": "Watch a short video to instantly earn\n+50 Free Coins!",
+  "watchAd": "Watch Ad",
+  "notEnoughCoinsWatchAd": "Not enough coins! Watch an ad instead.",
+  "watchAdPlus50Coins": "Watch Ad +25 Coins",
+  "earnFreeCoins": "Watch a short video to instantly earn\n+25 Free Coins!",
   "noThanks": "No, thanks",
   "needMoreCoins": "Need More Coins?",
   "needHint": "Need a Hint?",
-  "hintDesc": "Stuck? Let the AI find the best move for you!\nCost: 25 Coins.",
-  "getHint": "Get Hint (-25",
+  "hintDesc": "Stuck? Let the AI find the best move for you!\nCost: {cost} Coins.",
+  "@hintDesc": {
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
+  },
+  "getHint": "Get Hint ({cost})",
+  "@getHint": {
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
+  },
+  "undoText": "Undo",
   "earnedCoins": "You earned {amount} ",
   "dailyRewardTitle": "Daily Reward",
   "dailyStreak": "Day {streak} Streak",
@@ -147,6 +201,14 @@
     }
   },
   "claim": "CLAIM",
+  "comeBackTomorrowForCoins": "Come back tomorrow for {amount} coins!",
+  "@comeBackTomorrowForCoins": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
   "decorTypeTube": "Tubes",
   "decorTypeBall": "Balls",
   "decorTypeWall": "Walls",
