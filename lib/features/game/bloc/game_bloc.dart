@@ -5,6 +5,7 @@ import 'package:dream_sort/features/game/repo/game_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:vibration/vibration.dart';
 import 'dart:math';
 
@@ -192,7 +193,9 @@ class GameState extends Equatable {
       levelStartTime: levelStartTime ?? this.levelStartTime,
       levelEndTime: levelEndTime ?? this.levelEndTime,
       comboCount: comboCount ?? this.comboCount,
-      lastComboReward: clearLastComboReward ? null : (lastComboReward ?? this.lastComboReward),
+      lastComboReward: clearLastComboReward
+          ? null
+          : (lastComboReward ?? this.lastComboReward),
       lastActivityAt: lastActivityAt ?? this.lastActivityAt,
       frozenTubeIndices: frozenTubeIndices ?? this.frozenTubeIndices,
     );
@@ -243,9 +246,9 @@ class GameBloc extends GameBlocBase
   final AudioController _audio;
 
   GameBloc({required GameRepository repo, required AudioController audio})
-      : _repo = repo,
-        _audio = audio,
-        super(const GameState(tubes: [], coinCount: 0)) {
+    : _repo = repo,
+      _audio = audio,
+      super(const GameState(tubes: [], coinCount: 0)) {
     on<LoadLevel>(_onLoadLevel);
     on<TubeTapped>(_onTubeTapped);
     on<UndoMove>(_onUndoMove);

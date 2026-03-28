@@ -31,6 +31,8 @@
   "levelComplete": "اكتمل المستوى في {time}",
   "nextLevel": "المستوى التالي",
   "dreamSorted": "تم الفرز!",
+  "notifDailyTitle": "🎁 مكافأتك اليومية جاهزة!",
+  "notifDailyBody": "مكافأتك اليومية بانتظارك. تعال واستلمها!",
   "rewardBase": "أساسي",
   "rewardUndoBonus": "مكافأة التراجع",
   "rewardTimeBonus": "مكافأة الوقت",
@@ -160,5 +162,16 @@
   "item_paint_surreal": "حلم سريالي",
   "item_paint_portrait": "سلف نبيل",
   "item_paint_landscape": "قمة الجبل",
-  "item_paint_starry": "كون عميق"
+  "item_paint_starry": "كون عميق",
+  "shareApp": "مشاركة التطبيق",
+  "removeAds": "إزالة الإعلانات",
+  "removeAdsPurchased": "تمت إزالة الإعلانات ✓",
+  "restorePurchases": "استعادة المشتريات",
+  "supportDeveloper": "ادعم المطوّر",
+  "tipSmall": "تبرع صغير  $0.99",
+  "tipMedium": "تبرع متوسط  $2.99",
+  "tipLarge": "تبرع كبير  $4.99",
+  "purchaseSuccess": "تمت عملية الشراء بنجاح! شكراً جزيلاً 🙏",
+  "purchaseFailed": "فشلت عملية الشراء. يرجى المحاولة مجدداً.",
+  "purchasePending": "جارٍ معالجة الشراء…"
 }

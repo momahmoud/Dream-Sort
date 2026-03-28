@@ -206,7 +206,8 @@ class _WinOverlayWidgetState extends State<WinOverlayWidget>
                     undoBonus = state.isDailyChallenge
                         ? RewardConstants.undoBonusPerfectDaily
                         : RewardConstants.undoBonusPerfectNormal;
-                  } else if (state.undosUsed <= RewardConstants.undoGoodMaxUndos) {
+                  } else if (state.undosUsed <=
+                      RewardConstants.undoGoodMaxUndos) {
                     undoBonus = state.isDailyChallenge
                         ? RewardConstants.undoBonusGoodDaily
                         : RewardConstants.undoBonusGoodNormal;
@@ -220,7 +221,8 @@ class _WinOverlayWidgetState extends State<WinOverlayWidget>
                         .inSeconds;
                     if (seconds <= RewardConstants.timeBonusFastSeconds) {
                       timeBonus = RewardConstants.timeBonusFast;
-                    } else if (seconds <= RewardConstants.timeBonusGoodSeconds) {
+                    } else if (seconds <=
+                        RewardConstants.timeBonusGoodSeconds) {
                       timeBonus = RewardConstants.timeBonusGood;
                     }
                   }
@@ -228,9 +230,11 @@ class _WinOverlayWidgetState extends State<WinOverlayWidget>
                   int comboBonus = 0;
                   if (state.comboCount >= RewardConstants.comboThreshold8) {
                     comboBonus = RewardConstants.comboRewardAt8;
-                  } else if (state.comboCount >= RewardConstants.comboThreshold5) {
+                  } else if (state.comboCount >=
+                      RewardConstants.comboThreshold5) {
                     comboBonus = RewardConstants.comboRewardAt5;
-                  } else if (state.comboCount >= RewardConstants.comboThreshold3) {
+                  } else if (state.comboCount >=
+                      RewardConstants.comboThreshold3) {
                     comboBonus = RewardConstants.comboRewardAt3;
                   }
 

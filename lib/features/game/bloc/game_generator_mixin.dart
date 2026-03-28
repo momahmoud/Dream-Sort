@@ -69,28 +69,6 @@ mixin GameGeneratorMixin on GameBlocBase {
       itemsInTubes[i] = List.generate(4, (_) => SortingItem(colorIndex: i));
     }
 
-    if (level >= 15 || seed != null) {
-      int stonesToPlace = 1;
-      if (level >= 30) {
-        stonesToPlace = 3;
-      } else if (level >= 20 || seed != null) {
-        stonesToPlace = 2;
-      }
-
-      int stonesPlaced = 0;
-      int safetyLimit = 0;
-      while (stonesPlaced < stonesToPlace && safetyLimit < 100) {
-        safetyLimit++;
-        int targetIndex = numColors + random.nextInt(numEmptyTubes);
-        if (itemsInTubes[targetIndex].isEmpty) {
-          itemsInTubes[targetIndex].add(
-            const SortingItem(colorIndex: -1, isStone: true),
-          );
-          stonesPlaced++;
-        }
-      }
-    }
-
     int targetMoves = (50 + pow(level.toDouble(), 1.4)).toInt();
     if (seed != null) targetMoves += 100;
     int successfulMoves = 0;
@@ -115,6 +93,59 @@ mixin GameGeneratorMixin on GameBlocBase {
         successfulMoves++;
         lastSource = source;
         lastTarget = target;
+      }
+    }
+
+    int globalHideThreshold = 0;
+    if (level >= 7 || seed != null) {
+      globalHideThreshold = 1;
+      if (level >= 50) {
+        globalHideThreshold = 4;
+      } else if (level >= 15) {
+        globalHideThreshold = 3;
+      } else if (level >= 10) {
+        globalHideThreshold = 2;
+      }
+      if (seed != null) globalHideThreshold = 2;
+    }
+
+    if (globalHideThreshold > 1) {
+      for (int t = 0; t < itemsInTubes.length; t++) {
+        final tubeItems = itemsInTubes[t];
+        for (
+          int i = 1;
+          i < tubeItems.length - 1 && i < globalHideThreshold;
+          i++
+        ) {
+          if (tubeItems[i].colorIndex == tubeItems[i - 1].colorIndex) {
+            bool swapped = false;
+            for (
+              int otherT = 0;
+              otherT < itemsInTubes.length && !swapped;
+              otherT++
+            ) {
+              if (otherT == t) continue;
+              var otherTube = itemsInTubes[otherT];
+              for (int j = 0; j < otherTube.length; j++) {
+                var myColor = tubeItems[i].colorIndex;
+                var otherColor = otherTube[j].colorIndex;
+                if (otherColor != myColor &&
+                    otherColor != tubeItems[i - 1].colorIndex &&
+                    (i + 1 >= tubeItems.length ||
+                        otherColor != tubeItems[i + 1].colorIndex) &&
+                    (j == 0 || myColor != otherTube[j - 1].colorIndex) &&
+                    (j + 1 >= otherTube.length ||
+                        myColor != otherTube[j + 1].colorIndex)) {
+                  var temp = tubeItems[i];
+                  tubeItems[i] = otherTube[j];
+                  otherTube[j] = temp;
+                  swapped = true;
+                  break;
+                }
+              }
+            }
+          }
+        }
       }
     }
 
@@ -145,20 +176,6 @@ mixin GameGeneratorMixin on GameBlocBase {
               isStone: itm.isStone,
               isLocked: itm.isLocked,
             );
-          }
-
-          if (level >= 20 || seed != null) {
-            final isTubeFull = tubeItems.length >= tubeCapacities[t];
-            if (random.nextDouble() < 0.15 &&
-                i == tubeItems.length - 1 &&
-                !isTubeFull) {
-              itm = SortingItem(
-                colorIndex: itm.colorIndex,
-                isHidden: itm.isHidden,
-                isStone: itm.isStone,
-                isLocked: true,
-              );
-            }
           }
         }
         tubeItems[i] = itm;

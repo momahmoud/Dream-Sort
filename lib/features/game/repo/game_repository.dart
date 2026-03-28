@@ -29,7 +29,7 @@ class GameRepository {
 
   int getCoins() {
     return _box?.get(coinsKey, defaultValue: RewardConstants.startingCoins) ??
-      RewardConstants.startingCoins;
+        RewardConstants.startingCoins;
   }
 
   Future<void> addCoins(int amount) async {
@@ -143,6 +143,20 @@ class GameRepository {
     await _box?.put(streakKey, newStreak);
     await _box?.put(lastLoginKey, lastLogin.toIso8601String());
   }
+
+  // --- Ads Removed ---
+  bool get adsRemoved =>
+      _box?.get('ads_removed', defaultValue: false) ?? false;
+
+  Future<void> setAdsRemoved() async =>
+      await _box?.put('ads_removed', true);
+
+  // --- Rating ---
+  bool get hasRatingBeenRequested =>
+      _box?.get('rating_requested', defaultValue: false) ?? false;
+
+  Future<void> setRatingRequested() async =>
+      await _box?.put('rating_requested', true);
 
   Future<void> resetProgress() async {
     await _box?.clear();

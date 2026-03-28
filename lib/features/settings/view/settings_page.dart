@@ -1,9 +1,11 @@
 import 'package:dream_sort/core/audio/audio_controller.dart';
 import 'package:dream_sort/core/locale/locale_cubit.dart';
+import 'package:dream_sort/core/services/iap_service.dart';
 import 'package:dream_sort/features/game/repo/game_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'package:dream_sort/core/locale/language_selection_dialog.dart';
 import '../../../l10n/app_localizations.dart';
@@ -22,6 +24,32 @@ class _SettingsPageState extends State<SettingsPage> {
   void initState() {
     super.initState();
     _loadVersion();
+    IAPService.purchaseMessage.addListener(_onPurchaseMessage);
+  }
+
+  @override
+  void dispose() {
+    IAPService.purchaseMessage.removeListener(_onPurchaseMessage);
+    super.dispose();
+  }
+
+  void _onPurchaseMessage() {
+    final key = IAPService.purchaseMessage.value;
+    if (key == null || !mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+    final String msg;
+    switch (key) {
+      case 'purchase_success':
+        msg = l10n.purchaseSuccess;
+        break;
+      case 'purchase_failed':
+        msg = l10n.purchaseFailed;
+        break;
+      default:
+        msg = l10n.purchasePending;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+    IAPService.purchaseMessage.value = null;
   }
 
   Future<void> _loadVersion() async {
@@ -29,6 +57,30 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() {
       _version = '${info.version} +${info.buildNumber}';
     });
+  }
+
+  void _showStoreUnavailableDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF16213E),
+        title: Text(
+          l10n.purchaseFailed,
+          style: const TextStyle(color: Colors.white),
+        ),
+        content: const Text(
+          'Store is not available right now. Please check your connection and try again.',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.gotIt),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showResetConfirmDialog(BuildContext context) {
@@ -225,7 +277,104 @@ class _SettingsPageState extends State<SettingsPage> {
 
               const SizedBox(height: 30),
 
-              // 3. Danger Zone
+              // 3. Share & Store
+              _SectionHeader(title: l10n.shareApp),
+              const SizedBox(height: 10),
+              Container(
+                decoration: _cardDecoration,
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.share_rounded, color: Colors.white),
+                      title: Text(
+                        l10n.shareApp,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      onTap: () {
+                        Share.share(
+                          'https://play.google.com/store/apps/details?id=com.elaskry.dream_sort',
+                        );
+                      },
+                    ),
+                    const Divider(color: Colors.white24, height: 1),
+                    StatefulBuilder(
+                      builder: (context, setState) {
+                        final repo = context.read<GameRepository>();
+                        final removed = repo.adsRemoved;
+                        return ListTile(
+                          leading: Icon(
+                            removed
+                                ? Icons.check_circle_rounded
+                                : Icons.block_rounded,
+                            color:
+                                removed ? Colors.greenAccent : Colors.white,
+                          ),
+                          title: Text(
+                            removed
+                                ? l10n.removeAdsPurchased
+                                : l10n.removeAds,
+                            style: TextStyle(
+                              color: removed
+                                  ? Colors.greenAccent
+                                  : Colors.white,
+                            ),
+                          ),
+                          subtitle: removed
+                              ? null
+                              : const Text(
+                                  '\$1.99',
+                                  style: TextStyle(color: Colors.white54),
+                                ),
+                          onTap: removed
+                              ? null
+                              : () async {
+                                  final ok = await IAPService.purchaseRemoveAds();
+                                  if (!ok && context.mounted) {
+                                    _showStoreUnavailableDialog(context);
+                                  } else if (context.mounted) {
+                                    setState(() {});
+                                  }
+                                },
+                        );
+                      },
+                    ),
+                    const Divider(color: Colors.white24, height: 1),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.restore_rounded,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        l10n.restorePurchases,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      onTap: () => IAPService.restorePurchases(),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              // 4. Support the Developer (Tip Jar)
+              _SectionHeader(title: l10n.supportDeveloper),
+              const SizedBox(height: 10),
+              Container(
+                decoration: _cardDecoration,
+                child: Column(
+                  children: [
+                    _TipTile(label: l10n.tipSmall, productId: IAPService.tipSmallId),
+                    const Divider(color: Colors.white24, height: 1),
+                    _TipTile(label: l10n.tipMedium, productId: IAPService.tipMediumId),
+                    const Divider(color: Colors.white24, height: 1),
+                    _TipTile(label: l10n.tipLarge, productId: IAPService.tipLargeId),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              // 5. Danger Zone / About
               _SectionHeader(title: l10n.about),
               const SizedBox(height: 10),
               Container(
@@ -292,6 +441,47 @@ class _SectionHeader extends StatelessWidget {
           letterSpacing: 1.2,
         ),
       ),
+    );
+  }
+}
+
+class _TipTile extends StatelessWidget {
+  final String label;
+  final String productId;
+
+  const _TipTile({required this.label, required this.productId});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return ListTile(
+      leading: const Icon(Icons.favorite_rounded, color: Colors.pinkAccent),
+      title: Text(label, style: const TextStyle(color: Colors.white)),
+      onTap: () async {
+        final ok = await IAPService.purchaseTip(productId);
+        if (!ok && context.mounted) {
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              backgroundColor: const Color(0xFF16213E),
+              title: Text(
+                l10n.purchaseFailed,
+                style: const TextStyle(color: Colors.white),
+              ),
+              content: const Text(
+                'Store is not available right now. Please check your connection and try again.',
+                style: TextStyle(color: Colors.white70),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(l10n.gotIt),
+                ),
+              ],
+            ),
+          );
+        }
+      },
     );
   }
 }

@@ -31,6 +31,8 @@
   "levelComplete": "Niveau Terminé en {time}",
   "nextLevel": "Niveau Suivant",
   "dreamSorted": "RÊVE TRIÉ !",
+  "notifDailyTitle": "🎁 Votre bonus quotidien est prêt !",
+  "notifDailyBody": "Votre récompense quotidienne vous attend. Venez la récupérer !",
   "rewardBase": "Base",
   "rewardUndoBonus": "Bonus Annulation",
   "rewardTimeBonus": "Bonus Temps",
@@ -160,5 +162,16 @@
   "item_paint_surreal": "Rêve Surréaliste",
   "item_paint_portrait": "Noble Ancêtre",
   "item_paint_landscape": "Sommet de Montagne",
-  "item_paint_starry": "Cosmos Profond"
+  "item_paint_starry": "Cosmos Profond",
+  "shareApp": "Partager l'app",
+  "removeAds": "Supprimer les pubs",
+  "removeAdsPurchased": "Pubs supprimées ✓",
+  "restorePurchases": "Restaurer les achats",
+  "supportDeveloper": "Soutenir le développeur",
+  "tipSmall": "Petit pourboire  $0.99",
+  "tipMedium": "Pourboire moyen  $2.99",
+  "tipLarge": "Grand pourboire  $4.99",
+  "purchaseSuccess": "Achat réussi ! Merci 🙏",
+  "purchaseFailed": "Échec de l'achat. Veuillez réessayer.",
+  "purchasePending": "Achat en cours…"
 }

@@ -118,6 +118,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dreamSorted => 'DREAM SORTED!';
 
   @override
+  String get notifDailyTitle => '🎁 Daily Bonus Ready!';
+
+  @override
+  String get notifDailyBody => 'Your daily reward is waiting. Come collect it!';
+
+  @override
   String get rewardBase => 'Base';
 
   @override
@@ -531,4 +537,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get item_paint_starry => 'Deep Cosmos';
+
+  @override
+  String get shareApp => 'Share App';
+
+  @override
+  String get removeAds => 'Remove Ads';
+
+  @override
+  String get removeAdsPurchased => 'Ads Removed ✓';
+
+  @override
+  String get restorePurchases => 'Restore Purchases';
+
+  @override
+  String get supportDeveloper => 'Support the Developer';
+
+  @override
+  String get tipSmall => 'Small Tip  \$0.99';
+
+  @override
+  String get tipMedium => 'Medium Tip  \$2.99';
+
+  @override
+  String get tipLarge => 'Large Tip  \$4.99';
+
+  @override
+  String get purchaseSuccess => 'Purchase successful! Thank you 🙏';
+
+  @override
+  String get purchaseFailed => 'Purchase failed. Please try again.';
+
+  @override
+  String get purchasePending => 'Purchase pending…';
 }

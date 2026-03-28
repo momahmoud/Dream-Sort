@@ -101,11 +101,13 @@ mixin GameMoveMixin on GameBlocBase {
           }
         });
         audio.playSelect();
-        emit(baseState.copyWith(
-          selectedTubeIndex: tappedIndex,
-          lastActivityAt: DateTime.now(),
-          clearLastComboReward: true,
-        ));
+        emit(
+          baseState.copyWith(
+            selectedTubeIndex: tappedIndex,
+            lastActivityAt: DateTime.now(),
+            clearLastComboReward: true,
+          ),
+        );
       }
       return;
     }
@@ -113,11 +115,13 @@ mixin GameMoveMixin on GameBlocBase {
     if (sourceIndex == tappedIndex) {
       HapticFeedback.selectionClick();
       audio.playDeselect();
-      emit(baseState.copyWith(
-        clearSelection: true,
-        lastActivityAt: DateTime.now(),
-        clearLastComboReward: true,
-      ));
+      emit(
+        baseState.copyWith(
+          clearSelection: true,
+          lastActivityAt: DateTime.now(),
+          clearLastComboReward: true,
+        ),
+      );
       return;
     }
 
@@ -239,6 +243,11 @@ mixin GameMoveMixin on GameBlocBase {
           repo.unlockLevel(baseState.levelId + 1);
         }
 
+        if (baseState.levelId >= 3 && !repo.hasRatingBeenRequested) {
+          repo.setRatingRequested();
+          InAppReview.instance.requestReview();
+        }
+
         int baseReward = baseState.isDailyChallenge
             ? RewardConstants.baseRewardDaily
             : RewardConstants.baseRewardNormal;
@@ -308,19 +317,23 @@ mixin GameMoveMixin on GameBlocBase {
       if (!targetTube.isEmpty) {
         HapticFeedback.selectionClick();
         audio.playSelect();
-        emit(baseState.copyWith(
-          selectedTubeIndex: tappedIndex,
-          lastActivityAt: DateTime.now(),
-          clearLastComboReward: true,
-        ));
+        emit(
+          baseState.copyWith(
+            selectedTubeIndex: tappedIndex,
+            lastActivityAt: DateTime.now(),
+            clearLastComboReward: true,
+          ),
+        );
       } else {
         HapticFeedback.heavyImpact();
         audio.playError();
-        emit(baseState.copyWith(
-          clearSelection: true,
-          lastActivityAt: DateTime.now(),
-          clearLastComboReward: true,
-        ));
+        emit(
+          baseState.copyWith(
+            clearSelection: true,
+            lastActivityAt: DateTime.now(),
+            clearLastComboReward: true,
+          ),
+        );
       }
     }
   }
@@ -333,15 +346,20 @@ mixin GameMoveMixin on GameBlocBase {
       repo.spendCoins(RewardConstants.undoPackCost);
     }
 
-    emit(state.copyWith(
-      remainingUndos: state.remainingUndos + RewardConstants.undoPackCount,
-      coinCount: event.free
-          ? state.coinCount
-          : state.coinCount - RewardConstants.undoPackCost,
-    ));
+    emit(
+      state.copyWith(
+        remainingUndos: state.remainingUndos + RewardConstants.undoPackCount,
+        coinCount: event.free
+            ? state.coinCount
+            : state.coinCount - RewardConstants.undoPackCost,
+      ),
+    );
   }
 
-  void _onPressureFreezeTube(PressureFreezeTube event, Emitter<GameState> emit) {
+  void _onPressureFreezeTube(
+    PressureFreezeTube event,
+    Emitter<GameState> emit,
+  ) {
     if (state.levelId < RewardConstants.pressureModeMinLevel) return;
     if (state.status != GameStatus.playing) return;
     if (state.tubes.isEmpty) return;
@@ -355,10 +373,11 @@ mixin GameMoveMixin on GameBlocBase {
     if (candidates.isEmpty) return;
 
     current.add(candidates[Random().nextInt(candidates.length)]);
-    emit(state.copyWith(
-      frozenTubeIndices: current,
-      lastActivityAt: DateTime.now(),
-    ));
+    emit(
+      state.copyWith(
+        frozenTubeIndices: current,
+        lastActivityAt: DateTime.now(),
+      ),
+    );
   }
-
 }

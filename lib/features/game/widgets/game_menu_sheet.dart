@@ -157,7 +157,9 @@ class GameMenuSheet extends StatelessWidget {
             ),
             onTap: () {
               Navigator.pop(context); // close the bottom sheet
-              Navigator.maybePop(context); // triggers PopScope → shows quit dialog
+              Navigator.maybePop(
+                context,
+              ); // triggers PopScope → shows quit dialog
             },
           ),
           const SizedBox(height: 16),

@@ -31,6 +31,8 @@
   "levelComplete": "स्तर {time} में पूरा हुआ",
   "nextLevel": "अगला स्तर",
   "dreamSorted": "सपना छांटा गया!",
+  "notifDailyTitle": "🎁 आपका दैनिक बोनस तैयार है!",
+  "notifDailyBody": "आपका दैनिक इनाम इंतज़ार कर रहा है। आकर ले जाएं!",
   "rewardBase": "आधार",
   "rewardUndoBonus": "अनडू बोनस",
   "rewardTimeBonus": "समय बोनस",
@@ -160,5 +162,16 @@
   "item_paint_surreal": "अवास्तविक सपना",
   "item_paint_portrait": "महान पूर्वज",
   "item_paint_landscape": "पर्वत शिखर",
-  "item_paint_starry": "गहरा ब्रह्मांड"
+  "item_paint_starry": "गहरा ब्रह्मांड",
+  "shareApp": "ऐप शेयर करें",
+  "removeAds": "विज्ञापन हटाएं",
+  "removeAdsPurchased": "विज्ञापन हटा दिए ✓",
+  "restorePurchases": "खरीदारी पुनर्स्थापित करें",
+  "supportDeveloper": "डेवलपर को सपोर्ट करें",
+  "tipSmall": "छोटी टिप  $0.99",
+  "tipMedium": "मध्यम टिप  $2.99",
+  "tipLarge": "बड़ी टिप  $4.99",
+  "purchaseSuccess": "खरीदारी सफल! धन्यवाद 🙏",
+  "purchaseFailed": "खरीदारी विफल। कृपया पुनः प्रयास करें।",
+  "purchasePending": "खरीदारी लंबित…"
 }

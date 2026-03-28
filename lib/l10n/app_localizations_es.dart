@@ -118,6 +118,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get dreamSorted => '¡SUEÑO CLASIFICADO!';
 
   @override
+  String get notifDailyTitle => '🎁 ¡Tu bono diario está listo!';
+
+  @override
+  String get notifDailyBody =>
+      'Tu recompensa diaria te espera. ¡Ven a recogerla!';
+
+  @override
   String get rewardBase => 'Base';
 
   @override
@@ -533,4 +540,37 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get item_paint_starry => 'Cosmos Profundo';
+
+  @override
+  String get shareApp => 'Compartir app';
+
+  @override
+  String get removeAds => 'Eliminar anuncios';
+
+  @override
+  String get removeAdsPurchased => 'Anuncios eliminados ✓';
+
+  @override
+  String get restorePurchases => 'Restaurar compras';
+
+  @override
+  String get supportDeveloper => 'Apoya al desarrollador';
+
+  @override
+  String get tipSmall => 'Propina pequeña  \$0.99';
+
+  @override
+  String get tipMedium => 'Propina mediana  \$2.99';
+
+  @override
+  String get tipLarge => 'Propina grande  \$4.99';
+
+  @override
+  String get purchaseSuccess => '¡Compra exitosa! Muchas gracias 🙏';
+
+  @override
+  String get purchaseFailed => 'Error en la compra. Inténtalo de nuevo.';
+
+  @override
+  String get purchasePending => 'Compra en proceso…';
 }

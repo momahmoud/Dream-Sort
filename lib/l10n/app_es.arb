@@ -31,6 +31,8 @@
   "levelComplete": "Nivel Completo en {time}",
   "nextLevel": "Siguiente Nivel",
   "dreamSorted": "¡SUEÑO CLASIFICADO!",
+  "notifDailyTitle": "🎁 ¡Tu bono diario está listo!",
+  "notifDailyBody": "Tu recompensa diaria te espera. ¡Ven a recogerla!",
   "rewardBase": "Base",
   "rewardUndoBonus": "Bono Deshacer",
   "rewardTimeBonus": "Bono Tiempo",
@@ -160,5 +162,16 @@
   "item_paint_surreal": "Sueño Surrealista",
   "item_paint_portrait": "Ancestro Noble",
   "item_paint_landscape": "Pico de Montaña",
-  "item_paint_starry": "Cosmos Profundo"
+  "item_paint_starry": "Cosmos Profundo",
+  "shareApp": "Compartir app",
+  "removeAds": "Eliminar anuncios",
+  "removeAdsPurchased": "Anuncios eliminados ✓",
+  "restorePurchases": "Restaurar compras",
+  "supportDeveloper": "Apoya al desarrollador",
+  "tipSmall": "Propina pequeña  $0.99",
+  "tipMedium": "Propina mediana  $2.99",
+  "tipLarge": "Propina grande  $4.99",
+  "purchaseSuccess": "¡Compra exitosa! Muchas gracias 🙏",
+  "purchaseFailed": "Error en la compra. Inténtalo de nuevo.",
+  "purchasePending": "Compra en proceso…"
 }

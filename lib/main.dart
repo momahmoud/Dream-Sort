@@ -7,6 +7,8 @@ import 'package:dream_sort/core/locale/locale_cubit.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dream_sort/features/game/repo/game_repository.dart';
 import 'package:dream_sort/core/services/ads_service.dart';
+import 'package:dream_sort/core/services/iap_service.dart';
+import 'package:dream_sort/core/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -43,9 +45,15 @@ void main() async {
   }
   await dotenv.load(fileName: ".env");
   await AdsService.init();
+  await NotificationService.init();
 
   final gameRepo = GameRepository();
   await gameRepo.init();
+
+  // Apply adsRemoved flag before any ad is loaded.
+  if (gameRepo.adsRemoved) AdsService.setAdsRemoved();
+
+  await IAPService.init(repo: gameRepo);
 
   final audioCtrl = AudioController(gameRepo);
   await audioCtrl.init();

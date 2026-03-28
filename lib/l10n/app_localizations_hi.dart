@@ -118,6 +118,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get dreamSorted => 'सपना छांटा गया!';
 
   @override
+  String get notifDailyTitle => '🎁 आपका दैनिक बोनस तैयार है!';
+
+  @override
+  String get notifDailyBody =>
+      'आपका दैनिक इनाम इंतज़ार कर रहा है। आकर ले जाएं!';
+
+  @override
   String get rewardBase => 'आधार';
 
   @override
@@ -532,4 +539,37 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get item_paint_starry => 'गहरा ब्रह्मांड';
+
+  @override
+  String get shareApp => 'ऐप शेयर करें';
+
+  @override
+  String get removeAds => 'विज्ञापन हटाएं';
+
+  @override
+  String get removeAdsPurchased => 'विज्ञापन हटा दिए ✓';
+
+  @override
+  String get restorePurchases => 'खरीदारी पुनर्स्थापित करें';
+
+  @override
+  String get supportDeveloper => 'डेवलपर को सपोर्ट करें';
+
+  @override
+  String get tipSmall => 'छोटी टिप  \$0.99';
+
+  @override
+  String get tipMedium => 'मध्यम टिप  \$2.99';
+
+  @override
+  String get tipLarge => 'बड़ी टिप  \$4.99';
+
+  @override
+  String get purchaseSuccess => 'खरीदारी सफल! धन्यवाद 🙏';
+
+  @override
+  String get purchaseFailed => 'खरीदारी विफल। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get purchasePending => 'खरीदारी लंबित…';
 }

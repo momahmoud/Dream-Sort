@@ -32,8 +32,8 @@ class RewardConstants {
   static const int hintCost = 20;
   static const int shuffleCost = 25;
   static const int helpCost = 60;
-  static const int undoPackCost = 15;   // cost to buy a pack of extra undos
-  static const int undoPackCount = 3;   // undos granted per purchase
+  static const int undoPackCost = 15; // cost to buy a pack of extra undos
+  static const int undoPackCount = 3; // undos granted per purchase
 
   // --- Rewarded ad ---
   static const int rewardedAdCoins = 25;

@@ -118,6 +118,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dreamSorted => 'تم الفرز!';
 
   @override
+  String get notifDailyTitle => '🎁 مكافأتك اليومية جاهزة!';
+
+  @override
+  String get notifDailyBody => 'مكافأتك اليومية بانتظارك. تعال واستلمها!';
+
+  @override
   String get rewardBase => 'أساسي';
 
   @override
@@ -529,4 +535,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get item_paint_starry => 'كون عميق';
+
+  @override
+  String get shareApp => 'مشاركة التطبيق';
+
+  @override
+  String get removeAds => 'إزالة الإعلانات';
+
+  @override
+  String get removeAdsPurchased => 'تمت إزالة الإعلانات ✓';
+
+  @override
+  String get restorePurchases => 'استعادة المشتريات';
+
+  @override
+  String get supportDeveloper => 'ادعم المطوّر';
+
+  @override
+  String get tipSmall => 'تبرع صغير  \$0.99';
+
+  @override
+  String get tipMedium => 'تبرع متوسط  \$2.99';
+
+  @override
+  String get tipLarge => 'تبرع كبير  \$4.99';
+
+  @override
+  String get purchaseSuccess => 'تمت عملية الشراء بنجاح! شكراً جزيلاً 🙏';
+
+  @override
+  String get purchaseFailed => 'فشلت عملية الشراء. يرجى المحاولة مجدداً.';
+
+  @override
+  String get purchasePending => 'جارٍ معالجة الشراء…';
 }

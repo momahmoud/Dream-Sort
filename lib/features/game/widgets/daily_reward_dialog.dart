@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:dream_sort/core/services/notification_service.dart';
 import 'package:dream_sort/features/game/constants/reward_constants.dart';
 import 'package:dream_sort/features/game/repo/game_repository.dart';
 import 'package:dream_sort/l10n/app_localizations.dart';
@@ -246,6 +247,14 @@ class DailyRewardDialog extends StatelessWidget {
           onClaim: () async {
             await repo.addCoins(reward);
             await repo.updateLoginData(streak, now);
+            if (context.mounted) {
+              final l10n = AppLocalizations.of(context)!;
+              await NotificationService.scheduleDailyReminder(
+                now.add(const Duration(days: 1)),
+                title: l10n.notifDailyTitle,
+                body: l10n.notifDailyBody,
+              );
+            }
           },
         ),
       );

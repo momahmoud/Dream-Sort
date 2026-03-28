@@ -20,7 +20,8 @@ class GameBottomControls extends StatelessWidget {
         builder: (context, state) {
           final addCost = RewardConstants.helpCost;
           final canAffordAdd = state.coinCount >= addCost;
-          final canAffordShuffle = state.coinCount >= RewardConstants.shuffleCost;
+          final canAffordShuffle =
+              state.coinCount >= RewardConstants.shuffleCost;
 
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -173,7 +174,7 @@ class GameBottomControls extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                          Text(
+                      Text(
                         '${RewardConstants.hintCost}',
                         style: TextStyle(
                           color: state.coinCount >= RewardConstants.hintCost

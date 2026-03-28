@@ -79,6 +79,8 @@
   },
   "nextLevel": "Next Level",
   "dreamSorted": "DREAM SORTED!",
+  "notifDailyTitle": "🎁 Daily Bonus Ready!",
+  "notifDailyBody": "Your daily reward is waiting. Come collect it!",
   "rewardBase": "Base",
   "rewardUndoBonus": "Undo Bonus",
   "rewardTimeBonus": "Time Bonus",
@@ -266,5 +268,16 @@
   "item_paint_surreal": "Surreal Dream",
   "item_paint_portrait": "Noble Ancestor",
   "item_paint_landscape": "Mountain Peak",
-  "item_paint_starry": "Deep Cosmos"
+  "item_paint_starry": "Deep Cosmos",
+  "shareApp": "Share App",
+  "removeAds": "Remove Ads",
+  "removeAdsPurchased": "Ads Removed ✓",
+  "restorePurchases": "Restore Purchases",
+  "supportDeveloper": "Support the Developer",
+  "tipSmall": "Small Tip  $0.99",
+  "tipMedium": "Medium Tip  $2.99",
+  "tipLarge": "Large Tip  $4.99",
+  "purchaseSuccess": "Purchase successful! Thank you 🙏",
+  "purchaseFailed": "Purchase failed. Please try again.",
+  "purchasePending": "Purchase pending…"
 }

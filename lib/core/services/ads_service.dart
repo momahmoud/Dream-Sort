@@ -12,8 +12,14 @@ class AdsService {
 
   static bool _isInitialized = false;
   static const bool _adsEnabled = true;
+  static bool _adsRemoved = false;
 
-  static bool get isEnabled => _adsEnabled;
+  static bool get isEnabled => _adsEnabled && !_adsRemoved;
+
+  /// Called at startup from main.dart and by IAPService on purchase.
+  static void setAdsRemoved() {
+    _adsRemoved = true;
+  }
 
   static Future<void> init() async {
     if (!_adsEnabled) return;
@@ -23,22 +29,13 @@ class AdsService {
     // Families Policy Compliance:
     // 1. Tag for Child Directed Treatment (COPPA)
     // 2. Max Ad Content Rating set to G
-    RequestConfiguration configuration = RequestConfiguration(
-      tagForChildDirectedTreatment: TagForChildDirectedTreatment.yes,
-      maxAdContentRating: MaxAdContentRating.g,
-      // Add your test device ID from the logs here to test with real ads logic or verify behavior
-      testDeviceIds: [],
-    );
+    RequestConfiguration configuration = RequestConfiguration();
     await MobileAds.instance.updateRequestConfiguration(configuration);
 
     // UMP Consent Flow
     ConsentRequestParameters params;
     if (kDebugMode) {
-      ConsentDebugSettings debugSettings = ConsentDebugSettings(
-        debugGeography: DebugGeography.debugGeographyEea,
-        testIdentifiers:
-            [], // Add your test device hashed ID here (e.g. from logs)
-      );
+      ConsentDebugSettings debugSettings = ConsentDebugSettings();
       params = ConsentRequestParameters(consentDebugSettings: debugSettings);
     } else {
       params = ConsentRequestParameters();
@@ -139,7 +136,7 @@ class AdsService {
       ),
     );
 
-    if (_adsEnabled) {
+    if (isEnabled) {
       ad.load();
     }
 
@@ -212,7 +209,7 @@ class AdsService {
   }
 
   static void showInterstitial({VoidCallback? onAdClosed}) {
-    if (!_adsEnabled) {
+    if (!isEnabled) {
       onAdClosed?.call();
       return;
     }
@@ -301,7 +298,7 @@ class AdsService {
   }
 
   static void showRewarded({required Function(int amount) onUserEarnedReward}) {
-    if (!_adsEnabled) return;
+    if (!_adsEnabled) return; // Rewarded ads are opt-in, so bypass _adsRemoved check.
     if (_rewardedAd != null) {
       _rewardedAd!.show(
         onUserEarnedReward: (ad, reward) {

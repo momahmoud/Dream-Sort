@@ -296,6 +296,18 @@ abstract class AppLocalizations {
   /// **'DREAM SORTED!'**
   String get dreamSorted;
 
+  /// No description provided for @notifDailyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'🎁 Daily Bonus Ready!'**
+  String get notifDailyTitle;
+
+  /// No description provided for @notifDailyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your daily reward is waiting. Come collect it!'**
+  String get notifDailyBody;
+
   /// No description provided for @rewardBase.
   ///
   /// In en, this message translates to:
@@ -1075,6 +1087,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deep Cosmos'**
   String get item_paint_starry;
+
+  /// No description provided for @shareApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Share App'**
+  String get shareApp;
+
+  /// No description provided for @removeAds.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Ads'**
+  String get removeAds;
+
+  /// No description provided for @removeAdsPurchased.
+  ///
+  /// In en, this message translates to:
+  /// **'Ads Removed ✓'**
+  String get removeAdsPurchased;
+
+  /// No description provided for @restorePurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Purchases'**
+  String get restorePurchases;
+
+  /// No description provided for @supportDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'Support the Developer'**
+  String get supportDeveloper;
+
+  /// No description provided for @tipSmall.
+  ///
+  /// In en, this message translates to:
+  /// **'Small Tip  \$0.99'**
+  String get tipSmall;
+
+  /// No description provided for @tipMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium Tip  \$2.99'**
+  String get tipMedium;
+
+  /// No description provided for @tipLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Large Tip  \$4.99'**
+  String get tipLarge;
+
+  /// No description provided for @purchaseSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase successful! Thank you 🙏'**
+  String get purchaseSuccess;
+
+  /// No description provided for @purchaseFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase failed. Please try again.'**
+  String get purchaseFailed;
+
+  /// No description provided for @purchasePending.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase pending…'**
+  String get purchasePending;
 }
 
 class _AppLocalizationsDelegate

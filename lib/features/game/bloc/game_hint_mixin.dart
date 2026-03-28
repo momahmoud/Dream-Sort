@@ -1,15 +1,15 @@
 part of 'game_bloc.dart';
 
 // Scoring constants — easy to tune, avoids magic numbers in loops
-const int _scoreComplete  = 600;
+const int _scoreComplete = 600;
 const int _scoreStackBase = 80;
 const int _scoreStackLayer = 25;
 const int _scoreUnblockHidden = 120;
 const int _scoreUnblockUseful = 50;
-const int _scoreClearMixed   = 60;
+const int _scoreClearMixed = 60;
 const int _penaltyWasteEmpty = -1200;
-const int _penaltyEmptyHom   = -250;
-const int _penaltyEmptyMix   = -40;
+const int _penaltyEmptyHom = -250;
+const int _penaltyEmptyMix = -40;
 
 mixin GameHintMixin on GameBlocBase {
   void _onRequestHint(RequestHint event, Emitter<GameState> emit) {
@@ -64,22 +64,29 @@ mixin GameHintMixin on GameBlocBase {
     if (best == null) return;
 
     repo.spendCoins(RewardConstants.hintCost);
-    emit(state.copyWith(
-      hintMove: MoveDetails(
-        sourceIndex: best.sourceIndex,
-        targetIndex: best.targetIndex,
-        colorIndex: best.colorIndex,
-        moveId: -1,
-        count: best.count,
+    emit(
+      state.copyWith(
+        hintMove: MoveDetails(
+          sourceIndex: best.sourceIndex,
+          targetIndex: best.targetIndex,
+          colorIndex: best.colorIndex,
+          moveId: -1,
+          count: best.count,
+        ),
+        coinCount: state.coinCount - RewardConstants.hintCost,
       ),
-      coinCount: state.coinCount - RewardConstants.hintCost,
-    ));
+    );
   }
 
   int _score(
-    int si, int ti, int colorIndex, int count,
-    Tube src, Tube tgt,
-    List<Tube> tubes, int n,
+    int si,
+    int ti,
+    int colorIndex,
+    int count,
+    Tube src,
+    Tube tgt,
+    List<Tube> tubes,
+    int n,
   ) {
     int score = 0;
     final srcItems = src.items;
@@ -123,7 +130,10 @@ mixin GameHintMixin on GameBlocBase {
     if (srcLen > 1) {
       final c = srcItems.first.colorIndex;
       for (int i = 1; i < srcLen; i++) {
-        if (srcItems[i].colorIndex != c) { srcHom = false; break; }
+        if (srcItems[i].colorIndex != c) {
+          srcHom = false;
+          break;
+        }
       }
     }
 
