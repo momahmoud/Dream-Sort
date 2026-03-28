@@ -1153,6 +1153,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Purchase pending…'**
   String get purchasePending;
+
+  /// No description provided for @premium.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get premium;
+
+  /// No description provided for @support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get support;
+
+  /// No description provided for @rateApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate App'**
+  String get rateApp;
+
+  /// No description provided for @rateNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Now'**
+  String get rateNow;
+
+  /// No description provided for @rateAppDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enjoying the game? Rate us to help others discover it!'**
+  String get rateAppDesc;
+
+  /// No description provided for @removeAdsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enjoy playing without any ads'**
+  String get removeAdsDesc;
+
+  /// No description provided for @restorePurchasesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore your previous purchases'**
+  String get restorePurchasesDesc;
+
+  /// No description provided for @supportDeveloperDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your support helps us keep improving the game'**
+  String get supportDeveloperDesc;
 }
 
 class _AppLocalizationsDelegate

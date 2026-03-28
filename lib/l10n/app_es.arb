@@ -173,5 +173,13 @@
   "tipLarge": "Propina grande  $4.99",
   "purchaseSuccess": "¡Compra exitosa! Muchas gracias 🙏",
   "purchaseFailed": "Error en la compra. Inténtalo de nuevo.",
-  "purchasePending": "Compra en proceso…"
+  "purchasePending": "Compra en proceso…",
+  "premium": "Premium",
+  "support": "Soporte",
+  "rateApp": "Calificar app",
+  "rateNow": "Calificar ahora",
+  "rateAppDesc": "¿Disfrutas el juego? ¡Califícanos para ayudar a otros a descubrirlo!",
+  "removeAdsDesc": "Juega sin ningún anuncio",
+  "restorePurchasesDesc": "Restaura tus compras anteriores",
+  "supportDeveloperDesc": "Tu apoyo nos ayuda a mejorar el juego"
 }

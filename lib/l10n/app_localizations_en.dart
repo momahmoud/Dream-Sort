@@ -570,4 +570,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get purchasePending => 'Purchase pending…';
+
+  @override
+  String get premium => 'Premium';
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String get rateApp => 'Rate App';
+
+  @override
+  String get rateNow => 'Rate Now';
+
+  @override
+  String get rateAppDesc =>
+      'Enjoying the game? Rate us to help others discover it!';
+
+  @override
+  String get removeAdsDesc => 'Enjoy playing without any ads';
+
+  @override
+  String get restorePurchasesDesc => 'Restore your previous purchases';
+
+  @override
+  String get supportDeveloperDesc =>
+      'Your support helps us keep improving the game';
 }

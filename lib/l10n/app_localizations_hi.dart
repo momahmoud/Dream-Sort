@@ -572,4 +572,29 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get purchasePending => 'खरीदारी लंबित…';
+
+  @override
+  String get premium => 'प्रीमियम';
+
+  @override
+  String get support => 'समर्थन';
+
+  @override
+  String get rateApp => 'ऐप रेट करें';
+
+  @override
+  String get rateNow => 'अभी रेट करें';
+
+  @override
+  String get rateAppDesc => 'गेम पसंद आया? दूसरों की मदद के लिए रेट करें!';
+
+  @override
+  String get removeAdsDesc => 'बिना विज्ञापन के खेलें';
+
+  @override
+  String get restorePurchasesDesc => 'अपनी पिछली खरीदारी वापस लाएं';
+
+  @override
+  String get supportDeveloperDesc =>
+      'आपका समर्थन हमें गेम बेहतर बनाने में मदद करता है';
 }

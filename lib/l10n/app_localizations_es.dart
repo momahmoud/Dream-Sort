@@ -573,4 +573,29 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get purchasePending => 'Compra en proceso…';
+
+  @override
+  String get premium => 'Premium';
+
+  @override
+  String get support => 'Soporte';
+
+  @override
+  String get rateApp => 'Calificar app';
+
+  @override
+  String get rateNow => 'Calificar ahora';
+
+  @override
+  String get rateAppDesc =>
+      '¿Disfrutas el juego? ¡Califícanos para ayudar a otros a descubrirlo!';
+
+  @override
+  String get removeAdsDesc => 'Juega sin ningún anuncio';
+
+  @override
+  String get restorePurchasesDesc => 'Restaura tus compras anteriores';
+
+  @override
+  String get supportDeveloperDesc => 'Tu apoyo nos ayuda a mejorar el juego';
 }

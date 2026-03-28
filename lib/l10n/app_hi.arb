@@ -173,5 +173,13 @@
   "tipLarge": "बड़ी टिप  $4.99",
   "purchaseSuccess": "खरीदारी सफल! धन्यवाद 🙏",
   "purchaseFailed": "खरीदारी विफल। कृपया पुनः प्रयास करें।",
-  "purchasePending": "खरीदारी लंबित…"
+  "purchasePending": "खरीदारी लंबित…",
+  "premium": "प्रीमियम",
+  "support": "समर्थन",
+  "rateApp": "ऐप रेट करें",
+  "rateNow": "अभी रेट करें",
+  "rateAppDesc": "गेम पसंद आया? दूसरों की मदद के लिए रेट करें!",
+  "removeAdsDesc": "बिना विज्ञापन के खेलें",
+  "restorePurchasesDesc": "अपनी पिछली खरीदारी वापस लाएं",
+  "supportDeveloperDesc": "आपका समर्थन हमें गेम बेहतर बनाने में मदद करता है"
 }

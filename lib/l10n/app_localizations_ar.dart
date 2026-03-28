@@ -568,4 +568,29 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get purchasePending => 'جارٍ معالجة الشراء…';
+
+  @override
+  String get premium => 'بريميوم';
+
+  @override
+  String get support => 'الدعم';
+
+  @override
+  String get rateApp => 'قيّم التطبيق';
+
+  @override
+  String get rateNow => 'قيّم الآن';
+
+  @override
+  String get rateAppDesc =>
+      'هل تستمتع باللعبة؟ قيّمنا لتساعد الآخرين على اكتشافها!';
+
+  @override
+  String get removeAdsDesc => 'استمتع باللعب بدون إعلانات';
+
+  @override
+  String get restorePurchasesDesc => 'استرجع مشترياتك السابقة';
+
+  @override
+  String get supportDeveloperDesc => 'دعمك يساعدنا نطوّر اللعبة';
 }

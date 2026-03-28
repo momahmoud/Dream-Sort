@@ -173,5 +173,13 @@
   "tipLarge": "تبرع كبير  $4.99",
   "purchaseSuccess": "تمت عملية الشراء بنجاح! شكراً جزيلاً 🙏",
   "purchaseFailed": "فشلت عملية الشراء. يرجى المحاولة مجدداً.",
-  "purchasePending": "جارٍ معالجة الشراء…"
+  "purchasePending": "جارٍ معالجة الشراء…",
+  "premium": "بريميوم",
+  "support": "الدعم",
+  "rateApp": "قيّم التطبيق",
+  "rateNow": "قيّم الآن",
+  "rateAppDesc": "هل تستمتع باللعبة؟ قيّمنا لتساعد الآخرين على اكتشافها!",
+  "removeAdsDesc": "استمتع باللعب بدون إعلانات",
+  "restorePurchasesDesc": "استرجع مشترياتك السابقة",
+  "supportDeveloperDesc": "دعمك يساعدنا نطوّر اللعبة"
 }

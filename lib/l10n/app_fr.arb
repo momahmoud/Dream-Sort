@@ -173,5 +173,13 @@
   "tipLarge": "Grand pourboire  $4.99",
   "purchaseSuccess": "Achat réussi ! Merci 🙏",
   "purchaseFailed": "Échec de l'achat. Veuillez réessayer.",
-  "purchasePending": "Achat en cours…"
+  "purchasePending": "Achat en cours…",
+  "premium": "Premium",
+  "support": "Soutien",
+  "rateApp": "Noter l'app",
+  "rateNow": "Noter maintenant",
+  "rateAppDesc": "Vous aimez le jeu ? Notez-nous pour aider les autres à le découvrir !",
+  "removeAdsDesc": "Jouez sans aucune publicité",
+  "restorePurchasesDesc": "Restaurez vos achats précédents",
+  "supportDeveloperDesc": "Votre soutien nous aide à améliorer le jeu"
 }

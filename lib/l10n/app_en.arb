@@ -279,5 +279,13 @@
   "tipLarge": "Large Tip  $4.99",
   "purchaseSuccess": "Purchase successful! Thank you 🙏",
   "purchaseFailed": "Purchase failed. Please try again.",
-  "purchasePending": "Purchase pending…"
+  "purchasePending": "Purchase pending…",
+  "premium": "Premium",
+  "support": "Support",
+  "rateApp": "Rate App",
+  "rateNow": "Rate Now",
+  "rateAppDesc": "Enjoying the game? Rate us to help others discover it!",
+  "removeAdsDesc": "Enjoy playing without any ads",
+  "restorePurchasesDesc": "Restore your previous purchases",
+  "supportDeveloperDesc": "Your support helps us keep improving the game"
 }

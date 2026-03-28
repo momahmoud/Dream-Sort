@@ -574,4 +574,30 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get purchasePending => 'Achat en cours…';
+
+  @override
+  String get premium => 'Premium';
+
+  @override
+  String get support => 'Soutien';
+
+  @override
+  String get rateApp => 'Noter l\'app';
+
+  @override
+  String get rateNow => 'Noter maintenant';
+
+  @override
+  String get rateAppDesc =>
+      'Vous aimez le jeu ? Notez-nous pour aider les autres à le découvrir !';
+
+  @override
+  String get removeAdsDesc => 'Jouez sans aucune publicité';
+
+  @override
+  String get restorePurchasesDesc => 'Restaurez vos achats précédents';
+
+  @override
+  String get supportDeveloperDesc =>
+      'Votre soutien nous aide à améliorer le jeu';
 }
